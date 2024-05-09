@@ -123,11 +123,12 @@ contract interestData {
         uint256 runningUpIndex = startIndex;
         uint256 runningDownIndex = endIndex;
         uint256 biggestPossibleStartTimeframe;
+        uint256 adjustedIndex;
         
-        // if(startIndex != 1) {
-        //     startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
-        // }
-        startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        if(startIndex != 1) {
+            startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        }
+        // startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
 
         for (uint256 i = 0; i < timeframes.length; i++) {
             if ( startIndex + timeframes[i] - 1 <= endIndex) { // For spliting
@@ -147,7 +148,7 @@ contract interestData {
         for (uint256 i = 0; i < timeframes.length; i++) {
             while ((runningUpIndex + timeframes[i] - 1) <= endIndex) {
                 // this inverses the list order due to interest being stored in the opposite index format 0-4
-                uint256 adjustedIndex = timeframes.length - 1 - i;
+                adjustedIndex = timeframes.length - 1 - i;
                 // console.log("adjusted index", adjustedIndex);
                 // console.log("time scale rate index", fetchTimeScaledRateIndex(
                 //     adjustedIndex,
@@ -170,7 +171,7 @@ contract interestData {
             // Calculate cumulative interest rates for decreasing indexes
             while ((runningDownIndex >= timeframes[i]) && ((runningDownIndex - timeframes[i] + 1) >= startIndex)) {
                 //&& available
-                uint256 adjustedIndex = timeframes.length - 1 - i;
+                adjustedIndex = timeframes.length - 1 - i;
                 // console.log("adjustedindex", adjustedIndex);
 
                 cumulativeInterestRates +=
@@ -200,101 +201,6 @@ contract interestData {
         return cumulativeInterestRates / (endIndex - (startIndex  - 1));
     }
 
-    // function calculateAverageCumulativeInterest(
-    //     uint256 startIndex,
-    //     uint256 endIndex,
-    //     address token
-    // ) public view returns (uint256) {
-    //     uint256 cumulativeInterestRates = 0;
-    //     uint16[5] memory timeframes = [8736, 672, 168, 24, 1];
-
-    //     uint256 runningUpIndex = startIndex;
-    //     uint256 runningDownIndex = endIndex;
-    //     uint256 biggestPossibleStartTimeframe;
-
-    //     // console.log("runningUpIndex", runningUpIndex);
-    //     // console.log("runningDownIndex", runningDownIndex);
-
-    //     uint32 counter;
-
-    //     startIndex += 1;
-
-    //     for (uint256 i = 0; i < timeframes.length; i++) {
-    //         if (startIndex + timeframes[i] <= endIndex) {
-    //             // console.log("timeframe", timeframes[i]);
-    //             biggestPossibleStartTimeframe =
-    //                 ((endIndex - startIndex) / timeframes[i]) *
-    //                 timeframes[i];
-    //             // console.log("biggestPossibleStartTimeframe", biggestPossibleStartTimeframe);
-    //             runningDownIndex = biggestPossibleStartTimeframe; // 168
-    //             // console.log("runningDownIndex", runningDownIndex);
-    //             runningUpIndex = biggestPossibleStartTimeframe; // 168
-    //             // console.log("runningUpIndex", runningUpIndex);
-    //             break;
-    //         }
-    //     }
-    //     for (uint256 i = 0; i < timeframes.length; i++) {
-    //         while (runningUpIndex + timeframes[i] <= endIndex) {
-    //             // this inverses the list order due to interest being stored in the opposite index format 0-4
-    //             uint256 adjustedIndex = timeframes.length - 1 - i;
-    //             // console.log("adjusted index", adjustedIndex);
-    //             // console.log("time scale rate index", fetchTimeScaledRateIndex(
-    //             //     adjustedIndex,
-    //             //     token,
-    //             //     runningUpIndex / timeframes[i] // 168 / 168 = 1
-    //             // ).interestRate);
-    //             cumulativeInterestRates +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningUpIndex / timeframes[i] // 168 / 168 = 1
-    //                 ).interestRate *
-    //                 timeframes[i];
-    //             // console.log("cumulativeInterestRates", cumulativeInterestRates);
-    //             runningUpIndex += timeframes[i];
-    //             // console.log("runningUpIndex", runningUpIndex);
-    //             counter++;
-    //             // console.log("counter", counter);
-    //         }
-
-    //         // Calculate cumulative interest rates for decreasing indexes
-    //         while (
-    //             runningDownIndex >= startIndex &&
-    //             runningDownIndex >= timeframes[i]
-    //         ) {
-    //             //&& available
-    //             uint256 adjustedIndex = timeframes.length - 1 - i;
-    //             // console.log("adjustedindex", adjustedIndex);
-
-    //             cumulativeInterestRates +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningDownIndex / timeframes[i]
-    //                 ).interestRate *
-    //                 timeframes[i];
-
-    //             // console.log("cumulativeInterestRates", cumulativeInterestRates);
-
-    //             counter++;
-
-    //             // console.log("counter", counter);
-
-    //             runningDownIndex -= timeframes[i];
-
-    //             // console.log("runningDownIndex", runningDownIndex);
-    //         }
-    //     }
-
-    //     if (
-    //         cumulativeInterestRates == 0 || (endIndex - (startIndex - 1)) == 0
-    //     ) {
-    //         return 0;
-    //     }
-    //     // Return the cumulative interest rates
-    //     return cumulativeInterestRates / (endIndex - (startIndex - 1));
-    // }
-
     function calculateAverageCumulativeDepositInterest(
         uint256 startIndex,
         uint256 endIndex,
@@ -308,11 +214,12 @@ contract interestData {
         uint256 runningUpIndex = startIndex;
         uint256 runningDownIndex = endIndex;
         uint256 biggestPossibleStartTimeframe;
+        uint256 adjustedIndex;
 
-        // if(startIndex != 1) {
-        //     startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
-        // }
-        startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        if(startIndex != 1) {
+            startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        }
+        // startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
         
         for (uint256 i = 0; i < timeframes.length; i++) {
             if ( startIndex + timeframes[i] - 1 <= endIndex) { // For spliting
@@ -330,7 +237,7 @@ contract interestData {
 
         for (uint256 i = 0; i < timeframes.length; i++) {
             while ((runningUpIndex + timeframes[i] - 1) <= endIndex) {
-                uint256 adjustedIndex = timeframes.length - 1 - i;
+                adjustedIndex = timeframes.length - 1 - i;
                 cumulativeInterestRates +=
                     fetchTimeScaledRateIndex(
                         adjustedIndex,
@@ -352,7 +259,7 @@ contract interestData {
 
             // Calculate cumulative interest rates for decreasing indexes
             while ((runningDownIndex >= timeframes[i]) && ((runningDownIndex - timeframes[i] + 1) >= startIndex)) {
-                uint256 adjustedIndex = timeframes.length - 1 - i;
+                adjustedIndex = timeframes.length - 1 - i;
 
                 cumulativeInterestRates +=
                     fetchTimeScaledRateIndex(
@@ -385,148 +292,6 @@ contract interestData {
             (cumulativeBorrowProportion / (endIndex - (startIndex - 1)));
     }
 
-    // function calculateAverageCumulativeDepositInterest(
-    //     uint256 startIndex,
-    //     uint256 endIndex,
-    //     address token
-    // ) public view returns (uint256) {
-    //     uint256 cumulativeInterestRates = 0;
-    //     uint16[5] memory timeframes = [8736, 672, 168, 24, 1];
-
-    //     uint256 cumulativeBorrowProportion;
-
-    //     uint256 runningUpIndex = startIndex;
-    //     uint256 runningDownIndex = endIndex;
-    //     uint256 biggestPossibleStartTimeframe;
-
-    //     uint32 counter;
-
-    //     startIndex += 1;
-
-    //     for (uint256 i = 0; i < timeframes.length; i++) {
-    //         if (startIndex + timeframes[i] <= endIndex) {
-    //             biggestPossibleStartTimeframe =
-    //                 ((endIndex - startIndex) / timeframes[i]) *
-    //                 timeframes[i];
-    //             runningDownIndex = biggestPossibleStartTimeframe; // 168
-    //             runningUpIndex = biggestPossibleStartTimeframe; // 168
-    //             break;
-    //         }
-    //     }
-
-    //     for (uint256 i = 0; i < timeframes.length; i++) {
-    //         while (runningUpIndex + timeframes[i] <= endIndex) {
-    //             uint256 adjustedIndex = timeframes.length - 1 - i;
-    //             cumulativeInterestRates +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningUpIndex / timeframes[i] // 168 / 168 = 1
-    //                 ).interestRate *
-    //                 timeframes[i];
-
-    //             cumulativeBorrowProportion +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningUpIndex / timeframes[i] // 168 / 168 = 1
-    //                 ).borrowProportionAtIndex *
-    //                 timeframes[i];
-
-    //             runningUpIndex += timeframes[i];
-    //             counter++;
-    //         }
-
-    //         // Calculate cumulative interest rates for decreasing indexes
-    //         while (
-    //             runningDownIndex >= startIndex &&
-    //             runningDownIndex - startIndex >= timeframes[i]
-    //         ) {
-    //             uint256 adjustedIndex = timeframes.length - 1 - i;
-
-    //             cumulativeInterestRates +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningDownIndex / timeframes[i]
-    //                 ).interestRate *
-    //                 timeframes[i];
-
-    //             cumulativeBorrowProportion +=
-    //                 fetchTimeScaledRateIndex(
-    //                     adjustedIndex,
-    //                     token,
-    //                     runningUpIndex / timeframes[i] // 168 / 168 = 1
-    //                 ).borrowProportionAtIndex *
-    //                 timeframes[i];
-
-    //             counter++;
-
-    //             runningDownIndex -= timeframes[i];
-    //         }
-    //     }
-
-    //     if (
-    //         cumulativeInterestRates == 0 || (endIndex - (startIndex - 1)) == 0
-    //     ) {
-    //         return 0;
-    //     }
-
-    //     return
-    //         (cumulativeInterestRates / (endIndex - (startIndex - 1))) *
-    //         (cumulativeBorrowProportion / (endIndex - (startIndex - 1)));
-    // }
-    /// @notice updates intereest epochs, fills in the struct of data for a new index
-    /// @param token the token being targetted
-    /// @param index the index of the period
-    /// @param value the value
-    /*
-function updateInterestIndex(
-    address token,
-    uint256 index,
-    uint256 value
-) public checkRoleAuthority {
-    uint256 currentIndex = currentInterestIndex[token];
-    uint16[5] memory periods = [1, 24, 168, 672, 8736];
-
-    currentInterestIndex[token] = index + 1;
-
-    for (uint256 i = 0; i < periods.length; i++) {
-        if (index % periods[i] == 0) {
-            uint256 periodIndex = currentIndex / periods[i];
-            
-            if (i == 0) {
-             InterestRateEpochs[i][token][periodIndex].interestRate = value;
-             InterestRateEpochs[i][token][periodIndex].lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[i][token][periodIndex].totalLiabilitiesAtIndex = Datahub.returnAssetLogs(token).totalBorrowedAmount;
-            InterestRateEpochs[i][token][periodIndex].totalAssetSuplyAtIndex = Datahub.returnAssetLogs(token).totalAssetSupply;
-            InterestRateEpochs[i][token][periodIndex].rateInfo = InterestRateEpochs[i][token][periodIndex].rateInfo;
-            } else {
-                InterestRateEpochs[i][token][periodIndex].interestRate = EVO_LIBRARY.calculateAverage(
-                    fetchRatesList(
-                        currentIndex - (periods[i] - 1),
-                        currentIndex,
-                        token
-                    )
-                );
-            }
-
-            InterestRateEpochs[i][token][periodIndex].lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[i][token][periodIndex].totalLiabilitiesAtIndex = Datahub.returnAssetLogs(token).totalBorrowedAmount;
-            InterestRateEpochs[i][token][periodIndex].totalAssetSuplyAtIndex = Datahub.returnAssetLogs(token).totalAssetSupply;
-            InterestRateEpochs[i][token][periodIndex].borrowProportionAtIndex = EVO_LIBRARY.calculateAverage(
-                utils.fetchBorrowProportionList(
-                    currentIndex - (periods[i] - 1),
-                    currentIndex,
-                    token
-                )
-            );
-
-            InterestRateEpochs[i][token][periodIndex].rateInfo = InterestRateEpochs[i][token][periodIndex - 1].rateInfo;
-        }
-    }
-}
-*/
     /// @notice updates intereest epochs, fills in the struct of data for a new index
     /// @param token the token being targetted
     /// @param index the index of the period
@@ -540,191 +305,70 @@ function updateInterestIndex(
         // console.log("index", index);
         // console.log("value", value);
         currentInterestIndex[token] = index + 1; // 25
+        uint16[5] memory timeframes = [1, 24, 168, 672, 8736];
+        uint256 period_start;
+        uint256 period_interval;
+        uint256 borrowProportion;
+        uint256 interestReate;
 
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .interestRate = value;
-
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .lastUpdatedTime = block.timestamp;
-
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .totalLiabilitiesAtIndex = Datahub
-            .returnAssetLogs(token)
-            .totalBorrowedAmount;
-
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .totalAssetSuplyAtIndex = Datahub
-            .returnAssetLogs(token)
-            .totalAssetSupply;
-
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .borrowProportionAtIndex = EVO_LIBRARY.calculateBorrowProportion(
+        borrowProportion = EVO_LIBRARY.calculateBorrowProportion(
             Datahub.returnAssetLogs(token)
         );
 
-        InterestRateEpochs[0][token][uint(currentInterestIndex[token])]
-            .rateInfo = InterestRateEpochs[0][token][
-            uint(currentInterestIndex[token]) - 1
-        ].rateInfo;
+        setInterestRateEpoch(
+            0,
+            token,
+            uint(currentInterestIndex[token]),
+            borrowProportion,
+            value
+        );
 
-        if (index % 24 == 0) {
-            // 168
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .interestRate = EVO_LIBRARY.calculateAverage(
-                fetchRatesList(
-                    currentInterestIndex[token] - 23, // 1
-                    currentInterestIndex[token], //24
-                    token
-                )
-            );
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .totalLiabilitiesAtIndex = Datahub
-                .returnAssetLogs(token)
-                .totalBorrowedAmount;
-
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .totalAssetSuplyAtIndex = Datahub
-                .returnAssetLogs(token)
-                .totalAssetSupply;
-
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .borrowProportionAtIndex = EVO_LIBRARY.calculateAverage(
-                utils.fetchBorrowProportionList(
-                    currentInterestIndex[token] - 23, // 1
-                    currentInterestIndex[token], //24
-                    token
-                )
-            );
-
-            InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
-                .rateInfo = InterestRateEpochs[1][token][
-                uint(currentInterestIndex[token]) - 1
-            ].rateInfo;
-        }
-        if (index % 168 == 0) {
-            InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token] / 168)
-            ].interestRate = EVO_LIBRARY.calculateAverage(
-                fetchRatesList(
-                    currentInterestIndex[token] - 167,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-
-            InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token] / 168)
-            ].lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token] / 168)
-            ].totalLiabilitiesAtIndex = Datahub
-                .returnAssetLogs(token)
-                .totalBorrowedAmount;
-
-            InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token] / 168)
-            ].borrowProportionAtIndex = EVO_LIBRARY.calculateAverage(
-                utils.fetchBorrowProportionList(
-                    currentInterestIndex[token] - 167,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-
-            InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token] / 168)
-            ].rateInfo = InterestRateEpochs[2][token][
-                uint(currentInterestIndex[token]) - 1
-            ].rateInfo;
-        }
-        if (index % 672 == 0) {
-            InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token] / 672) //8736, 672, 168, 24
-            ].interestRate = EVO_LIBRARY.calculateAverage(
-                fetchRatesList(
-                    currentInterestIndex[token] - 671,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-            InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token] / 672)
-            ].lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token] / 672)
-            ].totalLiabilitiesAtIndex = Datahub
-                .returnAssetLogs(token)
-                .totalBorrowedAmount;
-
-            InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token] / 672)
-            ].borrowProportionAtIndex = EVO_LIBRARY.calculateAverage(
-                utils.fetchBorrowProportionList(
-                    currentInterestIndex[token] - 671,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-
-            InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token] / 672)
-            ].rateInfo = InterestRateEpochs[3][token][
-                uint(currentInterestIndex[token]) - 1
-            ].rateInfo;
-        }
-        if (index % 8736 == 0) {
-            InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token] / 8736)
-            ].interestRate = EVO_LIBRARY.calculateAverage(
-                fetchRatesList(
-                    currentInterestIndex[token] - 8735,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-            InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token] / 8736)
-            ].lastUpdatedTime = block.timestamp;
-            InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token] / 8736)
-            ].totalLiabilitiesAtIndex = Datahub
-                .returnAssetLogs(token)
-                .totalBorrowedAmount;
-            InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token] / 8736)
-            ].borrowProportionAtIndex = EVO_LIBRARY.calculateAverage(
-                utils.fetchBorrowProportionList(
-                    currentInterestIndex[token] - 8735,
-                    currentInterestIndex[token],
-                    token
-                )
-            );
-            InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token] / 8736)
-            ].rateInfo = InterestRateEpochs[4][token][
-                uint(currentInterestIndex[token]) - 1
-            ].rateInfo;
+        for (uint256 i = 1; i < timeframes.length; i++) {
+            if( (index % timeframes[i]) == 0 ) {
+                period_interval = timeframes[i] / timeframes[i-1];
+                period_start = currentInterestIndex[token] / timeframes[i-1];
+                period_start = (period_start / period_interval - 1) * period_interval + 1;
+                borrowProportion = EVO_LIBRARY.calculateAverage(
+                    utils.fetchBorrowProportionList(
+                        i - 1,
+                        period_start, // 1
+                        period_start + period_interval - 1, //24
+                        token
+                    )
+                );
+                interestReate = EVO_LIBRARY.calculateAverage(
+                    utils.fetchRatesList(
+                        i - 1,
+                        period_start, // 1
+                        period_start + period_interval - 1, //24
+                        token
+                    )
+                );
+                setInterestRateEpoch(
+                    i,
+                    token,
+                    uint(currentInterestIndex[token] / timeframes[i]),
+                    borrowProportion,
+                    interestReate
+                );
+            }
         }
     }
-    /// @notice returns a list of interest rates for a set amount of indexs or hours
-    function fetchRatesList(
-        uint256 startingIndex,
-        uint256 endingIndex,
-        address token
-    ) private view returns (uint256[] memory) {
-        uint256[] memory interestRatesForThePeriod = new uint256[](
-            (endingIndex) - startingIndex
-        );
-        uint counter = 0;
-        for (uint256 i = startingIndex; i < endingIndex; i++) {
-            interestRatesForThePeriod[counter] = InterestRateEpochs[0][token][i]
-                .interestRate;
 
-            counter += 1;
-        }
-        return interestRatesForThePeriod;
+    function setInterestRateEpoch(uint256 dimension, address token, uint256 index, uint256 borrowProportionAtIndex, uint256 interestRate ) internal {
+        // console.log("======================setInterestRateEpoch function=========================");
+        InterestRateEpochs[dimension][token][index].interestRate = interestRate;
+
+        InterestRateEpochs[dimension][token][index].lastUpdatedTime = block.timestamp;
+
+        InterestRateEpochs[dimension][token][index].totalLiabilitiesAtIndex = Datahub.returnAssetLogs(token).totalBorrowedAmount;
+
+        InterestRateEpochs[dimension][token][index].totalAssetSuplyAtIndex = Datahub.returnAssetLogs(token).totalAssetSupply;
+
+        InterestRateEpochs[dimension][token][index].borrowProportionAtIndex = borrowProportionAtIndex;
+
+        InterestRateEpochs[dimension][token][index].rateInfo = InterestRateEpochs[dimension][token][index-1].rateInfo;
+        // console.log("===============================end===============================");
     }
     /// @notice initilizes the interest data for a token
     function initInterest(
@@ -747,6 +391,7 @@ function updateInterestIndex(
     function chargeMassinterest(address token) public {
         console.log("================charge Massininterest Function=================");
         // console.log("current token index", fetchCurrentRateIndex(token));
+        // console.log("token address", token);
         if (
             fetchRateInfo(token, fetchCurrentRateIndex(token)).lastUpdatedTime +
                 1 hours <=
@@ -755,11 +400,11 @@ function updateInterestIndex(
             console.log("current index");
             console.log(fetchCurrentRateIndex(token));
             // console.log("assetlogs");
-            // console.log(Datahub.returnAssetLogs(token));
+            // console.log(Datahub.returnAssetLogs(token).totalAssetSupply);
             // console.log("rate info");
             // console.log(fetchRateInfo(token, fetchCurrentRateIndex(token)));
 
-            console.log("calculate interest rate", EVO_LIBRARY.calculateInterestRate(0, Datahub.returnAssetLogs(token), fetchRateInfo(token, fetchCurrentRateIndex(token))));
+            // console.log("calculate interest rate", EVO_LIBRARY.calculateInterestRate(0, Datahub.returnAssetLogs(token), fetchRateInfo(token, fetchCurrentRateIndex(token))));
 
             updateInterestIndex(
                 token,

@@ -459,11 +459,16 @@ contract DataHub is Ownable {
         uint256 amount,
         bool pos_neg
     ) external checkRoleAuthority {
+        // console.log("===============settotalAssetSupply Function==================");
+        // console.log("address", token);
+        // console.log("amount", amount);
+        // console.log("total supply before update", assetdata[token].totalAssetSupply);
         if (pos_neg == true) {
             assetdata[token].totalAssetSupply += amount;
         } else {
             assetdata[token].totalAssetSupply -= amount;
         }
+        // console.log("total supply after update", assetdata[token].totalAssetSupply);
     }
 
     /// @notice This increases or decreases the total borrowed amount of a given tokens
@@ -493,6 +498,9 @@ contract DataHub is Ownable {
     function returnAssetLogs(
         address token
     ) public view returns (AssetData memory) {
+        // console.log("================returnAssetLogs Function===============");
+        // console.log("return asset token address", token);
+        // console.log("total supply in return Assetlogs", assetdata[token].totalAssetSupply);
         return assetdata[token];
     }
 
@@ -664,6 +672,9 @@ contract DataHub is Ownable {
                     userdata[user].asset_info[token]) / 10 ** 18) *
                     assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+            return 0;
         }
         return sumOfAssets - calculateLiabilitiesValue(user);
     }
