@@ -111,8 +111,9 @@ contract DepositVault is Ownable {
     function getTotalAssetSupplyValue(
         address token
     ) public view returns (uint256) {
-        uint256 totalValue = (Datahub.returnAssetLogs(token).assetPrice *
-            Datahub.returnAssetLogs(token).totalAssetSupply) / 10 ** 18;
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
+
+        uint256 totalValue = (assetLogs.assetPrice * assetLogs.assetInfo[0]) / 10 ** 18; // 0 -> totalSupply
 
         return totalValue;
     }
@@ -176,15 +177,15 @@ contract DepositVault is Ownable {
             "this asset is not available to be deposited or traded"
         );
         // console.log("amount before fee", amount);
-        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        console.log("amount to be paid if fee is applicable", amount);
+        // amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
+        // console.log("amount to be paid if fee is applicable", amount);
         // console.log("amount after fee", amount);
         // we need to add the function that transfertokenwithfee  : https://docs.uniswap.org/contracts/v2/reference/smart-contracts/router-02#swapexacttokensfortokenssupportingfeeontransfertokens
         require(IERC20.IERC20(token).transferFrom(msg.sender, address(this), amount));
         require(!circuitBreakerStatus);
 
         // console.log("total supply before", Datahub.returnAssetLogs(token).totalAssetSupply);
-        Datahub.settotalAssetSupply(token, amount, true);
+        Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalSupply
         // console.log("total supply after", Datahub.returnAssetLogs(token).totalAssetSupply);
         
         // console.log("amount after total asset supply", amount);
@@ -222,7 +223,7 @@ contract DepositVault is Ownable {
                 // interestContract.chargeMassinterest(token);
                 liabilities -= amount;
 
-                Datahub.setTotalBorrowedAmount(token, amount, false);
+                Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
 
                 interestContract.chargeMassinterest(token);
 
@@ -240,7 +241,7 @@ contract DepositVault is Ownable {
 
                 Datahub.removeLiabilities(msg.sender, token, liabilities); // remove all liabilities
 
-                Datahub.setTotalBorrowedAmount(token, liabilities, false);
+                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
 
                 Datahub.changeMarginStatus(msg.sender);
                 interestContract.chargeMassinterest(token);
@@ -289,9 +290,12 @@ contract DepositVault is Ownable {
             "You cannot withdraw more than your asset balance"
         );
 
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
+
+        // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
         require(
-            amount + Datahub.returnAssetLogs(token).totalBorrowedAmount <
-                Datahub.returnAssetLogs(token).totalAssetSupply,
+            amount + assetLogs.assetInfo[1] <
+            assetLogs.assetInfo[0],
             "You cannot withdraw this amount as it would exceed the maximum borrow proportion"
         );
         /*
@@ -321,11 +325,11 @@ contract DepositVault is Ownable {
             token_withdraws_hour[token] = 0;
         }
         */
-        IDataHub.AssetData memory assetInformation = Datahub.returnAssetLogs(
-            token
-        );
+        // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(
+        //     token
+        // );
 
-        uint256 AssetPriceCalulation = (assetInformation.assetPrice * amount) /
+        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) /
             10 ** 18; // this is 10*18 dnominated price of asset amount
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
@@ -348,39 +352,48 @@ contract DepositVault is Ownable {
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
         ERC20Token.transfer(msg.sender, amount);
 
-        Datahub.settotalAssetSupply(token, amount, false);
+        Datahub.setAssetInfo(0, token, amount, false); // 0 -> totalSupply
 
-        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
+        // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
-        // recalculate interest rate because total asset supply is changing
-        if (assetLogs.totalBorrowedAmount > 0) {
+        // 1 -> totalBorrowedAmount
+        if (assetLogs.assetInfo[1] > 0) {
             interestContract.chargeMassinterest(token);
         }
     }
 
     function debitAssetInterest(address user, address token) private {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+
+        uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+        address orderBookProvider = Executor.fetchOrderBookProvider();
+        address daoWallet = Executor.fetchDaoWallet();
+
+        uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
+            usersEarningRateIndex,
+            currentReateIndex,
+            token
+        );
+
         (
             uint256 interestCharge,
             uint256 OrderBookProviderCharge,
             uint256 DaoInterestCharge
         ) = EVO_LIBRARY.calculateCompoundedAssets(
-                interestContract.fetchCurrentRateIndex(token),
-                interestContract.calculateAverageCumulativeDepositInterest(
-                    Datahub.viewUsersEarningRateIndex(user, token),
-                    interestContract.fetchCurrentRateIndex(token),
-                    token
-                ),
+                currentReateIndex,
+                averageCumulativeDepositInterest,
                 assets,
-                Datahub.viewUsersEarningRateIndex(user, token)
+                usersEarningRateIndex
             );
+        
         Datahub.alterUsersEarningRateIndex(user, token);
 
         Datahub.addAssets(user, token, interestCharge);
-        Datahub.addAssets(Executor.fetchDaoWallet(), token, DaoInterestCharge);
+        Datahub.addAssets(daoWallet, token, DaoInterestCharge);
 
         Datahub.addAssets(
-            Executor.fetchOrderBookProvider(),
+            orderBookProvider,
             token,
             OrderBookProviderCharge
         );
@@ -396,6 +409,7 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
+    
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
         // extending support for token with fee on transfer 
         // if(Datahub.tokenTransferFees(token) > 0){
@@ -403,13 +417,13 @@ contract DepositVault is Ownable {
         //     console.log("amount to be paid if fee is applicable", amount);
         // }
         amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        console.log("amount to be paid if fee is applicable", amount);
+        // console.log("amount to be paid if fee is applicable", amount);
         require(
             ERC20Token.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
         );
 
-        Datahub.settotalAssetSupply(token, amount, true);
+        Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalAssetSupply
 
         (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
             beneficiary,
@@ -433,7 +447,7 @@ contract DepositVault is Ownable {
                     ((10 ** 18) - liabilityMultiplier)
                 );
 
-                Datahub.setTotalBorrowedAmount(token, amount, false);
+                Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
 
                 interestContract.chargeMassinterest(token);
 
@@ -445,7 +459,7 @@ contract DepositVault is Ownable {
 
                 Datahub.addAssets(beneficiary, token, amountAddedtoAssets);
                 Datahub.removeLiabilities(beneficiary, token, liabilities);
-                Datahub.setTotalBorrowedAmount(token, liabilities, false);
+                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
 
                 Datahub.changeMarginStatus(beneficiary);
                 interestContract.chargeMassinterest(token);
