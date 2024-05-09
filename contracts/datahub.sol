@@ -460,11 +460,16 @@ contract DataHub is Ownable {
         uint256 amount,
         bool pos_neg
     ) external checkRoleAuthority {
+        // console.log("===============settotalAssetSupply Function==================");
+        // console.log("address", token);
+        // console.log("amount", amount);
+        // console.log("total supply before update", assetdata[token].totalAssetSupply);
         if (pos_neg == true) {
             assetdata[token].totalAssetSupply += amount;
         } else {
             assetdata[token].totalAssetSupply -= amount;
         }
+        // console.log("total supply after update", assetdata[token].totalAssetSupply);
     }
 
     /// @notice This increases or decreases the total borrowed amount of a given tokens
@@ -494,6 +499,9 @@ contract DataHub is Ownable {
     function returnAssetLogs(
         address token
     ) public view returns (AssetData memory) {
+        // console.log("================returnAssetLogs Function===============");
+        // console.log("return asset token address", token);
+        // console.log("total supply in return Assetlogs", assetdata[token].totalAssetSupply);
         return assetdata[token];
     }
 
@@ -549,6 +557,13 @@ contract DataHub is Ownable {
         });
     }
 
+    function setTokenTransferFee(
+        address token,
+        uint256 value
+    ) external checkRoleAuthority {
+        assetdata[token].tokenTransferFee = value;
+    }
+
     function tradeFee(
         address token,
         uint256 feeType
@@ -564,16 +579,6 @@ contract DataHub is Ownable {
         uint256 value
     ) external checkRoleAuthority {
         assetdata[token].assetPrice = value;
-    }
-
-    /// @notice Changes the assets transfer_fee
-    /// @param token the token being targetted
-    /// @param value the new Fee
-    function setTokenTransferFee(
-        address token,
-        uint256 value
-    ) external checkRoleAuthority {
-        assetdata[token].tokenTransferFee = value;
     }
 
     /// -----------------------------------------------------------------------
@@ -677,6 +682,9 @@ contract DataHub is Ownable {
                     assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
+        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+            return 0;
+        }
         return sumOfAssets - calculateLiabilitiesValue(user);
     }
 
@@ -742,12 +750,8 @@ contract DataHub is Ownable {
         return AMMR;
     }
 
-    /// @notice Returns a TokenTransferFee data
-    /// @param token address of the token 
-    /// @return fee value of the Fee 
     function tokenTransferFees(address token)external view returns(uint256 fee){
         return assetdata[token].tokenTransferFee;
     }
-
     receive() external payable {}
 }
