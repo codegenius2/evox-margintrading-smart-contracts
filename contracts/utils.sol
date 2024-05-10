@@ -128,16 +128,14 @@ contract Utility is Ownable {
         uint256 userAssets
     ) external view returns (bool) {
         uint256 liabilities = (BalanceToLeave - userAssets);
-        uint256 ammrForUser = Datahub.calculateAMMRForUser(user);
-        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
-
-        uint256 maintenanceRequirementForTrade = EVO_LIBRARY.calculateMaintenanceRequirementForTrade(
-            assetLogs,
-            liabilities
-        );
-        uint256 totalPortfolioValue = Datahub.calculateTotalPortfolioValue(user);
-
-        if (ammrForUser + (maintenanceRequirementForTrade * assetLogs.assetPrice) <=  totalPortfolioValue) {
+        if (
+            Datahub.calculateAMMRForUser(user) +
+                (EVO_LIBRARY.calculateMaintenanceRequirementForTrade(
+                    Datahub.returnAssetLogs(token),
+                    liabilities
+                ) * Datahub.returnAssetLogs(token).assetPrice) <=
+            Datahub.calculateTotalPortfolioValue(user)
+        ) {
             return true;
         } else {
             return false;
@@ -150,9 +148,10 @@ contract Utility is Ownable {
     function calculateAMMRRequirement(
         address user
     ) external view returns (bool) {
-        uint256 ammrForUser = Datahub.calculateAMMRForUser(user);
-        uint256 totalPortfolioValue = Datahub.calculateTotalPortfolioValue(user);
-        if (ammrForUser <= totalPortfolioValue) {
+        if (
+            Datahub.calculateAMMRForUser(user) <=
+            Datahub.calculateTotalPortfolioValue(user)
+        ) {
             return true;
         } else {
             return false;
@@ -180,9 +179,9 @@ contract Utility is Ownable {
         uint256[] memory MakerliabilityAmounts = new uint256[](
             participants[1].length
         );
-        uint256 TakeramountToAddToLiabilities;
+
         for (uint256 i = 0; i < participants[0].length; i++) {
-            TakeramountToAddToLiabilities = calculateAmountToAddToLiabilities(
+            uint256 TakeramountToAddToLiabilities = calculateAmountToAddToLiabilities(
                     participants[0][i],
                     pair[0],
                     trade_amounts[0][i]
@@ -192,9 +191,9 @@ contract Utility is Ownable {
 
             TakerliabilityAmounts[i] = TakeramountToAddToLiabilities;
         }
-        uint256 MakeramountToAddToLiabilities;
+
         for (uint256 i = 0; i < participants[1].length; i++) {
-            MakeramountToAddToLiabilities = calculateAmountToAddToLiabilities(
+            uint256 MakeramountToAddToLiabilities = calculateAmountToAddToLiabilities(
                     participants[1][i],
                     pair[1],
                     trade_amounts[1][i]
@@ -258,7 +257,7 @@ contract Utility is Ownable {
         uint256 amount
     ) external view returns (uint256) {
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
-        uint256 maintenace = assetLogs.marginRequirement[1]; // 1 -> MaintenanceMarginRequirement
+        uint256 maintenace = assetLogs.MaintenanceMarginRequirement;
         return ((maintenace * (amount)) / 10 ** 18); //
     }
 
@@ -269,19 +268,20 @@ contract Utility is Ownable {
         uint256[][2] memory trade_amounts
     ) public view returns (bool) {
         uint256 newLiabilitiesIssued;
-
         for (uint256 i = 0; i < pair.length; i++) {
-            uint256 collateral = EVO_LIBRARY.calculateTotal(trade_amounts[i]);
-            uint256 bulkAssets = returnBulkAssets(participants[i], pair[i]);
-            newLiabilitiesIssued = collateral > bulkAssets ? collateral - bulkAssets: 0;
+            newLiabilitiesIssued = EVO_LIBRARY.calculateTotal(
+                trade_amounts[i]
+            ) > returnBulkAssets(participants[i], pair[i]) // sum of users assets
+                ? EVO_LIBRARY.calculateTotal(trade_amounts[i]) -
+                    returnBulkAssets(participants[i], pair[i])
+                : 0;
 
             if (newLiabilitiesIssued > 0) {
-                IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair[i]);
-                bool flag = EVO_LIBRARY.calculateBorrowProportionAfterTrades(
-                    assetLogs,
-                    newLiabilitiesIssued
-                );
-                return flag;
+                return
+                    EVO_LIBRARY.calculateBorrowProportionAfterTrades(
+                        Datahub.returnAssetLogs(pair[i]),
+                        newLiabilitiesIssued
+                    );
             }
         }
         return true;
@@ -323,7 +323,6 @@ contract Utility is Ownable {
         uint256[] memory tradeAmounts,
         address pair
     ) internal returns (bool) {
-        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair);
         for (uint256 i = 0; i < participants.length; i++) {
             (uint256 assets, , , , ) = Datahub.ReadUserData(
                 participants[i],
@@ -331,15 +330,24 @@ contract Utility is Ownable {
             );
 
             if (tradeAmounts[i] > assets) {
-                uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, tradeAmounts[i]);
-                initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
-                uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]);
-                uint256 aimrForUser = Datahub.calculateAIMRForUser(participants[i]);
-                if (collateralValue <= aimrForUser + initalMarginFeeAmount) {
+                uint256 initalMarginFeeAmount = EVO_LIBRARY
+                    .calculateinitialMarginFeeAmount(
+                        Datahub.returnAssetLogs(pair),
+                        tradeAmounts[i]
+                    );
+                initalMarginFeeAmount *=
+                    (Datahub.returnAssetLogs(pair).assetPrice) /
+                    10 ** 18;
+
+                if (
+                    Datahub.calculateCollateralValue(participants[i]) <=
+                    Datahub.calculateAIMRForUser(participants[i]) +
+                        initalMarginFeeAmount
+                ) {
                     return false;
                 }
-                bool flag = validateMarginStatus(participants[i], pair);
-                if (!flag) {
+
+                if (!validateMarginStatus(participants[i], pair)) {
                     Datahub.SetMarginStatus(participants[i], true);
                 }
             }
@@ -366,22 +374,28 @@ contract Utility is Ownable {
             in_token
         );
         if (amount <= returnliabilities(user, in_token)) {
-            uint256 StartingDollarMMR = (amount * assetLogsOutToken.marginRequirement[1]) / 10 ** 18; // 1 -> MaintenanceMarginRequirement
-            uint256 pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, out_token);
-            if (StartingDollarMMR > pairMMROfUser) {
-                uint256 overage = (StartingDollarMMR - pairMMROfUser) * (10 ** 18) / assetLogsInToken.marginRequirement[1]; // 1 -> MaintenanceMarginRequirement
+            uint256 StartingDollarMMR = (amount *
+                assetLogsOutToken.MaintenanceMarginRequirement) / 10 ** 18; // check to make sure this is right
+            if (
+                StartingDollarMMR >
+                Datahub.returnPairMMROfUser(user, in_token, out_token)
+            ) {
+                uint256 overage = (StartingDollarMMR -
+                    Datahub.returnPairMMROfUser(user, in_token, out_token)) * (10 ** 18) /
+                    assetLogsInToken.MaintenanceMarginRequirement;
 
                 Datahub.removeMaintenanceMarginRequirement(
                     user,
                     in_token,
                     out_token,
-                    pairMMROfUser
+                    Datahub.returnPairMMROfUser(user, in_token, out_token)
                 );
 
-                uint256 userLiabilities = returnliabilities(user, in_token);
-
                 uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(userLiabilities, overage);
+                    .calculatedepositLiabilityRatio(
+                        returnliabilities(user, in_token),
+                        overage
+                    );
 
                 address[] memory tokens = Datahub.returnUsersAssetTokens(user);
 
@@ -402,17 +416,17 @@ contract Utility is Ownable {
                 );
             }
         } else {
-            uint256 length = Datahub.returnUsersAssetTokens(user).length;
-            address[] memory tokens;
-            uint256 partMMROfUser;
-            for (uint256 i = 0; i < length; i++) {
-                tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
+            for (
+                uint256 i = 0;
+                i < Datahub.returnUsersAssetTokens(user).length;
+                i++
+            ) {
+                address[] memory tokens = Datahub.returnUsersAssetTokens(user);
                 Datahub.removeMaintenanceMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    Datahub.returnPairMMROfUser(user, in_token, tokens[i])
                 );
             }
         }
@@ -431,21 +445,29 @@ contract Utility is Ownable {
             in_token
         );
         if (amount <= returnliabilities(user, in_token)) {
-            uint256 StartingDollarIMR = (amount * assetLogsOutToken.marginRequirement[0]) / 10 ** 18; // 0 -> InitialMarginRequirement
-            uint256 pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, out_token);
-            if (StartingDollarIMR > pairMMROfUser) {
-                uint256 overage = (StartingDollarIMR - pairMMROfUser) * (10 ** 18) / assetLogsInToken.marginRequirement[0]; // 0-> initialMarginRequirement
+            uint256 StartingDollarIMR = (amount *
+                assetLogsOutToken.initialMarginRequirement) / 10 ** 18; // check to make sure this is right
+            if (
+                StartingDollarIMR >
+                Datahub.returnPairIMROfUser(user, in_token, out_token)
+            ) {
+                uint256 overage = (StartingDollarIMR -
+                    Datahub.returnPairIMROfUser(user, in_token, out_token)) * (10 ** 18) /
+                    assetLogsInToken.initialMarginRequirement;
 
                 Datahub.removeInitialMarginRequirement(
                     user,
                     in_token,
                     out_token,
-                    pairMMROfUser
+                    Datahub.returnPairIMROfUser(user, in_token, out_token)
                 );
 
-                uint256 userLiabilities = returnliabilities(user, in_token);
                 uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(userLiabilities, overage);
+                    .calculatedepositLiabilityRatio(
+                        returnliabilities(user, in_token),
+                        overage
+                    );
+
                 address[] memory tokens = Datahub.returnUsersAssetTokens(user);
 
                 for (uint256 i = 0; i < tokens.length; i++) {
@@ -465,17 +487,17 @@ contract Utility is Ownable {
                 );
             }
         } else {
-            uint256 length = Datahub.returnUsersAssetTokens(user).length;
-            address[] memory tokens;
-            uint256 partMMROfUser;
-            for (uint256 i = 0; i < length; i++) {
-                tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
+            for (
+                uint256 i = 0;
+                i < Datahub.returnUsersAssetTokens(user).length;
+                i++
+            ) {
+                address[] memory tokens = Datahub.returnUsersAssetTokens(user);
                 Datahub.removeInitialMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    Datahub.returnPairIMROfUser(user, in_token, tokens[i])
                 );
             }
         }
@@ -525,7 +547,9 @@ contract Utility is Ownable {
         );
         uint counter = 0;
         for (uint256 i = startingIndex; i <= endingIndex; i++) {
-            BorrowProportionsForThePeriod[counter] = interestContract.fetchTimeScaledRateIndex(dimension, token, i).borrowProportionAtIndex;
+            BorrowProportionsForThePeriod[counter] = interestContract
+                .fetchTimeScaledRateIndex(dimension, token, i)
+                .borrowProportionAtIndex;
 
             counter += 1;
         }
@@ -548,7 +572,8 @@ contract Utility is Ownable {
         uint counter = 0;
         for (uint256 i = startingIndex; i <= endingIndex; i++) {
             // console.log("i", i);
-            interestRatesForThePeriod[counter] = interestContract.fetchTimeScaledRateIndex(dimension, token, i).interestRate;
+            interestRatesForThePeriod[counter] = interestContract
+            .fetchTimeScaledRateIndex(dimension, token, i).interestRate;
             // console.log("interest reate", interestRatesForThePeriod[counter]);
             counter += 1;
         }
@@ -563,7 +588,7 @@ contract Utility is Ownable {
     function fetchTotalAssetSupply(
         address token
     ) external view returns (uint256) {
-        return  Datahub.returnAssetLogs(token).assetInfo[0]; // 0 -> totalAssetSupply
+        return  Datahub.returnAssetLogs(token).totalAssetSupply;
     }
     receive() external payable {}
 }
