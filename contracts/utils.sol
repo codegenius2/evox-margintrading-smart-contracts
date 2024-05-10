@@ -8,7 +8,6 @@ import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./libraries/EVO_LIBRARY.sol";
 import "./interfaces/IExecutor.sol";
-import "./interfaces/IinterestData.sol";
 import "hardhat/console.sol";
 
 contract Utility is Ownable {
@@ -537,50 +536,25 @@ contract Utility is Ownable {
     }
 */
     function fetchBorrowProportionList(
-        uint256 dimension,
         uint256 startingIndex,
         uint256 endingIndex,
         address token
     ) public view returns (uint256[] memory) {
         uint256[] memory BorrowProportionsForThePeriod = new uint256[](
-            (endingIndex) - startingIndex + 1
+            (endingIndex) - startingIndex
         );
         uint counter = 0;
-        for (uint256 i = startingIndex; i <= endingIndex; i++) {
+        for (uint256 i = startingIndex; i < endingIndex; i++) {
             BorrowProportionsForThePeriod[counter] = interestContract
-                .fetchTimeScaledRateIndex(dimension, token, i)
+                .fetchRateInfo(token, i)
                 .borrowProportionAtIndex;
 
             counter += 1;
         }
         return BorrowProportionsForThePeriod;
     }
-    function fetchRatesList(
-        uint256 dimension,
-        uint256 startingIndex,
-        uint256 endingIndex,
-        address token
-    ) external view returns (uint256[] memory) {
-        // console.log("====================================rate list==============================");
-        // console.log("dimension", dimension);
-        // console.log("start", startingIndex);
-        // console.log("endingIndex", endingIndex);
 
-        uint256[] memory interestRatesForThePeriod = new uint256[](
-            (endingIndex) - startingIndex + 1
-        );
-        uint counter = 0;
-        for (uint256 i = startingIndex; i <= endingIndex; i++) {
-            // console.log("i", i);
-            interestRatesForThePeriod[counter] = interestContract
-            .fetchTimeScaledRateIndex(dimension, token, i).interestRate;
-            // console.log("interest reate", interestRatesForThePeriod[counter]);
-            counter += 1;
-        }
-        // console.log("counter", counter);
-        // console.log("=========================end==============================");
-        return interestRatesForThePeriod;
-    }
+
 
     /// @notice Fetches the total amount borrowed of the token
     /// @param token the token being queried
@@ -590,5 +564,6 @@ contract Utility is Ownable {
     ) external view returns (uint256) {
         return  Datahub.returnAssetLogs(token).totalAssetSupply;
     }
+
     receive() external payable {}
 }
