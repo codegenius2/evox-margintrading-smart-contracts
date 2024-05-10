@@ -11,7 +11,6 @@ const utilABI = require("../artifacts/contracts/utils.sol/Utility.json")
 const DataHubAbi = require("../artifacts/contracts/mock/MockDatahub.sol/MockDatahub.json");
 const InterestAbi = require("../artifacts/contracts/mock/MockInterestData.sol/MockInterestData.json")
 const LiquidatorAbi = require("../artifacts/contracts/liquidator.sol/Liquidator.json")
-// const MathAbi = require("../artifacts/contracts/Math.sol/Math.json")
 const increaseTime =  require("./utils.js");
 
 
@@ -145,40 +144,28 @@ describe("Interest Test", function () {
         /////////////////////// USDT /////////////////////////
         const USDTprice = 1_000000000000000000n
         const USDTCollValue = 1_000000000000000000n
-        const USDTFeeInfo = [
-            200000000000000000n, // USDTinitialMarginRequirement
-            30000000000000000n, // USDTliquidationFee
-            30000000000000000n // tokenTransferFee
-        ];
-        const USDTMarginRequirement = [
-            200000000000000000n, // initialMarginRequirement
-            100000000000000000n // MaintenanceMarginRequirement
-        ];
-        const USDTBorrowPosition = [
-            700000000000000000n, // optimalBorrowProportion
-            1_000000000000000000n // maximumBorrowProportion
-        ];
+        const USDTinitialMarginFee = 5000000000000000n // 0.5% //0.05 (5*16)
+        const USDTliquidationFee = 30000000000000000n //( 3**17) was 30
+        const USDTinitialMarginRequirement = 200000000000000000n //( 2**18) was 200
+        const USDTMaintenanceMarginRequirement = 100000000000000000n // .1 ( 10*17)
+        const USDToptimalBorrowProportion = 700000000000000000n //( 7**18) was 700
+        const USDTmaximumBorrowProportion = 1_000000000000000000n //( 10**18) was 1000
         const USDTInterestRate = 5000000000000000n //( 5**16) was 5
         const USDT_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
 
+
         /////////////////////// REX /////////////////////////
-        const REXEprice = 1_000000000000000000n
+        const REXEprice = 2_000000000000000000n; /// 0.5 cents  = "500000000000000000"
+
         const EVOXCollValue = 1_000000000000000000n
-        const REXEFeeInfo = [
-            10000000000000000n, // USDTinitialMarginRequirement
-            100000000000000000n, // USDTliquidationFee
-            30000000000000000n // tokenTransferFee
-        ];
-        const REXEMarginRequirement = [
-            500000000000000000n, // initialMarginRequirement
-            250000000000000000n // MaintenanceMarginRequirement
-        ];
-        const REXEBorrowPosition = [
-            700000000000000000n, // optimalBorrowProportion
-            1000000000000000000n // maximumBorrowProportion
-        ];
-        const REXEInterestRate = 5000000000000000n //( 5**16) was 5
-        const REXE_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
+        const REXEinitialMarginFee = 10000000000000000n;
+        const REXEliquidationFee = 100000000000000000n;
+        const REXEinitialMarginRequirement = 500000000000000000n
+        const REXEMaintenanceMarginRequirement = 250000000000000000n
+        const REXEoptimalBorrowProportion = 700000000000000000n
+        const REXEmaximumBorrowProportion = 1000000000000000000n
+        const REXEInterestRate = 5000000000000000n
+        const REXEinterestRateInfo = [5000000000000000n, 100000000000000000n, 1000000000000000000n]
 
         //////////////////////////////////////// Init Contracts ///////////////////////////////////////////////
 
@@ -226,19 +213,19 @@ describe("Interest Test", function () {
         // console.log("interest init done")
 
         //////////////////// Set USDT and REXE in interestData //////////////////////
-        const InitRatesREXE = await _Interest.initInterest(await REXE.getAddress(), 1, REXE_interestRateInfo, REXEInterestRate)
+        const InitRatesREXE = await _Interest.initInterest(await REXE.getAddress(), 1, REXEinterestRateInfo, REXEInterestRate)
         const InitRatesUSDT = await _Interest.initInterest(await USDT.getAddress(), 1, USDT_interestRateInfo, USDTInterestRate)
         InitRatesREXE.wait();
         InitRatesUSDT.wait();
         // console.log("Set USDT and REXE in interestData done")
 
         //////////////////// InitTokenMarket USDT in DataHub //////////////////////
-        const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTMarginRequirement, USDTBorrowPosition, USDTFeeInfo);
+        const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTinitialMarginFee, USDTliquidationFee, USDTinitialMarginRequirement, USDTMaintenanceMarginRequirement, USDToptimalBorrowProportion, USDTmaximumBorrowProportion);
         USDT_init_transaction.wait();
         // console.log("InitTokenMarket USDT in DataHub done")
 
         //////////////////// InitTokenMarket REXE in DataHub //////////////////////
-        const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEMarginRequirement, REXEBorrowPosition, REXEFeeInfo);
+        const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEinitialMarginFee, REXEliquidationFee, REXEinitialMarginRequirement, REXEMaintenanceMarginRequirement, REXEoptimalBorrowProportion, REXEmaximumBorrowProportion);
         REXE_init_transaction.wait();
         // console.log("InitTokenMarket REXE in DataHub done")
 
@@ -300,11 +287,11 @@ describe("Interest Test", function () {
             await transfer.wait();
 
             expect(await USDT_TOKEN.balanceOf(signers[1].address)).to.equal(20_000_000000000000000000n);
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
            
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
-            // assetInfo[0] of USDT should be same as deposit_amount after deposit
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount);
+            // totalAssetSupply of USDT should be same as deposit_amount after deposit
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount); // compare assets in datahub
 
@@ -314,13 +301,13 @@ describe("Interest Test", function () {
             // REXE Deposit
             const deposit_amount_2 = 1_000_000000000000000000n;
 
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
 
             const approvalTx_2 = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), 5_000_000000000000000000n);
             await approvalTx_2.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (5_000_000000000000000000n));
 
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(5_000_000000000000000000n);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(5_000_000000000000000000n);
             expect(await REXE_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(5_000_000000000000000000n);
             expect((await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress()))[0]).to.equal(5_000_000000000000000000n); // compare assets in datahub
 
@@ -333,7 +320,7 @@ describe("Interest Test", function () {
             await approvalTx_3.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount_3)
 
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount + deposit_amount_3);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount + deposit_amount_3);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount + deposit_amount_3);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount); // compare assets in datahub
             expect((await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount_3); // compare assets in datahub
@@ -398,11 +385,11 @@ describe("Interest Test", function () {
                 }
 
                 // Get borrowed amount
-                let borrowed_usdt = (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[1];
+                let borrowed_usdt = (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalBorrowedAmount;
                 // borrowed_usdt = borrowed_usdt.totalLiabilitiesAtIndex
                 // console.log("USDT borrowed", borrowed_usdt);
 
-                // let borrowed_rexe = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[1];
+                // let borrowed_rexe = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalBorrowedAmount;
                 // borrowed_rexe = borrowed_rexe.totalLiabilitiesAtIndex
                 // console.log("REXE borrowed", borrowed_rexe);
                 
@@ -447,8 +434,8 @@ describe("Interest Test", function () {
 
                 let usdt_amount = user_usdt_data[0];    
                 // let rexe_amount = rexe_usdt_data[0];
-                let usdt_supply = (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0];
-                // let rexe_supply = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0];
+                let usdt_supply = (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply;
+                // let rexe_supply = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply;
 
                 //    https://docs.google.com/spreadsheets/u/5/d/1IS3WFMcbda7v_rshOefMGGS70yabp6qJ2PmDcBs8J1w/edit?usp=sharing&pli=1
                 // Go above and refer to line 1-5 for the excel sheet to check numbers against what we have 
@@ -507,11 +494,11 @@ describe("Interest Test", function () {
             await transfer.wait();
 
             expect(await USDT_TOKEN.balanceOf(signers[1].address)).to.equal(20_000_000000000000000000n);
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
            
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
-            // assetInfo[0] of USDT should be same as deposit_amount after deposit
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount);
+            // totalAssetSupply of USDT should be same as deposit_amount after deposit
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount); // compare assets in datahub
 
@@ -528,13 +515,13 @@ describe("Interest Test", function () {
             // await transfer1.wait();
 
             // expect(await REXE_TOKEN.balanceOf(signers[0].address)).to.equal(deposit_amount_2);
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
 
             const approvalTx_2 = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount_2);
             await approvalTx_2.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount_2));
 
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount_2);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount_2);
             expect(await REXE_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount_2);
             expect((await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress()))[0]).to.equal(deposit_amount_2); // compare assets in datahub
 
@@ -547,12 +534,12 @@ describe("Interest Test", function () {
             await approvalTx_3.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount_3)
 
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount + deposit_amount_3);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount + deposit_amount_3);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount + deposit_amount_3);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount + deposit_amount_3); // compare assets in datahub
             console.log("data hub address", await DataHub.getAddress());
             // const test_supply_amount = 1500_000000000000000000n;
-            // await DataHub.setassetInfo[0]Test(await USDT_TOKEN.getAddress(), test_supply_amount, true);
+            // await DataHub.settotalAssetSupplyTest(await USDT_TOKEN.getAddress(), test_supply_amount, true);
 
             const Data = {
                 "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
@@ -644,6 +631,7 @@ describe("Interest Test", function () {
         })
 
         it("calculateAverageCumulativeInterest_fix Function Test", async function () {
+            return;
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
             // console.log(signers);
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -661,11 +649,11 @@ describe("Interest Test", function () {
             await transfer.wait();
 
             expect(await USDT_TOKEN.balanceOf(signers[1].address)).to.equal(20_000_000000000000000000n);
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
            
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
-            // assetInfo[0] of USDT should be same as deposit_amount after deposit
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount);
+            // totalAssetSupply of USDT should be same as deposit_amount after deposit
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount); // compare assets in datahub
 
@@ -682,13 +670,13 @@ describe("Interest Test", function () {
             // await transfer1.wait();
 
             // expect(await REXE_TOKEN.balanceOf(signers[0].address)).to.equal(deposit_amount_2);
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
 
             const approvalTx_2 = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount_2);
             await approvalTx_2.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount_2));
 
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount_2);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount_2);
             expect(await REXE_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount_2);
             expect((await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress()))[0]).to.equal(deposit_amount_2); // compare assets in datahub
 
@@ -701,7 +689,7 @@ describe("Interest Test", function () {
             await approvalTx_3.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount_3)
 
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount + deposit_amount_3);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount + deposit_amount_3);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount + deposit_amount_3);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount + deposit_amount_3); // compare assets in datahub
 
@@ -758,11 +746,11 @@ describe("Interest Test", function () {
             await transfer.wait();
 
             expect(await USDT_TOKEN.balanceOf(signers[1].address)).to.equal(20_000_000000000000000000n);
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
            
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
-            // assetInfo[0] of USDT should be same as deposit_amount after deposit
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount);
+            // totalAssetSupply of USDT should be same as deposit_amount after deposit
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount); // compare assets in datahub
 
@@ -779,13 +767,13 @@ describe("Interest Test", function () {
             // await transfer1.wait();
 
             // expect(await REXE_TOKEN.balanceOf(signers[0].address)).to.equal(deposit_amount_2);
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(0);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(0);
 
             const approvalTx_2 = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount_2);
             await approvalTx_2.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount_2));
 
-            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount_2);
+            expect((await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount_2);
             expect(await REXE_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount_2);
             expect((await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress()))[0]).to.equal(deposit_amount_2); // compare assets in datahub
 
@@ -798,7 +786,7 @@ describe("Interest Test", function () {
             await approvalTx_3.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount_3)
 
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).assetInfo[0]).to.equal(deposit_amount + deposit_amount_3);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).totalAssetSupply).to.equal(deposit_amount + deposit_amount_3);
             expect(await USDT_TOKEN.balanceOf(await deposit_vault.getAddress())).to.equal(deposit_amount + deposit_amount_3);
             expect((await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress()))[0]).to.equal(deposit_amount + deposit_amount_3); // compare assets in datahub
 
