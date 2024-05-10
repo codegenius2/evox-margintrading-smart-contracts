@@ -127,13 +127,12 @@ contract DepositVault is Ownable {
         uint256 amount
     ) private {
         address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-        uint256 liabilityMultiplier;
         (, uint256 liabilities, , , ) = Datahub.ReadUserData(
             msg.sender,
             in_token
         );
         for (uint256 i = 0; i < tokens.length; i++) {
-            liabilityMultiplier = EVO_LIBRARY
+            uint256 liabilityMultiplier = EVO_LIBRARY
                 .calculatedepositLiabilityRatio(liabilities, amount);
             Datahub.alterMMR(user, in_token, tokens[i], liabilityMultiplier);
         }
@@ -149,13 +148,12 @@ contract DepositVault is Ownable {
         uint256 amount
     ) private {
         address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-        uint256 liabilityMultiplier;
         (, uint256 liabilities, , , ) = Datahub.ReadUserData(
             msg.sender,
             in_token
         );
         for (uint256 i = 0; i < tokens.length; i++) {
-            liabilityMultiplier = EVO_LIBRARY
+            uint256 liabilityMultiplier = EVO_LIBRARY
                 .calculatedepositLiabilityRatio(liabilities, amount);
             Datahub.alterIMR(user, in_token, tokens[i], liabilityMultiplier);
         }
@@ -175,19 +173,17 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
-        // console.log("amount before fee", amount);
-        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        console.log("amount to be paid if fee is applicable", amount);
-        // console.log("amount after fee", amount);
+        IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
+        
+        if(Datahub.tokenTransferFees(token) > 0){
+            amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
+            console.log("amount to be paid if fee is applicable", amount);
+        }
         // we need to add the function that transfertokenwithfee  : https://docs.uniswap.org/contracts/v2/reference/smart-contracts/router-02#swapexacttokensfortokenssupportingfeeontransfertokens
-        require(IERC20.IERC20(token).transferFrom(msg.sender, address(this), amount));
+        require(ERC20Token.transferFrom(msg.sender, address(this), amount));
         require(!circuitBreakerStatus);
 
-        // console.log("total supply before", Datahub.returnAssetLogs(token).totalAssetSupply);
         Datahub.settotalAssetSupply(token, amount, true);
-        // console.log("total supply after", Datahub.returnAssetLogs(token).totalAssetSupply);
-        
-        // console.log("amount after total asset supply", amount);
 
         (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
             msg.sender,
@@ -196,13 +192,13 @@ contract DepositVault is Ownable {
 
         // console.log("assets, liabilities", assets, liabilities);
 
-        if (assets == 0 && amount > liabilities) {
+        if (assets == 0) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
         } else {
             debitAssetInterest(msg.sender, token);
         }
 
-        ///
+        
         // checks to see if user is in the sytem and inits their struct if not
         if (liabilities > 0) {
             // checks to see if the user has liabilities of that asset
@@ -210,17 +206,14 @@ contract DepositVault is Ownable {
             if (amount <= liabilities) {
                 // if the amount is less or equal to their current liabilities -> lower their liabilities using the multiplier
 
-                modifyMMROnDeposit(msg.sender, token, amount);
+                uint256 liabilityMultiplier = EVO_LIBRARY
+                    .calculatedepositLiabilityRatio(liabilities, amount);
 
-                modifyIMROnDeposit(msg.sender, token, amount);
-
-                // Datahub.alterLiabilities(msg.sender, token, ((10 ** 18) -  EVO_LIBRARY.calculatedepositLiabilityRatio(liabilities, amount))
-                // );
-
-                // Datahub.setTotalBorrowedAmount(token, amount, false);
-
-                // interestContract.chargeMassinterest(token);
-                liabilities -= amount;
+                Datahub.alterLiabilities(
+                    msg.sender,
+                    token,
+                    ((10 ** 18) - liabilityMultiplier)
+                );
 
                 Datahub.setTotalBorrowedAmount(token, amount, false);
 
@@ -232,11 +225,9 @@ contract DepositVault is Ownable {
 
                 modifyIMROnDeposit(msg.sender, token, amount);
                 // if amount depositted is bigger that liability info 0 it out
-                // uint256 amountAddedtoAssets = amount - liabilities; // amount - outstanding liabilities
+                uint256 amountAddedtoAssets = amount - liabilities; // amount - outstanding liabilities
 
-                // Datahub.addAssets(msg.sender, token, amountAddedtoAssets); // add to assets
-
-                Datahub.addAssets(msg.sender, token, amount - liabilities); // add to assets
+                Datahub.addAssets(msg.sender, token, amountAddedtoAssets); // add to assets
 
                 Datahub.removeLiabilities(msg.sender, token, liabilities); // remove all liabilities
 
@@ -257,7 +248,6 @@ contract DepositVault is Ownable {
             return true;
         }
     }
-
     /* WITHDRAW FUNCTION */
 
     /// @notice This withdraws tokens from the exchange
@@ -398,12 +388,10 @@ contract DepositVault is Ownable {
         );
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
         // extending support for token with fee on transfer 
-        // if(Datahub.tokenTransferFees(token) > 0){
-        //     amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        //     console.log("amount to be paid if fee is applicable", amount);
-        // }
-        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        console.log("amount to be paid if fee is applicable", amount);
+        if(Datahub.tokenTransferFees(token) > 0){
+            amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
+            console.log("amount to be paid if fee is applicable", amount);
+        }
         require(
             ERC20Token.transferFrom(msg.sender, address(this), amount),
             "Transfer failed"
@@ -462,6 +450,7 @@ contract DepositVault is Ownable {
             return true;
         }
     }
+
 
     receive() external payable {}
 }
