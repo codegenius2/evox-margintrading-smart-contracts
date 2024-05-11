@@ -510,6 +510,14 @@ contract EVO_EXCHANGE is Ownable {
         }
     }
 
+    //audit fix bugID #11 09/05/24
+    function withdrawAll(address payable owner) external  onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+
+    }
+
     receive() external payable {}
 }
 

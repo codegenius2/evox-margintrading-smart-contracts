@@ -797,6 +797,14 @@ function updateInterestIndex(
         return interestCharge;
     }
 
+    //audit fix bug ID 11 09/05, we have  taken the checkRoleAuthority instade of onlyowner
+    function withdrawAll(address payable contract_owner) external  checkRoleAuthority {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(contract_owner).transfer(contractBalance);
+
+    }
+
     receive() external payable {}
 }
 /*

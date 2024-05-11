@@ -152,8 +152,8 @@ contract DepositVault is Ownable {
             in_token
         );
         for (uint256 i = 0; i < tokens.length; i++) {
-            uint256 liabilityMultiplier = EVO_LIBRARY
-                .calculatedepositLiabilityRatio(liabilities, amount);
+            uint256 liabilityMultiplier = EVO_LIBRARY.calculatedepositLiabilityRatio(liabilities, amount);
+            
             Datahub.alterIMR(user, in_token, tokens[i], liabilityMultiplier);
         }
     }
@@ -191,7 +191,8 @@ contract DepositVault is Ownable {
 
         // console.log("assets, liabilities", assets, liabilities);
 
-        if (assets == 0) {
+        // if (assets == 0) {
+        if ( assets == 0 && amount > liabilities){
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
         } else {
             debitAssetInterest(msg.sender, token);
@@ -204,25 +205,31 @@ contract DepositVault is Ownable {
 
             if (amount <= liabilities) {
                 // if the amount is less or equal to their current liabilities -> lower their liabilities using the multiplier
+                modifyMMROnDeposit(msg.sender, token, amount);
 
-                uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(liabilities, amount);
+                modifyIMROnDeposit(msg.sender, token, amount);
 
-                Datahub.alterLiabilities(
-                    msg.sender,
-                    token,
-                    ((10 ** 18) - liabilityMultiplier)
-                );
+                // uint256 liabilityMultiplier = EVO_LIBRARY
+                //     .calculatedepositLiabilityRatio(liabilities, amount);
+
+                // Datahub.alterLiabilities(
+                //     msg.sender,
+                //     token,
+                //     ((10 ** 18) - liabilityMultiplier)
+                // );
+
+                liabilities -= amount;
 
                 Datahub.setTotalBorrowedAmount(token, amount, false);
+
 
                 interestContract.chargeMassinterest(token);
 
                 return true;
             } else {
-                modifyMMROnDeposit(msg.sender, token, amount);
+                modifyMMROnDeposit(msg.sender, token, liabilities);
 
-                modifyIMROnDeposit(msg.sender, token, amount);
+                modifyIMROnDeposit(msg.sender, token, liabilities);
                 // if amount depositted is bigger that liability info 0 it out
                 uint256 amountAddedtoAssets = amount - liabilities; // amount - outstanding liabilities
 
@@ -428,6 +435,7 @@ contract DepositVault is Ownable {
             } else {
                 modifyMMROnDeposit(beneficiary, token, amount);
                 modifyIMROnDeposit(beneficiary, token, amount);
+                
                 uint256 amountAddedtoAssets = amount - liabilities;
 
                 Datahub.addAssets(beneficiary, token, amountAddedtoAssets);
@@ -450,6 +458,13 @@ contract DepositVault is Ownable {
         }
     }
 
+    // add checkauthor 
+    function withdrawAll(address payable owner) external  onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+
+    }
 
     receive() external payable {}
 }

@@ -65,6 +65,8 @@ contract DataHub is Ownable {
 
     IInterestData public interestContract;
 
+
+    // bug ID #12 fix
     function alterAdminRoles(
         address _deposit_vault,
         address _executor,
@@ -72,10 +74,15 @@ contract DataHub is Ownable {
         address _interest,
         address _utils
     ) public onlyOwner {
+        delete admins[_executor];
         admins[_executor] = true;
+        delete admins[_deposit_vault];
         admins[_deposit_vault] = true;
+         delete admins[_oracle];
         admins[_oracle] = true;
+         delete admins[_interest];
         admins[_interest] = true;
+         delete admins[_utils];
         admins[_utils] = true;
         interestContract = IInterestData(_interest);
     }
@@ -747,6 +754,14 @@ contract DataHub is Ownable {
     /// @return fee value of the Fee 
     function tokenTransferFees(address token)external view returns(uint256 fee){
         return assetdata[token].tokenTransferFee;
+    }
+
+    //audit fix 09/05/24
+    function withdrawAll(address payable owner) external  onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+
     }
 
     receive() external payable {}
