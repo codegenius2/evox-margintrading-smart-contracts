@@ -32,12 +32,13 @@ contract Oracle is Ownable{
         Executor = IExecutor(_executor);
     }
 
-    // bug ID #12 fix 
+    // bug ID #12 fix 10/05
     function alterAdminRoles(
         address _ex,
         address _DataHub,
         address _deposit_vault
     ) public onlyOwner {
+        delete admins[_ex];
         admins[_ex] = true;
         Datahub = IDataHub(_DataHub);
         DepositVault = IDepositVault(_deposit_vault);

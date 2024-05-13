@@ -58,16 +58,22 @@ contract EVO_EXCHANGE is Ownable {
         address _int,
         address _liquidator
     ) public onlyOwner {
+        delete admins[_datahub];
         admins[_datahub] = true;
         Datahub = IDataHub(_datahub);
+        delete admins[_deposit_vault];
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
+        delete admins[_oracle];
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
+        delete admins[_util];
         admins[_util] = true;
         Utilities = IUtilityContract(_util);
+        delete admins[_int];
         admins[_int] = true;
         interestContract = IInterestData(_int);
+        delete admins[_liquidator];
         admins[_liquidator] = true;
         Liquidator = _liquidator;
     }

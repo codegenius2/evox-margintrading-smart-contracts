@@ -27,15 +27,19 @@ contract DepositVault is Ownable {
     }
     mapping(address => bool) public admins;
 
+    // bugID 12 fix 10/05
     function alterAdminRoles(
         address dataHub,
         address executor,
         address interest
     ) public onlyOwner {
+        delete admins[dataHub];
         admins[dataHub] = true;
         Datahub = IDataHub(dataHub);
+        delete admins[executor];
         admins[executor] = true;
         Executor = IExecutor(executor);
+        delete admins[interest];
         admins[interest] = true;
         interestContract = IInterestData(interest);
     }
@@ -52,13 +56,13 @@ contract DepositVault is Ownable {
     mapping(uint256 => address) public userId;
 
     mapping(address => uint256) public token_withdraws_hour;
-    uint256 lastWithdrawUpdateTime = block.timestamp;
+    uint256 public lastWithdrawUpdateTime = block.timestamp;
 
     event hazard(uint256, uint256);
 
     error DangerousWithdraw();
 
-    bool circuitBreakerStatus = false;
+    bool public circuitBreakerStatus = false;
 
     uint256 public lastUpdateTime;
 

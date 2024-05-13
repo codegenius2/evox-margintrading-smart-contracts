@@ -181,7 +181,7 @@ async function main() {
 
 
 
-
+    //checking for bugID #12 
     const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
 
     setupDV.wait();
@@ -335,9 +335,9 @@ async function main() {
 
     const withdrawAll = new hre.ethers.Contract(await DVM.getAddress(), DVM.abi, signers[0]);
 
-    const SETUPEX1 = await DVM.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_depositVault.getAddress(), await DeployOracle.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), await Deploy_Liquidator.getAddress());
+    // const SETUPEX1 = await DVM.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_depositVault.getAddress(), await DeployOracle.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), await Deploy_Liquidator.getAddress());
     
-    SETUPEX1.wait()
+    // SETUPEX1.wait()
 
 
 
