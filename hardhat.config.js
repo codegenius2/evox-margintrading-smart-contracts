@@ -1,6 +1,7 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
 require('hardhat-abi-exporter');
+require("hardhat-contract-sizer");
 require('hardhat-gui');
 require('hardhat-deploy');
 require("@solarity/hardhat-markup")

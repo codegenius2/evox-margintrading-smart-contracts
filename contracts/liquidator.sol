@@ -15,9 +15,8 @@ import "hardhat/console.sol";
 contract Liquidator is Ownable {
     /* LIQUIDATION + INTEREST FUNCTIONS */
 
-    IUtilityContract public Utilities;
+    IUtilityContract  Utilities;
     IDataHub public Datahub;
-
     IExecutor public Executor;
 
     /** Constructor  */
@@ -30,7 +29,7 @@ contract Liquidator is Ownable {
         Executor = IExecutor(_executor);
     }
 
-    mapping(address => uint256) FeesCollected; // token --> amount
+    mapping(address => uint256)  FeesCollected; // token --> amount
 
     /// @notice This alters the admin roles for the contract
     /// @param _executor the address of the new executor contract

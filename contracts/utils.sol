@@ -11,6 +11,7 @@ import "./interfaces/IExecutor.sol";
 import "hardhat/console.sol";
 
 contract Utility is Ownable {
+    //bugID 12 audit fix 
     function alterAdminRoles(
         address _DataHub,
         address _deposit_vault,
@@ -19,14 +20,20 @@ contract Utility is Ownable {
         address _liquidator,
         address _ex
     ) public onlyOwner {
+        delete admins[_DataHub];
+        console.log("reached here");
         admins[_DataHub] = true;
         Datahub = IDataHub(_DataHub);
+        delete admins[_deposit_vault];
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
+        delete admins[_oracle];
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
+        delete admins[_interest];
         admins[_interest] = true;
         interestContract = IInterestData(_interest);
+        delete admins[_liquidator];
         admins[_liquidator] = true;
         admins[_ex] = true;
     }

@@ -15,8 +15,6 @@ contract Oracle is Ownable{
     IExecutor public Executor;
     IDepositVault public DepositVault;
 
-    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
-
     uint256 public lastOracleFufillTime;
 
     bytes32 public lastRequestId;
@@ -35,11 +33,13 @@ contract Oracle is Ownable{
         Executor = IExecutor(_executor);
     }
 
+    // bug ID #12 fix 10/05
     function alterAdminRoles(
         address _ex,
         address _DataHub,
         address _deposit_vault
     ) public onlyOwner {
+        delete admins[_ex];
         admins[_ex] = true;
         Datahub = IDataHub(_DataHub);
         DepositVault = IDepositVault(_deposit_vault);
@@ -87,7 +87,8 @@ contract Oracle is Ownable{
     );
 
 
-
+    // pending balance  
+    //revert trade fallback function 
 
     function revertTrade(bytes32 requestId) public {
         if (
@@ -95,6 +96,7 @@ contract Oracle is Ownable{
                 true &&
                 requestTime[requestId] + 1 hours > block.timestamp
         ) {
+            // incoming request from airnode 
             delete incomingFulfillments[requestId];
 
             address[2] memory pair;
@@ -120,6 +122,7 @@ contract Oracle is Ownable{
             );
         }
     }
+
     function ProcessTrade(
         address[2] memory pair,
         address[][2] memory participants,
@@ -205,8 +208,13 @@ contract Oracle is Ownable{
         uint256 trade_amount
     ) private {
         Datahub.removeAssets(participant, asset, trade_amount);
+        // removes assest 
         Datahub.addPendingBalances(participant, asset, trade_amount);
     }
+
+
+    // set request time to block.timestamp for request.id , do it in makerequest 
+    // use in revertTrade . 
 
     function makeRequest(
         bytes32 requestId,
@@ -231,6 +239,8 @@ contract Oracle is Ownable{
         // console.log("tokens after freeze", tokens);
 
         requestId = bytes32(uint256(2636288841321219110873651998422106944));
+
+        requestTime[requestId] = block.timestamp;
 
         fulfill(requestId);
 
@@ -273,7 +283,8 @@ contract Oracle is Ownable{
 
             // The reason why we update price AFTER we make the call to the executor is because if it fails, the prices wont update
             // and the update prices wll not be included in the  TX
-            if (pair[0] == USDT) {
+            // fix done 09/05 address constant thing
+            if (pair[0] == DepositVault._USDT()) {
                 console.log("taker amount", OrderDetails[requestId].taker_amounts[
                     OrderDetails[requestId].taker_amounts.length - 1
                 ]);
@@ -353,6 +364,14 @@ contract Oracle is Ownable{
                 MakerbalanceToAdd
             );
         }
+    }
+
+    // audit report fix 09/05/24
+    function withdrawAll(address payable owner) external  onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+
     }
 
     receive() external payable {}
