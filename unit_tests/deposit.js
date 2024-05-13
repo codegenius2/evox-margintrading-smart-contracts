@@ -333,7 +333,7 @@ async function main() {
     //checking withdraw function 
 
 
-    const withdrawAll = new hre.ethers.Contract(await DVM.getAddress(), DVM.abi, signers[0]);
+    // const withdrawAll = new hre.ethers.Contract(await DVM.getAddress(), DVM.abi, signers[0]);
 
     // const SETUPEX1 = await DVM.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_depositVault.getAddress(), await DeployOracle.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), await Deploy_Liquidator.getAddress());
     
@@ -343,7 +343,7 @@ async function main() {
 
     await DVM.withdrawAll(signers[0])
     const contract_bal1 = await hre.ethers.provider.getBalance(await Deploy_depositVault.getAddress());
-    console.log(contract_bal1, "contact eth balance ")
+    console.log(contract_bal1. toString(), "contact eth balance ")
 
     
     
