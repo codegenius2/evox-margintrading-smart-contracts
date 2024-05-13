@@ -274,7 +274,6 @@ contract Utility is Ownable {
             uint256 collateral = EVO_LIBRARY.calculateTotal(trade_amounts[i]);
             uint256 bulkAssets = returnBulkAssets(participants[i], pair[i]);
             newLiabilitiesIssued = collateral > bulkAssets ? collateral - bulkAssets: 0;
-
             if (newLiabilitiesIssued > 0) {
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair[i]);
                 bool flag = EVO_LIBRARY.calculateBorrowProportionAfterTrades(
@@ -430,7 +429,8 @@ contract Utility is Ownable {
         IDataHub.AssetData memory assetLogsInToken = Datahub.returnAssetLogs(
             in_token
         );
-        if (amount <= returnliabilities(user, in_token)) {
+        uint256 userLiabilities = returnliabilities(user, in_token);
+        if (amount <= userLiabilities ) {
             uint256 StartingDollarIMR = (amount * assetLogsOutToken.marginRequirement[0]) / 10 ** 18; // 0 -> InitialMarginRequirement
             uint256 pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, out_token);
             if (StartingDollarIMR > pairMMROfUser) {
@@ -443,7 +443,6 @@ contract Utility is Ownable {
                     pairMMROfUser
                 );
 
-                uint256 userLiabilities = returnliabilities(user, in_token);
                 uint256 liabilityMultiplier = EVO_LIBRARY
                     .calculatedepositLiabilityRatio(userLiabilities, overage);
                 address[] memory tokens = Datahub.returnUsersAssetTokens(user);
