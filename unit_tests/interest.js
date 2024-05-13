@@ -126,6 +126,10 @@ describe("Interest Test", function () {
         const connectedREXE = REXE.connect(selectedSigner);
         await REXE.waitForDeployment();
 
+        const DAI = await hre.ethers.deployContract("DAI", [selectedSigner.address]);
+        const connectedDAI = DAI.connect(selectedSigner);
+        await DAI.waitForDeployment();
+
         // console.log("REXE deployed to", await connectedREXE.getAddress());
         // console.log("REXE Balance = ", await REXE.balanceOf(signers[1].address))
 
@@ -181,6 +185,25 @@ describe("Interest Test", function () {
         const REXEInterestRate = 5000000000000000n //( 5**16) was 5
         const REXE_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
 
+        /////////////////////// DAI /////////////////////////
+        const DAIprice = 2_000000000000000000n
+        const DAICollValue = 1_000000000000000000n
+        const DAIFeeInfo = [
+            10000000000000000n, // USDTinitialMarginRequirement
+            100000000000000000n, // USDTliquidationFee
+            0 // tokenTransferFee
+        ];
+        const DAIMarginRequirement = [
+            500000000000000000n, // initialMarginRequirement
+            250000000000000000n // MaintenanceMarginRequirement
+        ];
+        const DAIBorrowPosition = [
+            700000000000000000n, // optimalBorrowProportion
+            1000000000000000000n // maximumBorrowProportion
+        ];
+        const DAIInterestRate = 5000000000000000n //( 5**16) was 5
+        const DAI_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
+
         //////////////////////////////////////// Init Contracts ///////////////////////////////////////////////
 
         //////////////////// Init utils //////////////////////
@@ -229,8 +252,11 @@ describe("Interest Test", function () {
         //////////////////// Set USDT and REXE in interestData //////////////////////
         const InitRatesREXE = await _Interest.initInterest(await REXE.getAddress(), 1, REXE_interestRateInfo, REXEInterestRate)
         const InitRatesUSDT = await _Interest.initInterest(await USDT.getAddress(), 1, USDT_interestRateInfo, USDTInterestRate)
+        const InitRatesDAI = await _Interest.initInterest(await DAI.getAddress(), 1, DAI_interestRateInfo, DAIInterestRate)
+        
         InitRatesREXE.wait();
         InitRatesUSDT.wait();
+        InitRatesDAI.wait();
         // console.log("Set USDT and REXE in interestData done")
 
         //////////////////// InitTokenMarket USDT in DataHub //////////////////////
@@ -243,6 +269,9 @@ describe("Interest Test", function () {
         REXE_init_transaction.wait();
         // console.log("InitTokenMarket REXE in DataHub done")
 
+        const DAI_init_transaction = await DataHub.InitTokenMarket(await DAI.getAddress(), DAIprice, DAICollValue, tradeFees, DAIMarginRequirement, DAIBorrowPosition, DAIFeeInfo);
+        DAI_init_transaction.wait();
+
         ///////////////////////////////// Getting Token Contracts //////////////////////////////////////
         const contractABI = tokenabi.abi; // token abi for approvals 
 
@@ -252,13 +281,19 @@ describe("Interest Test", function () {
         // Get Rexe Contract
         const REXE_TOKEN = new hre.ethers.Contract(await REXE.getAddress(), contractABI, signers[0]);
 
+        const DAI_TOKEN = new hre.ethers.Contract(await DAI.getAddress(), contractABI, signers[0]);
+
         const USDT_setTokenTransferFee = await DataHub.setTokenTransferFee(await USDT_TOKEN.getAddress(), 0) // 0.003% ==> 3  // 3000 for 3% percentage of fees. 
-        USDT_setTokenTransferFee.wait();
+        await USDT_setTokenTransferFee.wait();
         expect(await DataHub.tokenTransferFees(await USDT_TOKEN.getAddress())).to.equal(0);
 
         const REXE_setTokenTransferFee = await DataHub.setTokenTransferFee(await REXE_TOKEN.getAddress(), 0) // 0.003% ==> 3  // 3000 for 3% percentage of fees. 
-        REXE_setTokenTransferFee.wait();
+        await REXE_setTokenTransferFee.wait();
         expect(await DataHub.tokenTransferFees(await REXE_TOKEN.getAddress())).to.equal(0);
+
+        const DAI_setTokenTransferFee = await DataHub.setTokenTransferFee(await DAI_TOKEN.getAddress(), 0) // 0.003% ==> 3  // 3000 for 3% percentage of fees. 
+        await DAI_setTokenTransferFee.wait();
+        expect(await DataHub.tokenTransferFees(await DAI_TOKEN.getAddress())).to.equal(0);
 
         await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
