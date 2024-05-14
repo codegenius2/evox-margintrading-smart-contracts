@@ -33,10 +33,13 @@ contract DepositVault is Ownable {
         address executor,
         address interest
     ) public onlyOwner {
+        admins[address(Datahub)]= false; 
         admins[dataHub] = true;
         Datahub = IDataHub(dataHub);
+        admins[address(Executor)] = false;
         admins[executor] = true;
         Executor = IExecutor(executor);
+        admins[address(interestContract)] = false;
         admins[interest] = true;
         interestContract = IInterestData(interest);
     }
@@ -177,7 +180,7 @@ contract DepositVault is Ownable {
             "this asset is not available to be deposited or traded"
         );
         // console.log("amount before fee", amount);
-        // amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
+        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
         // console.log("amount to be paid if fee is applicable", amount);
         // console.log("amount after fee", amount);
         // we need to add the function that transfertokenwithfee  : https://docs.uniswap.org/contracts/v2/reference/smart-contracts/router-02#swapexacttokensfortokenssupportingfeeontransfertokens

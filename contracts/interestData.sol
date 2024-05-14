@@ -21,11 +21,19 @@ contract interestData {
         address _utils
     ) public {
         require(msg.sender == owner, " you cannot perform this action");
+        
+        admins[address(Datahub)]=false;
         admins[_dh] = true;
         Datahub = IDataHub(_dh);
+       
+        admins[address(Executor)] = false;
         admins[_executor] = true;
         Executor = IExecutor(_executor);
+
+        delete admins[_dv];
         admins[_dv] = true;
+        
+        admins[address(utils)] = false;
         admins[_utils] = true;
         utils = IUtilityContract(_utils);
     }
@@ -471,6 +479,13 @@ contract interestData {
         );
         // console.log("interest charge", interestCharge);
         return interestCharge;
+    }
+
+    //audit fix bug ID 11 09/05, we have  taken the checkRoleAuthority instade of onlyowner
+    function withdrawAll(address payable contract_owner) external  checkRoleAuthority {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(contract_owner).transfer(contractBalance);
     }
 
     receive() external payable {}
