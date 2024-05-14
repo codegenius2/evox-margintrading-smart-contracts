@@ -9,7 +9,20 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
+<<<<<<< HEAD
       "timestamp": 1715185812
+=======
+      "timestamp": 1714680090
+    },
+    "REXE": {
+      "index": 1,
+      "loop #": 0,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "timestamp": 1714680090
+>>>>>>> 466799898261742d16ce0b048ec46b288e742aff
     }
   },
   {
@@ -18,11 +31,45 @@
       "loop #": 1,
       "usdt_amount": 0,
       "usdt_supply": 1500,
-      "total-borrowed": 900.0093210361067,
+      "total-borrowed": 753.7593210361067,
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
+<<<<<<< HEAD
       "liabilities": 900.0093210361067,
       "timestamp": 1715189412
+=======
+      "liabilities": 0,
+      "timestamp": 1714683690
+    },
+    "REXE": {
+      "index": 2,
+      "loop #": 1,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "timestamp": 1714683690
+    }
+  },
+  {
+    "USDT": {
+      "index": 3,
+      "loop #": 2,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "timestamp": 1714687290
+    },
+    "REXE": {
+      "index": 3,
+      "loop #": 2,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "timestamp": 1714687290
+>>>>>>> 466799898261742d16ce0b048ec46b288e742aff
     }
   }
 ]
