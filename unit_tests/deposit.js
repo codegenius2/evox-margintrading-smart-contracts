@@ -51,6 +51,8 @@ async function main() {
 
     const Deploy_dataHub = await hre.ethers.deployContract("DataHub", [initialOwner, executor, depositvault, oracle, await Deploy_interest.getAddress(), initialOwner]);
 
+    const Deploy_dataHub1 = await hre.ethers.deployContract("DataHub", [initialOwner, executor, depositvault, oracle, await Deploy_interest.getAddress(), initialOwner]);
+
     await Deploy_dataHub.waitForDeployment();
 
     console.log("Datahub deployed to", await Deploy_dataHub.getAddress());
@@ -159,6 +161,9 @@ async function main() {
 
 
     const DataHub = new hre.ethers.Contract(await Deploy_dataHub.getAddress(), DataHubAbi.abi, signers[0]);
+    
+    const DataHub1 = new hre.ethers.Contract(await Deploy_dataHub1.getAddress(), DataHubAbi.abi, signers[0]);
+    
 
     const deposit_vault = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[0])
 
@@ -181,10 +186,29 @@ async function main() {
 
 
 
-
+    //checking for bugID #12 
     const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
 
     setupDV.wait();
+
+    const abc = await deposit_vault.admins(await Deploy_dataHub.getAddress())
+
+    console.log("reached here 189 ", abc);
+
+    // doing second change
+
+
+    const setupDV1 = await deposit_vault.alterAdminRoles(await Deploy_dataHub1.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
+
+    setupDV1.wait();
+
+    const cd = await deposit_vault.admins(await Deploy_dataHub.getAddress())
+
+    console.log('old data hub should false ', cd);
+
+    const abc1 = await deposit_vault.admins(await Deploy_dataHub1.getAddress())
+
+    console.log("reached here 207 ", abc1);
 
 
     const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
@@ -228,8 +252,18 @@ async function main() {
 
     const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTinitialMarginFee, USDTliquidationFee, USDTinitialMarginRequirement, USDTMaintenanceMarginRequirement, USDToptimalBorrowProportion, USDTmaximumBorrowProportion);
 
+    const USDT_setTokenTransferFee = await DataHub.setTokenTransferFee(await USDT.getAddress(), 0) // 0.003% ==> 3  // 3000 for 3% percentage of fees. 
+
+    const USDT_tokenTransferFees = await DataHub.tokenTransferFees(await USDT.getAddress());
+
+    // const tokenTransferFees = USDT_tokenTransferFees.wait();
+
+    console.log(USDT_tokenTransferFees, "tradingfeeeee ")
 
     USDT_init_transaction.wait();
+
+    USDT_setTokenTransferFee.wait();
+
 
 
     const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEinitialMarginFee, REXEliquidationFee, REXEinitialMarginRequirement, REXEMaintenanceMarginRequirement, REXEoptimalBorrowProportion, REXEmaximumBorrowProportion);
@@ -278,35 +312,66 @@ async function main() {
 
     await DVM.deposit_token(
         await REXE.getAddress(),
-        ("5000000000000000000000")
+        deposit_amount_2
     )
 
-
+    const deposit_amount_3 = "1000000000000000000000"
     const TOKENCONTRACT_3 = new hre.ethers.Contract(await USDT.getAddress(), tokenabi.abi, signers[1]);
 
     const approvalTx_3 = await TOKENCONTRACT_3.approve(await Deploy_depositVault.getAddress(), deposit_amount_2);
 
     await approvalTx_3.wait();  // Wait for the transaction to be mined
 
-<<<<<<< HEAD
     await DVM.deposit_token(await USDT.getAddress(),deposit_amount_3)
-    const bal = await DataHub.returnAssetLogs(await USDT.getAddress())
-    console.log("deposits complete", bal[9])
-=======
-    await DVM.deposit_token(
-        await USDT.getAddress(),
-        deposit_amount_2)
     console.log("deposits complete")
->>>>>>> 0782dc97a1e749027f4b9de66188f1ad7024f0fd
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
     console.log("deposit successful moving to withdraw")
 
-    await DVM.withdraw_token(await USDT.getAddress(),
-    deposit_amount_2);
+    // await DVM.withdraw_token(await USDT.getAddress(), deposit_amount_2);
+    // console.log("withdraw success")
 
-    console.log("withdraw success")
+
+    //checking withdraw eth function 
+
+    //sending eth  to contract 
+    const userbal = await hre.ethers.provider.getBalance(signers[0].address);
+    console.log(userbal, "user eth balance ")
+
+
+    const tx = await signers[0].sendTransaction({
+        to: await Deploy_depositVault.getAddress(),
+        value: "1000000000000000000"
+    });
+
+    
+    
+    await tx.wait();
+
+    console.log()
+    const contract_bal = await hre.ethers.provider.getBalance(await Deploy_depositVault.getAddress());
+    console.log(contract_bal, "contact eth balance ")
+
+    
+    //checking withdraw function 
+
+
+    // const withdrawAll = new hre.ethers.Contract(await DVM.getAddress(), DVM.abi, signers[0]);
+
+    // const SETUPEX1 = await DVM.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_depositVault.getAddress(), await DeployOracle.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), await Deploy_Liquidator.getAddress());
+    
+    // SETUPEX1.wait()
+
+
+
+    await DVM.withdrawAll(signers[0])
+    const contract_bal1 = await hre.ethers.provider.getBalance(await Deploy_depositVault.getAddress());
+    console.log(contract_bal1. toString(), "contact eth balance ")
+
+    
+    
+    
 }
 //npx hardhat run scripts/deploy.js 
 main().then(() => process.exit(0))

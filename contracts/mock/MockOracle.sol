@@ -14,6 +14,6 @@ contract MockOracle is Oracle {
   constructor(address initialOwner, address _DataHub, address _deposit_vault, address _executor) Oracle(initialOwner, _DataHub, _deposit_vault, _executor) {}
 
   function setUSDT(address _usdt) public {
-    USDT = _usdt;
+   address USDT = _usdt;
   }
 }

@@ -1,10 +1,10 @@
 require("@nomicfoundation/hardhat-toolbox");
 require("hardhat-gas-reporter");
 require('hardhat-abi-exporter');
+require("hardhat-contract-sizer");
 require('hardhat-gui');
 require('hardhat-deploy');
 require("@solarity/hardhat-markup")
-require("hardhat-contract-sizer");
 //https://www.npmjs.com/package/hardhat-abi-exporter
 /** @type import('hardhat/config').HardhatUserConfig */
 
@@ -15,17 +15,9 @@ module.exports = {
     settings: {
       optimizer: {
         enabled: true,
-        runs: 200,
+        runs: 1000,
       },
     },
-  },
-  contractSizer: {
-    alphaSort: true,
-    disambiguatePaths: false,
-    runOnCompile: true,
-    strict: false,
-    unit: "KiB",
-
   },
   defaultNetwork: "hardhat",
   mocha: {
@@ -50,16 +42,16 @@ module.exports = {
   networks: {
     hardhat: {
       allowBlocksWithSameTimestamp: true,
-      forking: {         
-        url: "https://rpc.ankr.com/polygon_zkevm_cardona",  // you must change this id    
-      },
+      // forking: {         
+      //   url: "https://rpc.ankr.com/polygon_zkevm_cardona",  // you must change this id    
+      // },
       chainId: 2442,
       forking: {
         // Using Alchemy
         url: "https://rpc.ankr.com/polygon_zkevm_cardona", // url to RPC node, ${ALCHEMY_KEY} - must be your API key
         // Using Infura
         // url: `https://mainnet.infura.io/v3/${INFURA_KEY}`, // ${INFURA_KEY} - must be your API key
-        blockNumber: 2966185, // a specific block number with which you want to work
+        blockNumber: 2799850, // a specific block number with which you want to work
       },     
       accounts: [
         { privateKey: '0xac0974bec39a17e36ba4a6b4d238ff944bacb478cbed5efcae784d7bf4f2ff80', balance: '1000000000000000000000' },
