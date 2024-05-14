@@ -1037,18 +1037,27 @@ describe("Interest Test", function () {
             let userData_usdt_signer00 = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
             let userData_rexe_signer00 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
 
-            console.log("userData_usdt_signer0_amount", userData_usdt_signer00[0]);
-            console.log("userData_rexe_signer0_amount", userData_rexe_signer00[0]);
-            console.log("userData_usdt_signer0_liabilities", userData_usdt_signer00[1]);
-            console.log("userData_rexe_signer0_liabilities", userData_rexe_signer00[1]);
+            // console.log("userData_usdt_signer0_amount", userData_usdt_signer00[0]);
+            // console.log("userData_rexe_signer0_amount", userData_rexe_signer00[0]);
+            // console.log("userData_usdt_signer0_liabilities", userData_usdt_signer00[1]);
+            // console.log("userData_rexe_signer0_liabilities", userData_rexe_signer00[1]);
 
             let userData_usdt_signer11 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
             let userData_rexe_signer11 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
 
-            console.log("userData_usdt_signer1_amount", userData_usdt_signer11[0]);
-            console.log("userData_rexe_signer1_amount", userData_rexe_signer11[0]);
-            console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
-            console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
+            // console.log("userData_usdt_signer1_amount", userData_usdt_signer11[0]);
+            // console.log("userData_rexe_signer1_amount", userData_rexe_signer11[0]);
+            // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
+            // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
+            expect(userData_usdt_signer00[0]).equals(0); // Amount
+            expect(userData_usdt_signer00[1]).equals(753759321036106749750n); // Liability
+            expect(userData_rexe_signer00[0]).equals(2500000000000000000000n); // Amount
+            expect(userData_rexe_signer00[1]).equals(0); // Liability
+
+            expect(userData_usdt_signer11[0]).equals(2250000000000000000000n); // Amount
+            expect(userData_usdt_signer11[1]).equals(0); // Liability
+            expect(userData_rexe_signer11[0]).equals(2500000000000000000000n); // Amount
+            expect(userData_rexe_signer11[1]).equals(0); // Liability
 
             const Data_Second = {
                 "taker_out_token": await REXE_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
@@ -1069,18 +1078,29 @@ describe("Interest Test", function () {
             let userData_usdt2_signer0 = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
             let userData_rexe2_signer0 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
 
-            console.log("userData_usdt2_signer0 amount", userData_usdt2_signer0[0]);
-            console.log("userData_rexe2_signer0 amount", userData_rexe2_signer0[0]);
-            console.log("userData_usdt2_signer0 liabilities", userData_usdt2_signer0[1]);
-            console.log("userData_rexe2_signer0 liabilities", userData_rexe2_signer0[1]);
+            // console.log("userData_usdt2_signer0 amount", userData_usdt2_signer0[0]);
+            // console.log("userData_rexe2_signer0 amount", userData_rexe2_signer0[0]);
+            // console.log("userData_usdt2_signer0 liabilities", userData_usdt2_signer0[1]);
+            // console.log("userData_rexe2_signer0 liabilities", userData_rexe2_signer0[1]);
 
             let userData_usdt2_signer1 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
             let userData_rexe2_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
 
-            console.log("userData_usdt2_signer1 amount", userData_usdt2_signer1[0]);
-            console.log("userData_rexe2_signer1 amount", userData_rexe2_signer1[0]);
-            console.log("userData_usdt2_signer1 liabilities", userData_usdt2_signer1[1]);
-            console.log("userData_rexe2_signer1 liabilities", userData_rexe2_signer1[1]);
+            // console.log("userData_usdt2_signer1 amount", userData_usdt2_signer1[0]);
+            // console.log("userData_rexe2_signer1 amount", userData_rexe2_signer1[0]);
+            // console.log("userData_usdt2_signer1 liabilities", userData_usdt2_signer1[1]);
+            // console.log("userData_rexe2_signer1 liabilities", userData_rexe2_signer1[1]);
+
+            expect(userData_usdt2_signer0[0]).equals(0); // Amount
+            expect(userData_usdt2_signer0[1]).equals(253759321036106749750n); // Liability
+            expect(userData_rexe2_signer0[0]).equals(2000000000000000000000n); // Amount
+            expect(userData_rexe2_signer0[1]).equals(0n); // Liability
+
+            expect(userData_usdt2_signer1[0]).equals(1750000000000000000000n); // Amount
+            expect(userData_usdt2_signer1[1]).equals(0n); // Liability
+            expect(userData_rexe2_signer1[0]).equals(3000000000000000000000n); // Amount
+            expect(userData_rexe2_signer1[1]).equals(0n); // Liability
+
         })
     })
 
