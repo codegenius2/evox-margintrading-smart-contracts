@@ -20,21 +20,25 @@ contract Utility is Ownable {
         address _liquidator,
         address _ex
     ) public onlyOwner {
-        delete admins[_DataHub];
-        console.log("reached here");
+        admins[address(Datahub)] = false;
         admins[_DataHub] = true;
         Datahub = IDataHub(_DataHub);
-        delete admins[_deposit_vault];
+
+        admins[address(DepositVault)] = false;
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
-        delete admins[_oracle];
+
+        admins[address(Oracle)] = false;
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
-        delete admins[_interest];
+
+        admins[address(interestContract)] = false;
         admins[_interest] = true;
         interestContract = IInterestData(_interest);
+
         delete admins[_liquidator];
         admins[_liquidator] = true;
+        delete admins[_ex];
         admins[_ex] = true;
     }
 
