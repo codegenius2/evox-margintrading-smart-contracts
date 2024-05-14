@@ -34,13 +34,13 @@ contract DepositVault is Ownable {
         address executor,
         address interest
     ) public onlyOwner {
-        delete admins[dataHub];
+        admins[address(Datahub)]= false; 
         admins[dataHub] = true;
         Datahub = IDataHub(dataHub);
-        delete admins[executor];
+        admins[address(Executor)] = false;
         admins[executor] = true;
         Executor = IExecutor(executor);
-        delete admins[interest];
+        admins[address(interestContract)] = false;
         admins[interest] = true;
         interestContract = IInterestData(interest);
     }

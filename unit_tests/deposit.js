@@ -51,6 +51,8 @@ async function main() {
 
     const Deploy_dataHub = await hre.ethers.deployContract("DataHub", [initialOwner, executor, depositvault, oracle, await Deploy_interest.getAddress(), initialOwner]);
 
+    const Deploy_dataHub1 = await hre.ethers.deployContract("DataHub", [initialOwner, executor, depositvault, oracle, await Deploy_interest.getAddress(), initialOwner]);
+
     await Deploy_dataHub.waitForDeployment();
 
     console.log("Datahub deployed to", await Deploy_dataHub.getAddress());
@@ -159,6 +161,9 @@ async function main() {
 
 
     const DataHub = new hre.ethers.Contract(await Deploy_dataHub.getAddress(), DataHubAbi.abi, signers[0]);
+    
+    const DataHub1 = new hre.ethers.Contract(await Deploy_dataHub1.getAddress(), DataHubAbi.abi, signers[0]);
+    
 
     const deposit_vault = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[0])
 
@@ -185,6 +190,25 @@ async function main() {
     const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
 
     setupDV.wait();
+
+    const abc = await deposit_vault.admins(await Deploy_dataHub.getAddress())
+
+    console.log("reached here 189 ", abc);
+
+    // doing second change
+
+
+    const setupDV1 = await deposit_vault.alterAdminRoles(await Deploy_dataHub1.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
+
+    setupDV1.wait();
+
+    const cd = await deposit_vault.admins(await Deploy_dataHub.getAddress())
+
+    console.log('old data hub should false ', cd);
+
+    const abc1 = await deposit_vault.admins(await Deploy_dataHub1.getAddress())
+
+    console.log("reached here 207 ", abc1);
 
 
     const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
