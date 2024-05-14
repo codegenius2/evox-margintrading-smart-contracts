@@ -32,6 +32,7 @@ library EVO_LIBRARY {
     function calculateAverage(
         uint256[] memory values
     ) public pure returns (uint256) {
+        // console.log("length", values.length);
         if (values.length == 0) {
             return 0;
         }
@@ -41,6 +42,7 @@ library EVO_LIBRARY {
             total += values[i];
         }
         value = total / values.length;
+        // console.log("average value", value);
         return value;
     }
 
@@ -115,13 +117,13 @@ library EVO_LIBRARY {
                 );
         } else {
             uint256 rate = maximumInterestRate - optimalInterestRate;
-            console.log("rate", rate);
-            console.log("result", min(
-                maximumInterestRate,
-                optimalInterestRate +
-                    (rate * (borrowProportion - optimalBorrowProportion)) /
-                    (1e18 - optimalBorrowProportion)
-            ));
+            // console.log("rate", rate);
+            // console.log("result", min(
+            //     maximumInterestRate,
+            //     optimalInterestRate +
+            //         (rate * (borrowProportion - optimalBorrowProportion)) /
+            //         (1e18 - optimalBorrowProportion)
+            // ));
             return
                 min(
                     maximumInterestRate,
@@ -147,7 +149,7 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetdata,
         uint256 liabilities
     ) public pure returns (uint256) {
-        return (assetdata.initialMarginFee * liabilities) / 10 ** 18;
+        return (assetdata.feeInfo[0] * liabilities) / 10 ** 18; // 0 -> initialMarginFee
     }
 
     function calculateInitialRequirementForTrade(
@@ -173,8 +175,8 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetdata
     ) public pure returns (uint256) {
         return
-            (assetdata.totalBorrowedAmount * 10 ** 18) /
-            assetdata.totalAssetSupply; // 10 ** 18 output
+            (assetdata.assetInfo[1] * 10 ** 18) /
+            assetdata.assetInfo[0]; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
     }
 
     function calculateBorrowProportionAfterTrades(
@@ -185,21 +187,21 @@ library EVO_LIBRARY {
         uint256 scaleFactor = 1e18; // Scaling factor, e.g., 10^18 for wei
 
         // here we add the current borrowed amount and the new liabilities to be issued, and scale it
-        uint256 scaledTotalBorrowed = (assetdata.totalBorrowedAmount +
-            new_liabilities) * scaleFactor;
+        uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] +
+            new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
 
         // console.log("scaledTotalBorrowed", scaledTotalBorrowed);
 
         // Calculate the new borrow proportion
         uint256 newBorrowProportion = (scaledTotalBorrowed /
-            assetdata.totalAssetSupply); // equal decimal * 10**!8 decimal is max
+            assetdata.assetInfo[0]); // totalAssetSupply
 
         // console.log("newBorrowProportion", newBorrowProportion);
 
         // console.log("maximum borrow propotion", assetdata.borrowPosition[1]);
 
         // Compare with maximumBorrowProportion
-        return newBorrowProportion <= assetdata.maximumBorrowProportion;
+        return newBorrowProportion <= assetdata.borrowPosition[1]; // 1 -> maximumBorrowProportion
     }
 
     function calculateFee(
