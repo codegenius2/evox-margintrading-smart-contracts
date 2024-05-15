@@ -207,7 +207,7 @@ contract Oracle is Ownable{
         address asset,
         uint256 trade_amount
     ) private {
-        Datahub.removeAssets(participant, asset, trade_amount);
+        // Datahub.removeAssets(participant, asset, trade_amount);
         // removes assest 
         Datahub.addPendingBalances(participant, asset, trade_amount);
     }
@@ -334,7 +334,7 @@ contract Oracle is Ownable{
         }
     }
 
-    function revertTrade(
+     function revertTrade(
         address[2] memory pair,
         address[] memory takers,
         address[] memory makers,
@@ -342,27 +342,27 @@ contract Oracle is Ownable{
         uint256[] memory maker_amounts
     ) private {
         for (uint256 i = 0; i < takers.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
-            uint256 balanceToAdd = taker_amounts[i] > assets
-                ? assets
-                : taker_amounts[i];
+            // (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
+            (, , uint256 pending, , ) = Datahub.ReadUserData(takers[i], pair[0]);
+            // 100 usdt 
+            // if its a margin trade , its makes perfect sense 
+            uint256 balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
+            // why ?
 
             Datahub.addAssets(takers[i], pair[0], balanceToAdd);
+
             Datahub.removePendingBalances(takers[i], pair[0], balanceToAdd);
         }
 
         for (uint256 i = 0; i < makers.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
-            uint256 MakerbalanceToAdd = maker_amounts[i] > assets
-                ? assets
-                : maker_amounts[i];
+           // (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
+           (, , uint256 pending, , ) = Datahub.ReadUserData(takers[i], pair[0]);
+
+            uint256 MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
 
             Datahub.addAssets(makers[i], pair[1], MakerbalanceToAdd);
-            Datahub.removePendingBalances(
-                makers[i],
-                pair[0],
-                MakerbalanceToAdd
-            );
+
+            Datahub.removePendingBalances(makers[i], pair[0], MakerbalanceToAdd );
         }
     }
 

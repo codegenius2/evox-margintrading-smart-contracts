@@ -398,7 +398,7 @@ contract EVO_EXCHANGE is Ownable {
                     );
                 }
                 // remove their pending balances
-                unFreezeBalance(users[i], out_token, amounts_out_token[i]);
+                Datahub.removePendingBalances(users[i], out_token, amounts_out_token[i]);
                 // give users their deposit interest accrued
                 debitAssetInterest(users[i], in_token);
                 // add remaining amount not subtracted from liabilities to assets
@@ -428,19 +428,19 @@ contract EVO_EXCHANGE is Ownable {
     /// @param user the user who we are unfreezing the balance of
     /// @param token the token that was involved in their trade
     /// @param amount the amount to be removed from pending
-    function unFreezeBalance(
-        address user,
-        address token,
-        uint256 amount
-    ) private {
-        amount > Utilities.returnPending(user, token)
-            ? Datahub.removePendingBalances(
-                user,
-                token,
-                Utilities.returnPending(user, token)
-            )
-            : Datahub.removePendingBalances(user, token, amount);
-    }
+    // function unFreezeBalance(
+    //     address user,
+    //     address token,
+    //     uint256 amount
+    // ) private {
+    //     amount > Utilities.returnPending(user, token)
+    //         ? Datahub.removePendingBalances(
+    //             user,
+    //             token,
+    //             Utilities.returnPending(user, token)
+    //         )
+    //         : Datahub.removePendingBalances(user, token, amount);
+    // }
 
     /// @notice This pays out the user for depositted assets
     /// @param user the user to be debitted
