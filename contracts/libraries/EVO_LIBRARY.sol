@@ -32,6 +32,7 @@ library EVO_LIBRARY {
     function calculateAverage(
         uint256[] memory values
     ) public pure returns (uint256) {
+        // console.log("length", values.length);
         if (values.length == 0) {
             return 0;
         }
@@ -41,6 +42,7 @@ library EVO_LIBRARY {
             total += values[i];
         }
         value = total / values.length;
+        // console.log("average value", value);
         return value;
     }
 
@@ -81,31 +83,31 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetlogs,
         IInterestData.interestDetails memory interestRateInfo
     ) public pure returns (uint256) {
-        console.log("======================calculate interest rate function===========================");
-        uint256 borrowProportion = ((assetlogs.totalBorrowedAmount + amount) *
-            10 ** 18) / assetlogs.totalAssetSupply; /// check for div by 0
-        console.log("borrow proportion", borrowProportion);
+        // console.log("======================calculate interest rate function===========================");
+        // uint256 borrowProportion = ((assetlogs.totalBorrowedAmount + amount) * 10 ** 18) / assetlogs.totalAssetSupply; /// check for div by 0
+        uint256 borrowProportion = ((assetlogs.assetInfo[1] + amount) * 10 ** 18) / assetlogs.assetInfo[0]; /// 0 -> totalAssetSupply 1 -> totalBorrowedAmount
+        // console.log("borrow proportion", borrowProportion);
         // also those will need to be updated on every borrow (trade) and every deposit -> need to write in
 
-        uint256 optimalBorrowProportion = assetlogs.optimalBorrowProportion;
-        console.log("optimal Borrow Proportion", optimalBorrowProportion);
+        uint256 optimalBorrowProportion = assetlogs.borrowPosition[0]; // 0 -> optimalBorrowProportion
+        // console.log("optimal Borrow Proportion", optimalBorrowProportion);
 
         uint256 minimumInterestRate = interestRateInfo.rateInfo[0];
         uint256 optimalInterestRate = interestRateInfo.rateInfo[1];
         uint256 maximumInterestRate = interestRateInfo.rateInfo[2];
-        console.log("minimumInterestRate", minimumInterestRate);
-        console.log("optimalInterestRate", optimalInterestRate);
-        console.log("maximumInterestRate", maximumInterestRate);
+        // console.log("minimumInterestRate", minimumInterestRate);
+        // console.log("optimalInterestRate", optimalInterestRate);
+        // console.log("maximumInterestRate", maximumInterestRate);
 
         if (borrowProportion <= optimalBorrowProportion) {
             uint256 rate = optimalInterestRate - minimumInterestRate; // 0.145
-            console.log("rate", rate);
-            console.log("result", min(
-                optimalInterestRate,
-                minimumInterestRate +
-                    (rate * borrowProportion) /
-                    optimalBorrowProportion
-            ));
+            // console.log("rate", rate);
+            // console.log("result", min(
+            //     optimalInterestRate,
+            //     minimumInterestRate +
+            //         (rate * borrowProportion) /
+            //         optimalBorrowProportion
+            // ));
             return
                 min(
                     optimalInterestRate,
@@ -115,13 +117,13 @@ library EVO_LIBRARY {
                 );
         } else {
             uint256 rate = maximumInterestRate - optimalInterestRate;
-            console.log("rate", rate);
-            console.log("result", min(
-                maximumInterestRate,
-                optimalInterestRate +
-                    (rate * (borrowProportion - optimalBorrowProportion)) /
-                    (1e18 - optimalBorrowProportion)
-            ));
+            // console.log("rate", rate);
+            // console.log("result", min(
+            //     maximumInterestRate,
+            //     optimalInterestRate +
+            //         (rate * (borrowProportion - optimalBorrowProportion)) /
+            //         (1e18 - optimalBorrowProportion)
+            // ));
             return
                 min(
                     maximumInterestRate,
@@ -147,14 +149,25 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetdata,
         uint256 liabilities
     ) public pure returns (uint256) {
-        return (assetdata.initialMarginFee * liabilities) / 10 ** 18;
+        return (assetdata.feeInfo[0] * liabilities) / 10 ** 18; // 0 -> initialMarginFee
+    }
+
+    function calculateInitialRequirementForTrade(
+        IDataHub.AssetData memory assetdata,
+        uint256 amount
+    ) public pure returns (uint256) {
+        uint256 initial = assetdata.marginRequirement[0]; // 0 -> InitialMarginRequirement
+        // console.log("maintenance", maintenance);
+        return (initial * (amount)) / 10 ** 18;
     }
 
     function calculateMaintenanceRequirementForTrade(
         IDataHub.AssetData memory assetdata,
         uint256 amount
     ) public pure returns (uint256) {
-        uint256 maintenance = assetdata.MaintenanceMarginRequirement; // 10 * 18 -> this function will output a 10*18 number
+        // console.log("margin requirement", assetdata.marginRequirement[1]);
+        uint256 maintenance = assetdata.marginRequirement[1]; // 1 -> MaintenanceMarginRequirement
+        // console.log("maintenance", maintenance);
         return (maintenance * (amount)) / 10 ** 18;
     } // 13 deimcals to big
 
@@ -162,33 +175,33 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetdata
     ) public pure returns (uint256) {
         return
-            (assetdata.totalBorrowedAmount * 10 ** 18) /
-            assetdata.totalAssetSupply; // 10 ** 18 output
+            (assetdata.assetInfo[1] * 10 ** 18) /
+            assetdata.assetInfo[0]; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
     }
 
     function calculateBorrowProportionAfterTrades(
         IDataHub.AssetData memory assetdata,
         uint256 new_liabilities
     ) public pure returns (bool) {
-        console.log("====================calculateBorrowProportionAfterTrades========================");
+        // console.log("====================calculateBorrowProportionAfterTrades========================");
         uint256 scaleFactor = 1e18; // Scaling factor, e.g., 10^18 for wei
 
         // here we add the current borrowed amount and the new liabilities to be issued, and scale it
-        uint256 scaledTotalBorrowed = (assetdata.totalBorrowedAmount +
-            new_liabilities) * scaleFactor;
+        uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] +
+            new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
 
-        console.log("scaledTotalBorrowed", scaledTotalBorrowed);
+        // console.log("scaledTotalBorrowed", scaledTotalBorrowed);
 
         // Calculate the new borrow proportion
         uint256 newBorrowProportion = (scaledTotalBorrowed /
-            assetdata.totalAssetSupply); // equal decimal * 10**!8 decimal is max
+            assetdata.assetInfo[0]); // totalAssetSupply
 
-        console.log("newBorrowProportion", newBorrowProportion);
+        // console.log("newBorrowProportion", newBorrowProportion);
 
-        console.log("maximum borrow propotion", assetdata.maximumBorrowProportion);
+        // console.log("maximum borrow propotion", assetdata.borrowPosition[1]);
 
         // Compare with maximumBorrowProportion
-        return newBorrowProportion <= assetdata.maximumBorrowProportion;
+        return newBorrowProportion <= assetdata.borrowPosition[1]; // 1 -> maximumBorrowProportion
     }
 
     function calculateFee(
@@ -206,6 +219,7 @@ library EVO_LIBRARY {
         uint256 usersOriginIndex
     ) public pure returns (uint256, uint256, uint256) {
         uint256 earningHours = currentIndex - usersOriginIndex;
+        // console.log("Billed Hours", earningHours);
 
         uint256 DaoInterestCharge;
         uint256 OrderBookProviderCharge;
@@ -279,12 +293,12 @@ library EVO_LIBRARY {
         uint256 usersLiabilities,
         uint256 usersOriginIndex
     ) public pure returns (uint256) {
-        console.log("=====================calculateCompundedLiabilities Function======================");
+        // console.log("=====================calculateCompundedLiabilities Function======================");
         uint256 amountOfBilledHours = currentIndex - usersOriginIndex;
         // if(usersOriginIndex == 1) {
         //     amountOfBilledHours = amountOfBilledHours + 1; // lower gas fee than amountOfBilledHours++
         // }
-        console.log("amount of billed hours", amountOfBilledHours);
+        // console.log("amount of billed hours", amountOfBilledHours);
 
         // calculate what the rate would be after their trade and charge that
 
@@ -296,7 +310,7 @@ library EVO_LIBRARY {
                     assetdata,
                     interestRateInfo
                 ) / 8736))) / (10 ** 18);
-        console.log("adjustedNewLiabilities", adjustedNewLiabilities);
+        // console.log("adjustedNewLiabilities", adjustedNewLiabilities);
         uint256 initalMarginFeeAmount;
 
         if (newLiabilities == 0) {
@@ -308,11 +322,11 @@ library EVO_LIBRARY {
             );
         }
 
-        console.log("initalMarginFeeAmount", initalMarginFeeAmount);
+        // console.log("initalMarginFeeAmount", initalMarginFeeAmount);
 
         if (newLiabilities != 0) {
-            console.log("result", (adjustedNewLiabilities + initalMarginFeeAmount) -
-            newLiabilities);
+            // console.log("result", (adjustedNewLiabilities + initalMarginFeeAmount) -
+            // newLiabilities);
             return
                 (adjustedNewLiabilities + initalMarginFeeAmount) -
                 newLiabilities;
@@ -320,12 +334,12 @@ library EVO_LIBRARY {
             uint256 interestCharge;
 
             uint256 averageHourly = 1e18 + AverageCumulativeInterest / 8736;
-            console.log("averageHourly", averageHourly);
+            // console.log("averageHourly", averageHourly);
 
             (uint256 averageHourlyBase, int256 averageHourlyExp) = normalize(
                 averageHourly
             );
-            console.log("averageHourlyBase", averageHourlyBase);
+            // console.log("averageHourlyBase", averageHourlyBase);
             // console.log("averageHourlyExp", averageHourlyExp);
             averageHourlyExp = averageHourlyExp - 18;
 
@@ -353,12 +367,12 @@ library EVO_LIBRARY {
                 amountOfBilledHours /= 2;
             }
 
-            console.log("hourlyChargesBase", hourlyChargesBase);
+            // console.log("hourlyChargesBase", hourlyChargesBase);
 
             uint256 compoundedLiabilities = usersLiabilities *
                 hourlyChargesBase;
 
-            console.log("compoundedLiabilities", compoundedLiabilities);
+            // console.log("compoundedLiabilities", compoundedLiabilities);
 
             unchecked {
                 if (hourlyChargesExp >= 0) {
@@ -371,16 +385,16 @@ library EVO_LIBRARY {
                         (10 ** uint256(-hourlyChargesExp));
                 }
 
-                console.log("compoundedLiabilities", compoundedLiabilities);
-                console.log("user liabilities", usersLiabilities);
-                console.log("interest rate", compoundedLiabilities - usersLiabilities);
+                // console.log("compoundedLiabilities", compoundedLiabilities);
+                // console.log("user liabilities", usersLiabilities);
+                // console.log("interest rate", compoundedLiabilities - usersLiabilities);
 
                 interestCharge =
                     (compoundedLiabilities +
                         adjustedNewLiabilities +
                         initalMarginFeeAmount) -
                     (usersLiabilities + newLiabilities);
-                console.log("interestCharge", interestCharge);
+                // console.log("interestCharge", interestCharge);
             }
             return interestCharge;
         }
