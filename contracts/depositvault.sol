@@ -181,24 +181,17 @@ contract DepositVault is Ownable {
         );
         // console.log("amount before fee", amount);
         amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        // console.log("amount to be paid if fee is applicable", amount);
-        // console.log("amount after fee", amount);
-        // we need to add the function that transfertokenwithfee  : https://docs.uniswap.org/contracts/v2/reference/smart-contracts/router-02#swapexacttokensfortokenssupportingfeeontransfertokens
         require(IERC20.IERC20(token).transferFrom(msg.sender, address(this), amount));
         require(!circuitBreakerStatus);
-
-        // console.log("total supply before", Datahub.returnAssetLogs(token).totalAssetSupply);
         Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalSupply
-        // console.log("total supply after", Datahub.returnAssetLogs(token).totalAssetSupply);
-        
-        // console.log("amount after total asset supply", amount);
+       
 
         (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
             msg.sender,
             token
         );
 
-        // console.log("assets, liabilities", assets, liabilities);
+        console.log("assets, liabilities , amount", assets, liabilities, amount);
 
         if (assets == 0 && amount > liabilities) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
@@ -224,7 +217,10 @@ contract DepositVault is Ownable {
                 // Datahub.setTotalBorrowedAmount(token, amount, false);
 
                 // interestContract.chargeMassinterest(token);
-                liabilities -= amount;
+                // liabilities -= amount;
+                // updating liability mapping for user 
+
+               Datahub.removeLiabilities(msg.sender, token , amount);
 
                 Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
 
