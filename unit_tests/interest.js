@@ -17,6 +17,7 @@ const increaseTime =  require("./utils.js");
 
 const fs = require('fs');
 const exp = require("constants");
+const { Sign } = require("crypto");
 
 async function getTimeStamp(provider) {
     const block = await provider.getBlock('latest');
@@ -1417,6 +1418,31 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
             const result = await _Interest.calculateCompoundedAssetsTest(30000, 109090572904986170n, 9412667466204455n, 1);
             // console.log("result", result);
+        })
+
+        it("AlterTotalBorrow Function Test", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+            
+            await DataHub.setDaoWallet(signers[1].address);
+            expect(await DataHub.DAO_WALLET()).equals(signers[1].address);
+            
+            await DataHub.connect(signers[1]).setDaoRole(signers[2].address, true);
+            expect(await DataHub.dao_role(signers[2].address)).equals(true);
+
+            await DataHub.connect(signers[1]).setDaoRole(signers[2].address, false);
+            expect(await DataHub.dao_role(signers[2].address)).equals(false);
+
+            await DataHub.connect(signers[1]).setDaoRole(signers[2].address, true);
+            expect(await DataHub.dao_role(signers[2].address)).equals(true);
+
+            await DataHub.connect(signers[2]).changeTotalBorrowedAmountOfAsset(await USDT_TOKEN.getAddress(), 100_000000000000000000n);
+            // console.log((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[6][1]);
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[6][1]).equals(100_000000000000000000n);
+
+            await DataHub.connect(signers[1]).setDaoRole(signers[2].address, false);
+            expect(await DataHub.dao_role(signers[2].address)).equals(false);
+
+            await expect(DataHub.connect(signers[2]).changeTotalBorrowedAmountOfAsset(await USDT_TOKEN.getAddress(), 100_000000000000000000n)).to.be.revertedWith('Unauthorized');
         })
     })
 })
