@@ -71,9 +71,9 @@ contract MockDatahub is DataHub {
     sumOfAssets = calculateTotalAssetCollateralAmount(user);
     userLiabilities = calculateLiabilitiesValue(user);
     if(sumOfAssets < userLiabilities) {
-      userdata_negative_value[user] = userLiabilities - sumOfAssets;
+      userdata[user].negative_value = userLiabilities - sumOfAssets;
     } else {
-      userdata_negative_value[user] = 0;
+      userdata[user].negative_value = 0;
     }
   }
 }

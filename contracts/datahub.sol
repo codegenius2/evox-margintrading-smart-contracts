@@ -20,6 +20,7 @@ contract DataHub is Ownable {
         mapping(address => uint256) pending_balances;
         mapping(address => uint256) interestRateIndex;
         mapping(address => uint256) earningRateIndex;
+        uint256 negative_value;
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
@@ -91,8 +92,6 @@ contract DataHub is Ownable {
     /// @notice Keeps track of a users data
     /// @dev Go to IDatahub for more details
     mapping(address => UserData) public userdata;
-
-    mapping(address => uint256) public userdata_negative_value;
 
     /// @notice Keeps track of an assets data
     /// @dev Go to IDatahub for more details
@@ -185,9 +184,9 @@ contract DataHub is Ownable {
         sumOfAssets = calculateTotalAssetCollateralAmount(user);
         userLiabilities = calculateLiabilitiesValue(user);
         if(sumOfAssets < userLiabilities) {
-            userdata_negative_value[user] = userLiabilities - sumOfAssets;
+            userdata[user].negative_value = userLiabilities - sumOfAssets;
         } else {
-            userdata_negative_value[user] = 0;
+            userdata[user].negative_value = 0;
         }
     }
 
