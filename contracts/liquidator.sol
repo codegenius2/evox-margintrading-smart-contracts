@@ -256,7 +256,7 @@ contract Liquidator is Ownable {
         uint256 trade_amount
     ) private {
         // pay fee take less from the maker if they are a maker
-        Datahub.removeAssets(participant, asset, trade_amount);
+       // Datahub.removeAssets(participant, asset, trade_amount);
         Datahub.addPendingBalances(participant, asset, trade_amount);
     }
 
