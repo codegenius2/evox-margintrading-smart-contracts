@@ -64,4 +64,16 @@ contract MockDatahub is DataHub {
   ) external {
       assetdata[token].assetPrice = value;
   }
+
+  function alterUserNegativeValueTest(address user) public {
+    uint256 sumOfAssets;
+    uint256 userLiabilities;
+    sumOfAssets = calculateTotalAssetCollateralAmount(user);
+    userLiabilities = calculateLiabilitiesValue(user);
+    if(sumOfAssets < userLiabilities) {
+      userdata[user].negative_value = userLiabilities - sumOfAssets;
+    } else {
+      userdata[user].negative_value = 0;
+    }
+  }
 }
