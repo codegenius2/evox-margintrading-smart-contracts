@@ -92,6 +92,8 @@ contract DataHub is Ownable {
     /// @dev Go to IDatahub for more details
     mapping(address => UserData) public userdata;
 
+    mapping(address => uint256) public userdata_negative_value;
+
     /// @notice Keeps track of an assets data
     /// @dev Go to IDatahub for more details
     mapping(address => AssetData) public assetdata;
@@ -175,6 +177,18 @@ contract DataHub is Ownable {
         uint256 _updated_value
     ) external checkRoleAuthority {
         assetdata[token].assetInfo[1] = _updated_value; //  totalBorrowedAmount
+    }
+
+    function alterUserNegativeValue(address user) external checkRoleAuthority {
+        uint256 sumOfAssets;
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            userdata_negative_value[user] = userLiabilities - sumOfAssets;
+        } else {
+            userdata_negative_value[user] = 0;
+        }
     }
 
     /// -----------------------------------------------------------------------
@@ -683,6 +697,22 @@ contract DataHub is Ownable {
         return calculateTotalAssetValue(user) - calculateLiabilitiesValue(user);
     }
 
+    function calculateTotalAssetCollateralAmount(
+        address user
+    ) internal view returns (uint256) {
+        uint256 sumOfAssets;
+        address token;
+        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
+            token = userdata[user].tokens[i];
+            sumOfAssets +=
+                (((assetdata[token].assetPrice *
+                    userdata[user].asset_info[token]) / 10 ** 18) *
+                    assetdata[token].collateralMultiplier) /
+                10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        return sumOfAssets;
+    }
+
     /// @notice calculates the total dollar value of the users Collateral
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
@@ -709,16 +739,11 @@ contract DataHub is Ownable {
         address user
     ) external view returns (uint256) {
         uint256 sumOfAssets;
-        address token;
-        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
-            token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
-        }
-        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
         return sumOfAssets - calculateLiabilitiesValue(user);

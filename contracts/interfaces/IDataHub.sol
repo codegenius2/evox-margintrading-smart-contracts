@@ -152,6 +152,10 @@ interface IDataHub {
         uint256 amount
     ) external;
 
+    function alterUserNegativeValue(
+        address user
+    ) external;
+
     function SetMarginStatus(address user, bool onOrOff) external;
 
     function calculateAIMRForUser(address user) external view returns (uint256);
