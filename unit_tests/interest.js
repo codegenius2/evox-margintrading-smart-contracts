@@ -1271,7 +1271,7 @@ describe("Interest Test", function () {
 
         it("calculateAverageCumulativeInterest_fix Function Test", async function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
-
+                                    // 500
             const deposit_amount = 500_000000000000000000n
             const approvalTx = await USDT_TOKEN.approve(await deposit_vault.getAddress(), deposit_amount);
             await approvalTx.wait();  // Wait for the transaction to be mined
@@ -1279,7 +1279,7 @@ describe("Interest Test", function () {
             await transfer.wait();        
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
 
-            // REXE Deposit
+            // REXE Deposit             5000
             const deposit_amount_2 = 5_000_000000000000000000n
             const approvalTx1 = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
             await approvalTx1.wait();  // Wait for the transaction to be mined
@@ -1287,7 +1287,7 @@ describe("Interest Test", function () {
             await approvalTx_2.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount_2));
 
-            // USDT Deposit
+            // USDT Deposit             5000
             const deposit_amount_3 = 5_000_000000000000000000n
             const approvalTx_3 = await USDT_TOKEN.approve(await deposit_vault.getAddress(), deposit_amount_3);
             await approvalTx_3.wait();  // Wait for the transaction to be mined
