@@ -53,6 +53,21 @@ contract DataHub is Ownable {
         _;
     }
 
+    /// @notice Keeps track of a users data
+    /// @dev Go to IDatahub for more details
+    mapping(address => UserData) public userdata;
+
+    /// @notice Keeps track of an assets data
+    /// @dev Go to IDatahub for more details
+    mapping(address => AssetData) public assetdata;
+
+    /// @notice Keeps track of contract admins
+    mapping(address => bool) public admins;
+
+    mapping(address => bool) public dao_role;
+
+    address public DAO_WALLET;
+
     constructor(
         address initialOwner,
         address _executor,
@@ -89,16 +104,17 @@ contract DataHub is Ownable {
         interestContract = IInterestData(_interest);
     }
 
-    /// @notice Keeps track of a users data
-    /// @dev Go to IDatahub for more details
-    mapping(address => UserData) public userdata;
-
-    /// @notice Keeps track of an assets data
-    /// @dev Go to IDatahub for more details
-    mapping(address => AssetData) public assetdata;
-
-    /// @notice Keeps track of contract admins
-    mapping(address => bool) public admins;
+    /// @notice Sets a new DAO wallet
+    function setDaoWallet(address _dao) public onlyOwner {
+        DAO_WALLET = _dao;
+    }
+    function setDaoRole(
+        address _wallet,
+        bool _flag
+    ) public {
+        require(DAO_WALLET == msg.sender, "Only dao wallet can set the role!");
+        dao_role[_wallet] = _flag;
+    }
 
     /// @notice Alters the users interest rate index (or epoch)
     /// @dev This is to change the users rate epoch, it would be changed after they pay interest.
@@ -174,7 +190,8 @@ contract DataHub is Ownable {
     function changeTotalBorrowedAmountOfAsset(
         address token,
         uint256 _updated_value
-    ) external checkRoleAuthority {
+    ) external {
+        require((admins[msg.sender] == true) || (dao_role[msg.sender] == true), "Unauthorized");
         assetdata[token].assetInfo[1] = _updated_value; //  totalBorrowedAmount
     }
 
