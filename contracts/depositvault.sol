@@ -191,7 +191,7 @@ contract DepositVault is Ownable {
             token
         );
 
-        console.log("assets, liabilities , amount", assets, liabilities, amount);
+        // console.log("assets, liabilities , amount", assets, liabilities, amount);
 
         if (assets == 0 && amount > liabilities) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
