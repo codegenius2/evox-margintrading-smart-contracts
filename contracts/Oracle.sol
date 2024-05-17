@@ -345,7 +345,7 @@ contract Oracle is Ownable{
 
         for (uint256 i = 0; i < makers.length; i++) {
            // (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
-           (, , uint256 pending, , ) = Datahub.ReadUserData(makers[i], pair[0]);
+           (, , uint256 pending, , ) = Datahub.ReadUserData(makers[i], pair[1]);
 
             uint256 MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
 
