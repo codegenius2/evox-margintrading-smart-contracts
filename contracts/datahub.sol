@@ -183,7 +183,7 @@ contract DataHub is Ownable {
         address user,
         address token,
         uint256 amount
-    ) external checkRoleAuthority {
+    ) public checkRoleAuthority {
         userdata[user].asset_info[token] -= amount;
     }
 
@@ -263,9 +263,23 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
-        userdata[user].pending_balances[token] += amount;
-    }
+        // check that we are not removing  balance twice 
+        uint256 pendingamount ;
+        uint256 assets =  userdata[user].asset_info[token];
 
+        if (amount > assets ){
+
+            pendingamount = assets ;
+        }
+        else{ 
+            pendingamount = amount;
+        }
+        // cant have negative balance for the user 
+        userdata[user].pending_balances[token] += pendingamount;
+        // subracts from assest
+        removeAssets(user , token , pendingamount);
+
+    }
     /// @notice This removes a pending balance for the user on a token they are trading
     /// @dev We do this when the trade is cleared by the oracle and the trade is executed.
     /// @param user being targetted
@@ -276,7 +290,9 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
-        userdata[user].pending_balances[token] -= amount;
+    uint256 pendingBalances = userdata[user].pending_balances[token];
+    uint256 amountToRemove = amount >  pendingBalances ? pendingBalances : amount ;
+       userdata[user].pending_balances[token] -= amountToRemove;
     }
 
     function alterMMR(
