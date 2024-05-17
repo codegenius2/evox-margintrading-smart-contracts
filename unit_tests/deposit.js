@@ -179,6 +179,7 @@ async function main() {
 
     SETUPEX.wait()
 
+    console.log("exchange init done");
 
 
 
@@ -186,6 +187,7 @@ async function main() {
 
     setupDV.wait();
 
+    console.log("dV IS DONE");
 
     const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
 
@@ -193,6 +195,7 @@ async function main() {
 
     liqSetup.wait();
 
+    console.log("CurrentLiquidator IS DONE");
 
 
 
@@ -201,13 +204,13 @@ async function main() {
 
     setup.wait();
 
- 
+    console.log("dV IS DONE");
 
     const oraclesetup = await Oracle.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_depositVault.getAddress());
 
     oraclesetup.wait();
 
-
+    console.log("Oracle IS DONE");
 
     const _Interest = new hre.ethers.Contract(await Deploy_interest.getAddress(), InterestAbi.abi, signers[0]);
 
@@ -217,20 +220,40 @@ async function main() {
 
     interestSetup.wait();
 
+    console.log("_Interest IS DONE");
 
 
     const InitRatesREXE = await _Interest.initInterest(await REXE.getAddress(), 1, REXEinterestRateInfo, REXEInterestRate)
     const InitRatesUSDT = await _Interest.initInterest(await USDT.getAddress(), 1, USDT_interestRateInfo, USDTInterestRate)
 
     InitRatesREXE.wait();
+
+    console.log("InitRatesREXE");
+
     InitRatesUSDT.wait();
 
+    console.log("dV IS DONE");
+    const USDTMarginRequirement = [
+        200000000000000000n, // initialMarginRequirement
+        100000000000000000n // MaintenanceMarginRequirement
+    ];
+    const USDTBorrowPosition = [
+        700000000000000000n, // optimalBorrowProportion
+        1_000000000000000000n // maximumBorrowProportion
+    ];
 
-    const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTinitialMarginFee, USDTliquidationFee, USDTinitialMarginRequirement, USDTMaintenanceMarginRequirement, USDToptimalBorrowProportion, USDTmaximumBorrowProportion);
+    const USDTFeeInfo = [
+        5000000000000000n, // USDTinitialMarginRequirement
+        30000000000000000n, // USDTliquidationFee
+        0 // tokenTransferFee
+    ];
+   // const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTinitialMarginFee, USDTliquidationFee, USDTinitialMarginRequirement, USDTMaintenanceMarginRequirement, USDToptimalBorrowProportion, USDTmaximumBorrowProportion);
 
+    const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTMarginRequirement, USDTBorrowPosition, USDTFeeInfo);
 
     USDT_init_transaction.wait();
 
+    console.log("usdt-init-transaction")
 
     const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEinitialMarginFee, REXEliquidationFee, REXEinitialMarginRequirement, REXEMaintenanceMarginRequirement, REXEoptimalBorrowProportion, REXEmaximumBorrowProportion);
 
@@ -288,16 +311,9 @@ async function main() {
 
     await approvalTx_3.wait();  // Wait for the transaction to be mined
 
-<<<<<<< HEAD
     await DVM.deposit_token(await USDT.getAddress(),deposit_amount_3)
     const bal = await DataHub.returnAssetLogs(await USDT.getAddress())
     console.log("deposits complete", bal[9])
-=======
-    await DVM.deposit_token(
-        await USDT.getAddress(),
-        deposit_amount_2)
-    console.log("deposits complete")
->>>>>>> 0782dc97a1e749027f4b9de66188f1ad7024f0fd
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
     ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
