@@ -77,7 +77,7 @@ contract DepositVault is Ownable {
         return circuitBreakerStatus;
     }
 
-    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
+    // address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
 
     function _USDT() external view returns (address) {
         return USDT;
@@ -194,7 +194,7 @@ contract DepositVault is Ownable {
             token
         );
 
-        console.log("assets, liabilities , amount", assets, liabilities, amount);
+        // console.log("assets, liabilities , amount", assets, liabilities, amount);
 
         if (assets == 0 && amount > liabilities) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
