@@ -20,6 +20,7 @@ contract DataHub is Ownable {
         mapping(address => uint256) pending_balances;
         mapping(address => uint256) interestRateIndex;
         mapping(address => uint256) earningRateIndex;
+        uint256 negative_value;
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
@@ -51,6 +52,21 @@ contract DataHub is Ownable {
         require(admins[msg.sender] == true, "Unauthorized");
         _;
     }
+
+    /// @notice Keeps track of a users data
+    /// @dev Go to IDatahub for more details
+    mapping(address => UserData) public userdata;
+
+    /// @notice Keeps track of an assets data
+    /// @dev Go to IDatahub for more details
+    mapping(address => AssetData) public assetdata;
+
+    /// @notice Keeps track of contract admins
+    mapping(address => bool) public admins;
+
+    mapping(address => bool) public dao_role;
+
+    address public DAO_WALLET;
 
     constructor(
         address initialOwner,
@@ -88,16 +104,17 @@ contract DataHub is Ownable {
         interestContract = IInterestData(_interest);
     }
 
-    /// @notice Keeps track of a users data
-    /// @dev Go to IDatahub for more details
-    mapping(address => UserData) public userdata;
-
-    /// @notice Keeps track of an assets data
-    /// @dev Go to IDatahub for more details
-    mapping(address => AssetData) public assetdata;
-
-    /// @notice Keeps track of contract admins
-    mapping(address => bool) public admins;
+    /// @notice Sets a new DAO wallet
+    function setDaoWallet(address _dao) public onlyOwner {
+        DAO_WALLET = _dao;
+    }
+    function setDaoRole(
+        address _wallet,
+        bool _flag
+    ) public {
+        require(DAO_WALLET == msg.sender, "Only dao wallet can set the role!");
+        dao_role[_wallet] = _flag;
+    }
 
     /// @notice Alters the users interest rate index (or epoch)
     /// @dev This is to change the users rate epoch, it would be changed after they pay interest.
@@ -173,8 +190,21 @@ contract DataHub is Ownable {
     function changeTotalBorrowedAmountOfAsset(
         address token,
         uint256 _updated_value
-    ) external checkRoleAuthority {
+    ) external {
+        require((admins[msg.sender] == true) || (dao_role[msg.sender] == true), "Unauthorized");
         assetdata[token].assetInfo[1] = _updated_value; //  totalBorrowedAmount
+    }
+
+    function alterUserNegativeValue(address user) external checkRoleAuthority {
+        uint256 sumOfAssets;
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            userdata[user].negative_value = userLiabilities - sumOfAssets;
+        } else {
+            userdata[user].negative_value = 0;
+        }
     }
 
     /// -----------------------------------------------------------------------
@@ -699,6 +729,22 @@ contract DataHub is Ownable {
         return calculateTotalAssetValue(user) - calculateLiabilitiesValue(user);
     }
 
+    function calculateTotalAssetCollateralAmount(
+        address user
+    ) internal view returns (uint256) {
+        uint256 sumOfAssets;
+        address token;
+        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
+            token = userdata[user].tokens[i];
+            sumOfAssets +=
+                (((assetdata[token].assetPrice *
+                    userdata[user].asset_info[token]) / 10 ** 18) *
+                    assetdata[token].collateralMultiplier) /
+                10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        return sumOfAssets;
+    }
+
     /// @notice calculates the total dollar value of the users Collateral
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
@@ -725,16 +771,11 @@ contract DataHub is Ownable {
         address user
     ) external view returns (uint256) {
         uint256 sumOfAssets;
-        address token;
-        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
-            token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
-        }
-        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
         return sumOfAssets - calculateLiabilitiesValue(user);
