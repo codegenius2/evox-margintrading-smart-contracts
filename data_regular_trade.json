@@ -1,0 +1,42 @@
+{
+  "USDT-0": {
+    "index": 2,
+    "usdt_amount": 4.71,
+    "usdt_supply": 100,
+    "total-borrowed": 0,
+    "rate": 0.005,
+    "hourly-rate": 5.723443223443223e-7,
+    "liabilities": 0,
+    "timestamp": 1714683695
+  },
+  "USDT-2": {
+    "index": 2,
+    "usdt_amount": 95.29,
+    "usdt_supply": 100,
+    "total-borrowed": 0,
+    "rate": 0.005,
+    "hourly-rate": 5.723443223443223e-7,
+    "liabilities": 0,
+    "timestamp": 1714683695
+  },
+  "REXE-1": {
+    "index": 1,
+    "rexe_amount": 99,
+    "rexe_supply": 200,
+    "total-borrowed": 0,
+    "rate": 0.005,
+    "hourly-rate": 5.723443223443223e-7,
+    "liabilities": 0,
+    "timestamp": 1714683695
+  },
+  "REXE-2": {
+    "index": 1,
+    "rexe_amount": 101,
+    "rexe_supply": 200,
+    "total-borrowed": 0,
+    "rate": 0.005,
+    "hourly-rate": 5.723443223443223e-7,
+    "liabilities": 0,
+    "timestamp": 1714683695
+  }
+}
