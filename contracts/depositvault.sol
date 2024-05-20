@@ -11,6 +11,9 @@ import "./interfaces/IinterestData.sol";
 import "hardhat/console.sol";
 
 contract DepositVault is Ownable {
+
+    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
+    
     constructor(
         address initialOwner,
         address dataHub,
