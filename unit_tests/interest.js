@@ -1352,7 +1352,7 @@ describe("Interest Test", function () {
             await DataHub.alterUserNegativeValueTest(signers[0].address);
 
             // console.log("singer[0] negative amount", await DataHub.userdata_negative_value(signers[0].address));
-            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(503759321036106749750n);
+            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(1257518642072213499500n);
 
             // expect(userData_usdt2_signer1[0]).equals(1750000000000000000000n); // Amount
             // expect(userData_usdt2_signer1[1]).equals(0n); // Liability

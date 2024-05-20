@@ -40,10 +40,22 @@ contract Oracle is Ownable{
         address _DataHub,
         address _deposit_vault
     ) public onlyOwner {
+
+        admins[address(Executor)]=false;
         admins[_ex] = true;
-        Datahub = IDataHub(_DataHub);
-        DepositVault = IDepositVault(_deposit_vault);
         Executor = IExecutor(_ex);
+
+        admins[address(Datahub)]=false;
+        Datahub = IDataHub(_DataHub);
+        admins[_DataHub]=true;
+        
+        admins[address(DepositVault)]=false;
+        DepositVault = IDepositVault(_deposit_vault);
+        admins[_deposit_vault]=true;
+    }
+
+    function setAdminRole(address _admin) public onlyOwner() {
+        admins[_admin] = true;
     }
 
     /** Mapping's  */
@@ -270,7 +282,7 @@ contract Oracle is Ownable{
 
             // The reason why we update price AFTER we make the call to the executor is because if it fails, the prices wont update
             // and the update prices wll not be included in the  TX
-            if (pair[0] == USDT) {
+            if (pair[0] == DepositVault._USDT()) {
                 // console.log("taker amount", OrderDetails[requestId].taker_amounts[
                 //     OrderDetails[requestId].taker_amounts.length - 1
                 // ]);
@@ -329,14 +341,14 @@ contract Oracle is Ownable{
         uint256[] memory taker_amounts,
         uint256[] memory maker_amounts
     ) private {
-        // uint256 balanceToAdd;
-        // uint256 MakerbalanceToAdd;
+        uint256 balanceToAdd;
+        uint256 MakerbalanceToAdd;
         for (uint256 i = 0; i < takers.length; i++) {
             // (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
             (, , uint256 pending, , ) = Datahub.ReadUserData(takers[i], pair[0]);
             // 100 usdt 
             // if its a margin trade , its makes perfect sense 
-            uint256 balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
+            balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
 
             Datahub.addAssets(takers[i], pair[0], balanceToAdd);
 
@@ -347,7 +359,7 @@ contract Oracle is Ownable{
            // (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
            (, , uint256 pending, , ) = Datahub.ReadUserData(makers[i], pair[0]);
 
-            uint256 MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
+            MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
 
             Datahub.addAssets(makers[i], pair[1], MakerbalanceToAdd);
 
