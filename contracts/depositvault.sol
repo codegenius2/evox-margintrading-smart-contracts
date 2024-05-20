@@ -187,12 +187,20 @@ contract DepositVault is Ownable {
         require(IERC20.IERC20(token).transferFrom(msg.sender, address(this), amount));
         require(!circuitBreakerStatus);
         Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalSupply
-       
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
-            msg.sender,
-            token
-        );
+        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(msg.sender, token);
+
+        if(liabilities > 0) {
+            uint256 interestCharge = interestContract.returnInterestCharge(
+                msg.sender,
+                token,
+                0
+            );
+    
+            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            liabilities = liabilities + interestCharge;
+        }
+        
 
         // console.log("assets, liabilities , amount", assets, liabilities, amount);
 
@@ -223,7 +231,7 @@ contract DepositVault is Ownable {
                 // liabilities -= amount;
                 // updating liability mapping for user 
 
-               Datahub.removeLiabilities(msg.sender, token , amount);
+                Datahub.removeLiabilities(msg.sender, token , amount);
 
                 Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
 
@@ -413,26 +421,24 @@ contract DepositVault is Ownable {
         );
     
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
-        // extending support for token with fee on transfer 
-        // if(Datahub.tokenTransferFees(token) > 0){
-        //     amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        //     console.log("amount to be paid if fee is applicable", amount);
-        // }
         amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        // console.log("amount to be paid if fee is applicable", amount);
-        require(
-            ERC20Token.transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
-
+        require(ERC20Token.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalAssetSupply
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
-            beneficiary,
-            token
-        );
+        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(beneficiary, token);
 
-        if (assets == 0) {
+        if(liabilities > 0) {
+            uint256 interestCharge = interestContract.returnInterestCharge(
+                msg.sender,
+                token,
+                0
+            );
+    
+            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            liabilities = liabilities + interestCharge;
+        }
+
+        if (assets == 0 && amount > liabilities) {
             Datahub.alterUsersEarningRateIndex(beneficiary, token);
         } else {
             debitAssetInterest(beneficiary, token);
