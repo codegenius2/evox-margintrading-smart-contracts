@@ -1704,14 +1704,14 @@ describe("Interest Test", function () {
                     await approvalTx.wait();  // Wait for the transaction to be mined
                     await deposit_vault.connect(signers[2]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
                 }
-                allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN));
+                // allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN));
             }
 
             // File path for the JSON file
-            const filePath = './data_liability.json';
+            // const filePath = './data_liability.json';
 
             // Write all collected data to the JSON file
-            fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
+            // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
             // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN);
