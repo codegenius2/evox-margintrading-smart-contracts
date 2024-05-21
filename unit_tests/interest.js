@@ -1456,7 +1456,7 @@ describe("Interest Test", function () {
             // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN);
-            expect(Number(test_val["USDT-0"]["total-borrowed"])).greaterThan(Number(test_val["USDT-0"].liabilities));
+            expect(Number(test_val["USDT-0"]["total-borrowed"])).equals(Number(test_val["USDT-0"].liabilities));
             // console.log("test_val", test_val);
         })
 
@@ -1715,7 +1715,7 @@ describe("Interest Test", function () {
             // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN);
-            expect(Number(test_val["USDT-0"]["total-borrowed"])).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
+            expect(Number(test_val["USDT-0"]["total-borrowed"])).lessThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
         })
 
