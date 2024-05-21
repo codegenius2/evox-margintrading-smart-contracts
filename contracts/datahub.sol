@@ -551,7 +551,11 @@ contract DataHub is Ownable {
         if (pos_neg == true) {
             assetdata[token].assetInfo[id] += amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
         } else {
-            assetdata[token].assetInfo[id] -= amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            if( assetdata[token].assetInfo[id] < amount) {
+                assetdata[token].assetInfo[id] = 0; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            } else {
+                assetdata[token].assetInfo[id] -= amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            }
         }
     }
 
