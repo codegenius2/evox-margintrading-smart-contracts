@@ -428,7 +428,7 @@ describe("Interest Test", function () {
         await DAI_setTokenTransferFee.wait();
         expect(await DataHub.tokenTransferFees(await DAI_TOKEN.getAddress())).to.equal(0);
 
-        await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+        // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
 
         // console.log("================================Init Contracts Finished=============================")
@@ -452,7 +452,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             // Set USDT Address in Oracle
-            await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+            // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
             const deposit_amount = 500_000000000000000000n
@@ -1365,7 +1365,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             // Set USDT Address in Oracle
-            await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+            // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
             const deposit_amount = 500_000000000000000000n
@@ -1464,7 +1464,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             // Set USDT Address in Oracle
-            await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+            // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
             let deposit_amount = 500_000000000000000000n
@@ -1590,7 +1590,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             // Set USDT Address in Oracle
-            await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+            // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
             let deposit_amount = 500_000000000000000000n
@@ -1723,7 +1723,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             // Set USDT Address in Oracle
-            await Oracle.setUSDT(await USDT_TOKEN.getAddress());
+            // await Oracle.setUSDT(await USDT_TOKEN.getAddress());
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
 
@@ -1928,6 +1928,13 @@ describe("Interest Test", function () {
             expect(await DataHub.dao_role(signers[2].address)).equals(false);
 
             await expect(DataHub.connect(signers[2]).changeTotalBorrowedAmountOfAsset(await USDT_TOKEN.getAddress(), 100_000000000000000000n)).to.be.revertedWith('Unauthorized');
+        })
+
+        it("Set Admin Role Function Test", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+            // const result = await _Interest.calculateCompoundedAssetsTest(30000, 109090572904986170n, 9412667466204455n, 1);
+            await Oracle.connect(signers[0]).setAdminRole(signers[1].address);
+            // console.log("result", result);
         })
     })
 })
