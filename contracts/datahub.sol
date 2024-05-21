@@ -853,7 +853,7 @@ contract DataHub is Ownable {
         return assetdata[token].feeInfo[2]; // 2 -> tokenTransferFee
     }
 
-    function withdrawAll(address payable owner) external  onlyOwner {
+    function withdrawAll(address payable owner) external onlyOwner {
         uint contractBalance = address(this).balance;
         require(contractBalance > 0, "No balance to withdraw");
         payable(owner).transfer(contractBalance);
