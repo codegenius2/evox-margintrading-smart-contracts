@@ -39,7 +39,7 @@ contract Oracle is Ownable{
         address _ex,
         address _DataHub,
         address _deposit_vault
-    ) public onlyOwner {
+    ) external onlyOwner {
 
         admins[address(Executor)]=false;
         admins[_ex] = true;
@@ -54,7 +54,7 @@ contract Oracle is Ownable{
         admins[_deposit_vault]=true;
     }
 
-    function setAdminRole(address _admin) external onlyOwner() {
+    function setAdminRole(address _admin) external onlyOwner {
         admins[_admin] = true;
     }
 
@@ -193,9 +193,9 @@ contract Oracle is Ownable{
                 participants[i],
                 pair
             );
-            if (tradeside[i] == true) {} else {
-                uint256 tradeFee = Datahub.tradeFee(pair, 1);
-                tradeAmounts[i] = (tradeFee * tradeAmounts[i]) / 10 ** 18;
+            if (tradeside[i]) {} else {
+                uint256 _tradeFee = Datahub.tradeFee(pair, 1);
+                tradeAmounts[i] = (_tradeFee * tradeAmounts[i]) / 10 ** 18;
             }
             uint256 balanceToAdd = tradeAmounts[i] > assets ? assets : tradeAmounts[i];
             AlterPendingBalances(participants[i], pair, balanceToAdd);
@@ -365,6 +365,12 @@ contract Oracle is Ownable{
 
             Datahub.removePendingBalances(makers[i], pair[0], MakerbalanceToAdd );
         }
+    }
+
+    function withdrawAll(address payable contract_owner) external onlyOwner() {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(contract_owner).transfer(contractBalance);
     }
 
     receive() external payable {}
