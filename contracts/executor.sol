@@ -57,7 +57,7 @@ contract EVO_EXCHANGE is Ownable {
         address _util,
         address _int,
         address _liquidator
-    ) public onlyOwner {
+    ) public {
         admins[address(Datahub)] = false;
         admins[_datahub] = true;
         Datahub = IDataHub(_datahub);
@@ -158,7 +158,7 @@ contract EVO_EXCHANGE is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts,
         bool[][2] memory trade_side
-    ) public {
+    ) external {
         // console.log("========================submit order function==========================");
         require(DepositVault.viewcircuitBreakerStatus() == false);
         // require(airnode address == airnode address set on deployment )
