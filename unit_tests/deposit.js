@@ -247,6 +247,25 @@ async function main() {
         30000000000000000n, // USDTliquidationFee
         0 // tokenTransferFee
     ];
+
+
+   
+    const REXEFeeInfo = [
+        10000000000000000n, // USDTinitialMarginRequirement
+        100000000000000000n, // USDTliquidationFee
+        0 // tokenTransferFee
+    ];
+    const REXEMarginRequirement = [
+        500000000000000000n, // initialMarginRequirement
+        250000000000000000n // MaintenanceMarginRequirement
+    ];
+    const REXEBorrowPosition = [
+        700000000000000000n, // optimalBorrowProportion
+        1000000000000000000n // maximumBorrowProportion
+    ];
+    
+    const REXE_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
+
    // const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTinitialMarginFee, USDTliquidationFee, USDTinitialMarginRequirement, USDTMaintenanceMarginRequirement, USDToptimalBorrowProportion, USDTmaximumBorrowProportion);
 
     const USDT_init_transaction = await DataHub.InitTokenMarket(await USDT.getAddress(), USDTprice, USDTCollValue, tradeFees, USDTMarginRequirement, USDTBorrowPosition, USDTFeeInfo);
@@ -255,8 +274,7 @@ async function main() {
 
     console.log("usdt-init-transaction")
 
-    const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEinitialMarginFee, REXEliquidationFee, REXEinitialMarginRequirement, REXEMaintenanceMarginRequirement, REXEoptimalBorrowProportion, REXEmaximumBorrowProportion);
-
+    const REXE_init_transaction = await DataHub.InitTokenMarket(await REXE.getAddress(), REXEprice, EVOXCollValue, tradeFees, REXEMarginRequirement, REXEBorrowPosition, REXEFeeInfo)
     REXE_init_transaction.wait();
 
 
@@ -289,40 +307,48 @@ async function main() {
         deposit_amount
     )
 
-    const deposit_amount_2 = "1000000000000000000000"
-
-    const TOKENCONTRACT_2 = new hre.ethers.Contract(await REXE.getAddress(), tokenabi.abi, signers[1]);
-    // Wait for approval transaction to finish
-    const approvalTx_2 = await TOKENCONTRACT_2.approve(await Deploy_depositVault.getAddress(), "5000000000000000000000");
-    await approvalTx_2.wait();  // Wait for the transaction to be mined
 
 
-    const DVM = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[1]);
+    const abc = await DataHub.ReadUserData(signers[0],  await USDT.getAddress())
 
-    await DVM.deposit_token(
-        await REXE.getAddress(),
-        ("5000000000000000000000")
-    )
+    console.log(abc ,"this is user data")
 
 
-    const TOKENCONTRACT_3 = new hre.ethers.Contract(await USDT.getAddress(), tokenabi.abi, signers[1]);
 
-    const approvalTx_3 = await TOKENCONTRACT_3.approve(await Deploy_depositVault.getAddress(), deposit_amount_2);
+    // const deposit_amount_2 = "1000000000000000000000"
 
-    await approvalTx_3.wait();  // Wait for the transaction to be mined
+    // const TOKENCONTRACT_2 = new hre.ethers.Contract(await REXE.getAddress(), tokenabi.abi, signers[1]);
+    // // Wait for approval transaction to finish
+    // const approvalTx_2 = await TOKENCONTRACT_2.approve(await Deploy_depositVault.getAddress(), "5000000000000000000000");
+    // await approvalTx_2.wait();  // Wait for the transaction to be mined
 
-    await DVM.deposit_token(await USDT.getAddress(),deposit_amount_3)
-    const bal = await DataHub.returnAssetLogs(await USDT.getAddress())
-    console.log("deposits complete", bal[9])
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
-    ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
-    console.log("deposit successful moving to withdraw")
+    // const DVM = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[1]);
 
-    await DVM.withdraw_token(await USDT.getAddress(),
-    deposit_amount_2);
+    // await DVM.deposit_token(
+    //     await REXE.getAddress(),
+    //     ("5000000000000000000000")
+    // )
 
-    console.log("withdraw success")
+
+    // const TOKENCONTRACT_3 = new hre.ethers.Contract(await USDT.getAddress(), tokenabi.abi, signers[1]);
+
+    // const approvalTx_3 = await TOKENCONTRACT_3.approve(await Deploy_depositVault.getAddress(), deposit_amount_2);
+
+    // await approvalTx_3.wait();  // Wait for the transaction to be mined
+
+    // await DVM.deposit_token(await USDT.getAddress(),deposit_amount_3)
+    // const bal = await DataHub.returnAssetLogs(await USDT.getAddress())
+    // console.log("deposits complete", bal[9])
+    // ///////////////////////////////////////////////////////////////////////////////////////////////////////
+    // ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+    // console.log("deposit successful moving to withdraw")
+
+    // await DVM.withdraw_token(await USDT.getAddress(),
+    // deposit_amount_2);
+
+    // console.log("withdraw success")
 }
 //npx hardhat run scripts/deploy.js 
 main().then(() => process.exit(0))
@@ -333,3 +359,4 @@ main().then(() => process.exit(0))
 
 
 
+``

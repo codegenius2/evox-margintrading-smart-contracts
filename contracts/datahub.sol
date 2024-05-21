@@ -849,10 +849,6 @@ contract DataHub is Ownable {
         return AMMR;
     }
 
-    function tokenTransferFees(address token)external view returns(uint256 fee){
-        return assetdata[token].feeInfo[2]; // 2 -> tokenTransferFee
-    }
-
     function withdrawAll(address payable owner) external onlyOwner {
         uint contractBalance = address(this).balance;
         require(contractBalance > 0, "No balance to withdraw");
