@@ -262,6 +262,17 @@ contract Utility is Ownable {
         return ((maintenace * (amount)) / 10 ** 18); //
     }
 
+    function valideateTradeAmounts(
+        uint256[][2] memory trade_amounts
+    ) public view returns (bool) {
+        for (uint256 i = 0; i < trade_amounts[0].length; i++) {
+            if(trade_amounts[0][i] == 0 || trade_amounts[1][i] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /// @notice Checks that the trade will not push the asset over maxBorrowProportion
     function maxBorrowCheck(
         address[2] memory pair,

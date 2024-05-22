@@ -303,11 +303,7 @@ contract DepositVault is Ownable {
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        require(
-            amount + assetLogs.assetInfo[1] <
-            assetLogs.assetInfo[0],
-            "You cannot withdraw this amount as it would exceed the maximum borrow proportion"
-        );
+        require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
         /*
         This piece of code is having problems its supposed to be basically a piece of code to protect against dangerous withdraws 
 
@@ -339,8 +335,7 @@ contract DepositVault is Ownable {
         //     token
         // );
 
-        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) /
-            10 ** 18; // this is 10*18 dnominated price of asset amount
+        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
 

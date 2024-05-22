@@ -89,6 +89,10 @@ interface IUtilityContract {
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
 
+    function valideateTradeAmounts(
+        uint256[][2] memory trade_amounts
+    ) external view returns (bool);
+
     function Modifymmr(
         address user,
         address in_token,
