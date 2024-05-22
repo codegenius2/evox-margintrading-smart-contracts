@@ -429,9 +429,15 @@ contract DepositVault is Ownable {
         );
     
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
-        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
+        //chechking balance for contract before the token transfer 
+        uint256 contractBalanceBefore = ERC20Token.balanceOf(address(this));
+        // transfering the tokens to contract
         require(ERC20Token.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalAssetSupply
+        //checking the balance for the contract after the token transfer 
+        uint256 contractBalanceAfter = ERC20Token.balanceOf(address(this));
+        // exactAmountTransfered is the exact value being transfer in contract
+        uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
 
         (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(beneficiary, token);
 
@@ -446,16 +452,16 @@ contract DepositVault is Ownable {
             liabilities = liabilities + interestCharge;
         }
 
-        if (assets == 0 && amount > liabilities) {
+        if (assets == 0 && exactAmountTransfered > liabilities) {
             Datahub.alterUsersEarningRateIndex(beneficiary, token);
         } else {
             debitAssetInterest(beneficiary, token);
         }
 
         if (liabilities > 0) {
-            if (amount <= liabilities) {
+            if (exactAmountTransfered <= liabilities) {
                 uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(liabilities, amount);
+                    .calculatedepositLiabilityRatio(liabilities, exactAmountTransfered);
 
                 Datahub.alterLiabilities(
                     beneficiary,
@@ -463,15 +469,15 @@ contract DepositVault is Ownable {
                     ((10 ** 18) - liabilityMultiplier)
                 );
 
-                Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
+                Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedAmount
 
                 interestContract.chargeMassinterest(token);
 
                 return true;
             } else {
-                modifyMMROnDeposit(beneficiary, token, amount);
-                modifyIMROnDeposit(beneficiary, token, amount);
-                uint256 amountAddedtoAssets = amount - liabilities;
+                modifyMMROnDeposit(beneficiary, token, exactAmountTransfered);
+                modifyIMROnDeposit(beneficiary, token, exactAmountTransfered);
+                uint256 amountAddedtoAssets = exactAmountTransfered - liabilities;
 
                 Datahub.addAssets(beneficiary, token, amountAddedtoAssets);
                 Datahub.removeLiabilities(beneficiary, token, liabilities);
@@ -487,7 +493,7 @@ contract DepositVault is Ownable {
             users[0] = beneficiary;
 
             Datahub.checkIfAssetIsPresent(users, token);
-            Datahub.addAssets(beneficiary, token, amount);
+            Datahub.addAssets(beneficiary, token, exactAmountTransfered);
 
             return true;
         }
