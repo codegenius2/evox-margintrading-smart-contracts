@@ -30,7 +30,7 @@ contract DataHub is Ownable {
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
         uint256 collateralMultiplier;
         uint256 assetPrice;
-        uint256[3] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
+        uint256[2] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee
         // uint256 initialMarginFee; // assigned in function Ex
         // uint256 liquidationFee;
         // uint256 tokenTransferFee;  // add zero for normal token, add transfer fee amount if there is fee on transfer 
@@ -582,7 +582,7 @@ contract DataHub is Ownable {
     /// @param tradeFees the trade fees they pay while trading
     /// @param _marginRequirement 0 -> InitialMarginRequirement 1 -> MaintenanceMarginRequirement
     /// @param _borrowPosition 0 -> OptimalBorrowProportion 1 -> MaximumBorrowProportion
-    /// @param _feeInfo // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
+    /// @param _feeInfo // 0 -> initialMarginFee, 1 -> liquidationFee
     function InitTokenMarket(
         address token,
         uint256 assetPrice,
@@ -590,7 +590,7 @@ contract DataHub is Ownable {
         uint256[2] memory tradeFees,
         uint256[2] memory _marginRequirement,
         uint256[2] memory _borrowPosition,
-        uint256[3] memory _feeInfo
+        uint256[2] memory _feeInfo
         // uint256 initialMarginFee,
         // uint256 liquidationFee,
         // uint256 initialMarginRequirement,
@@ -621,7 +621,7 @@ contract DataHub is Ownable {
         // _borrowPosition[0] = optimalBorrowProportion; // 0 -> optimalBorrowProportion
         // _borrowPosition[1] = maximumBorrowProportion; // 1 -> maximumBorrowProportion
 
-        // // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
+        // // 0 -> initialMarginFee, 1 -> liquidationFee
         // _feeInfo[0] = initialMarginFee; // 
         // _feeInfo[1] = liquidationFee;
         // _feeInfo[2] = 0;
@@ -637,13 +637,6 @@ contract DataHub is Ownable {
             borrowPosition: _borrowPosition,
             totalDepositors: 0           
         });
-    }
-
-    function setTokenTransferFee(
-        address token,
-        uint256 value
-    ) external checkRoleAuthority {
-        assetdata[token].feeInfo[2] = value;// 2 -> tokenTransferFee
     }
 
     function tradeFee(
@@ -851,10 +844,6 @@ contract DataHub is Ownable {
             }
         }
         return AMMR;
-    }
-
-    function tokenTransferFees(address token)external view returns(uint256 fee){
-        return assetdata[token].feeInfo[2]; // 2 -> tokenTransferFee
     }
 
     function withdrawAll(address payable owner) external onlyOwner {
