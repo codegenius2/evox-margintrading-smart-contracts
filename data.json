@@ -8,7 +8,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714680090
+      "timestamp": 1714680089
     },
     "USDT-2": {
       "index": 1,
@@ -18,7 +18,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714680090
+      "timestamp": 1714680089
     },
     "REXE-1": {
       "index": 1,
@@ -28,7 +28,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714680090
+      "timestamp": 1714680089
     },
     "REXE-2": {
       "index": 1,
@@ -38,7 +38,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714680090
+      "timestamp": 1714680089
     }
   },
   {
@@ -50,7 +50,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 753.7593210361067,
-      "timestamp": 1714683690
+      "timestamp": 1714683689
     },
     "USDT-2": {
       "index": 2,
@@ -60,7 +60,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714683690
+      "timestamp": 1714683689
     },
     "REXE-1": {
       "index": 1,
@@ -70,7 +70,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714683690
+      "timestamp": 1714683689
     },
     "REXE-2": {
       "index": 1,
@@ -80,7 +80,7 @@
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "timestamp": 1714683690
+      "timestamp": 1714683689
     }
   }
 ]
