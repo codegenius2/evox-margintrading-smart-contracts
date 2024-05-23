@@ -265,6 +265,8 @@ library EVO_LIBRARY {
                     (10 ** uint256(-hourlyChargesExp));
             }
 
+            // console.log("compoundedAssets - usersAssets", compoundedAssets, usersAssets);
+
             interestCharge = compoundedAssets - usersAssets;
 
             if (interestCharge > 0) {

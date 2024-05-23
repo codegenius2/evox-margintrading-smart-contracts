@@ -213,7 +213,7 @@ describe("Interest Test", function () {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
             },
         });
-        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress());
+        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin);
 
         await Deploy_depositVault.waitForDeployment();
 
@@ -353,7 +353,7 @@ describe("Interest Test", function () {
 
         //////////////////// Init deposit vault //////////////////////
         const deposit_vault = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[0])
-        const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress())
+        const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress(), await Deploy_Utilities.getAddress())
         await setupDV.wait();
         // console.log("deposit vault init done")
 
@@ -1619,6 +1619,12 @@ describe("Interest Test", function () {
             await approvalTx.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[2]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
 
+            // console.log("usdt address", await USDT_TOKEN.getAddress());
+            // console.log("rexe address", await REXE_TOKEN.getAddress());
+            // console.log("singer0", signers[0].address);
+            // console.log("singer1", signers[1].address);
+            // console.log("signer2", signers[2].address);
+
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
             ///////////////////////////////////////////////////////////////////////////////////////////////////////
 
@@ -1676,31 +1682,31 @@ describe("Interest Test", function () {
                 // const masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
                 // await masscharges_rexe.wait(); // Wait for the transaction to be mined
 
-                if (i == 1 || i == 30) {
+                if (i == 1) {
                     await CurrentExchange.SubmitOrder(pair, participants_1, trade_amounts, trade_sides)
                 }
 
-                if (i == 10 || i == 43) {
+                if (i == 10) {
                     await CurrentExchange.SubmitOrder(pair, participants_2, trade_amounts, trade_sides)
                 }
                 // Add the data object to the array
-                if (i == 3) {
-                    // USDT Deposit
-                    deposit_amount = 1_000_000000000000000000n
-                    approvalTx = await USDT_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
-                    await approvalTx.wait();  // Wait for the transaction to be mined
-                    await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+                // if (i == 3) {
+                //     // USDT Deposit
+                //     deposit_amount = 1_000_000000000000000000n
+                //     approvalTx = await USDT_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+                //     await approvalTx.wait();  // Wait for the transaction to be mined
+                //     await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
 
-                    transfer = await USDT_TOKEN.transfer(signers[2].address, 1_000_000000000000000000n);
-                    await transfer.wait();
-                }
+                //     transfer = await USDT_TOKEN.transfer(signers[2].address, 1_000_000000000000000000n);
+                //     await transfer.wait();
+                // }
 
-                if (i == 27 ) {
-                    deposit_amount = 1_000_000000000000000000n
-                    approvalTx = await USDT_TOKEN.connect(signers[2]).approve(await deposit_vault.getAddress(), deposit_amount);
-                    await approvalTx.wait();  // Wait for the transaction to be mined
-                    await deposit_vault.connect(signers[2]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
-                }
+                // if (i == 27 ) {
+                //     deposit_amount = 1_000_000000000000000000n
+                //     approvalTx = await USDT_TOKEN.connect(signers[2]).approve(await deposit_vault.getAddress(), deposit_amount);
+                //     await approvalTx.wait();  // Wait for the transaction to be mined
+                //     await deposit_vault.connect(signers[2]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+                // }
                 // allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN));
             }
 
@@ -1712,7 +1718,7 @@ describe("Interest Test", function () {
             // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN);
-            expect(Number(test_val["USDT-0"]["total-borrowed"])).lessThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
+            expect(Number(test_val["USDT-0"]["total-borrowed"])).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
         })
 

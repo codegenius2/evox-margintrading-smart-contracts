@@ -170,7 +170,9 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
+        // console.log("user - token - amount", user, token, amount);
         userdata[user].asset_info[token] += amount;
+        // console.log("user amount", userdata[user].asset_info[token]);
     }
 
     /// @notice This removes balance from the users assets
@@ -727,12 +729,15 @@ contract DataHub is Ownable {
     ) internal view returns (uint256) {
         uint256 sumOfAssets;
         address token;
+        // console.log("user - token length",user, userdata[user].tokens.length);
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
+            // console.log("token", token);
+            // console.log("price", assetdata[token].assetPrice);
+            // console.log("amount", userdata[user].asset_info[token]);
+            // console.log("asset amount", ((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18));
+            // console.log("collateral multiplier", assetdata[token].collateralMultiplier);
+            sumOfAssets += (((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
         return sumOfAssets;
