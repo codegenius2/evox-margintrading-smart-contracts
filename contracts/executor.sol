@@ -358,12 +358,14 @@ contract EVO_EXCHANGE is Ownable {
             }
             // if the amount coming into their wallet is larger than their current liabilities
             usersLiabilities = Utilities.returnliabilities(users[i], in_token);
-
-            // uint256 interestCharge = interestContract.returnInterestCharge(
-            //     msg.sender,
-            //     token,
-            //     0
-            // );
+            if(usersLiabilities > 0) {
+                uint256 interestCharge = interestContract.returnInterestCharge(
+                    msg.sender,
+                    in_token,
+                    0
+                );
+                usersLiabilities = usersLiabilities + interestCharge;
+            }            
 
             // console.log("amount in - liability", amounts_in_token[i], usersLiabilities);
             if ( amounts_in_token[i] <= usersLiabilities ) {
@@ -397,7 +399,7 @@ contract EVO_EXCHANGE is Ownable {
                 if (usersLiabilities > 0) {
                     // console.log("usersliabilities", usersLiabilities);
                     // console.log("input amount", input_amount);
-                    input_amount -= usersLiabilities;
+                    input_amount = input_amount - usersLiabilities;
                     // console.log("input amount", input_amount);
                     // Charge a user interest and subtract from their liabilities
                     chargeinterest(
