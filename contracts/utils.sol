@@ -262,9 +262,9 @@ contract Utility is Ownable {
         return ((maintenace * (amount)) / 10 ** 18); //
     }
 
-    function valideateTradeAmounts(
+    function validateTradeAmounts(
         uint256[][2] memory trade_amounts
-    ) public view returns (bool) {
+    ) external view returns (bool) {
         for (uint256 i = 0; i < trade_amounts[0].length; i++) {
             if(trade_amounts[0][i] == 0 || trade_amounts[1][i] == 0) {
                 return false;

@@ -182,7 +182,7 @@ contract EVO_EXCHANGE is Ownable {
 
         // this checks if the asset they are trying to trade isn't pass max borrow
 
-        require(Utilities.valideateTradeAmounts(trade_amounts), "Never 0 trades");
+        require(Utilities.validateTradeAmounts(trade_amounts), "Never 0 trades");
         require(
             Utilities.maxBorrowCheck(pair, participants, trade_amounts),
             "This trade puts the protocol above maximum borrow proportion and cannot be completed"
@@ -358,6 +358,13 @@ contract EVO_EXCHANGE is Ownable {
             }
             // if the amount coming into their wallet is larger than their current liabilities
             usersLiabilities = Utilities.returnliabilities(users[i], in_token);
+
+            // uint256 interestCharge = interestContract.returnInterestCharge(
+            //     msg.sender,
+            //     token,
+            //     0
+            // );
+
             // console.log("amount in - liability", amounts_in_token[i], usersLiabilities);
             if ( amounts_in_token[i] <= usersLiabilities ) {
                 // charge interest and subtract from their liabilities, do not add to assets just subtract from liabilities

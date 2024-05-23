@@ -36,7 +36,7 @@ interface IUtilityContract {
         address user,
         address token,
         uint256 amount
-    ) external view returns (uint256);
+    ) external returns (uint256);
 
     function returnAssets(
         address user,
@@ -89,7 +89,7 @@ interface IUtilityContract {
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
 
-    function valideateTradeAmounts(
+    function validateTradeAmounts(
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
 

@@ -190,7 +190,7 @@ contract DepositVault is Ownable {
         uint256 contractBalanceAfter = IERC20.IERC20(token).balanceOf(address(this));
         // exactAmountTransfered is the exact value being transfer in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
-        console.log("exactAmountTransfered", exactAmountTransfered);
+        // console.log("exactAmountTransfered", exactAmountTransfered);
     
 
         require(!circuitBreakerStatus);
@@ -375,7 +375,7 @@ contract DepositVault is Ownable {
         }
     }
 
-    function debitAssetInterest(address user, address token) private {
+    function debitAssetInterest(address user, address token) public {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
 
         uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
@@ -493,9 +493,5 @@ contract DepositVault is Ownable {
             return true;
         }
     }
-
-
-
-
     receive() external payable {}
 }

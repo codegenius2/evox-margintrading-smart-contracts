@@ -24,7 +24,6 @@ contract DataHub is Ownable {
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
-
     struct AssetData {
         bool initialized;
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
@@ -569,9 +568,6 @@ contract DataHub is Ownable {
     function returnAssetLogs(
         address token
     ) public view returns (AssetData memory) {
-        // console.log("================returnAssetLogs Function===============");
-        // console.log("return asset token address", token);
-        // console.log("total supply in return Assetlogs", assetdata[token].totalAssetSupply);
         return assetdata[token];
     }
 
