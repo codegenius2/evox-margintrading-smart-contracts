@@ -20,38 +20,27 @@ contract Utility is Ownable {
         address _liquidator,
         address _ex
     ) public onlyOwner {
+        admins[address(Datahub)] = false;
         admins[_DataHub] = true;
         Datahub = IDataHub(_DataHub);
+
+        admins[address(DepositVault)] = false;
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
+
+        admins[address(Oracle)] = false;
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
+        
+        admins[address(interestContract)] = false;
         admins[_interest] = true;
         interestContract = IInterestData(_interest);
+
         admins[_liquidator] = true;
+
+        admins[address(Executor)] = false;
         admins[_ex] = true;
-    }
-
-    /// @notice Alters the Admin roles for the contract
-    /// @param _datahub  the new address for the datahub
-    /// @param _depositVault the new address for the deposit vault
-    /// @param _oracle the new address for oracle
-    /// @param  _int the new address for the interest contract
-    function alterContractStrucutre(
-        address _datahub,
-        address _depositVault,
-        address _oracle,
-        address _int
-    ) public onlyOwner {
-        Datahub = IDataHub(_datahub);
-        DepositVault = IDepositVault(_depositVault);
-        Oracle = IOracle(_oracle);
-        interestContract = IInterestData(_int);
-    }
-
-    modifier checkRoleAuthority() {
-        require(admins[msg.sender] == true, "Unauthorized");
-        _;
+        Executor = IExecutor(_ex);
     }
 
     /// @notice Keeps track of contract admins
@@ -66,6 +55,12 @@ contract Utility is Ownable {
     IExecutor public Executor;
 
     IInterestData public interestContract;
+
+    /// @notice checks the role authority of the caller to see if they can change the state
+    modifier checkRoleAuthority() {
+        require(admins[msg.sender] == true, "Unauthorized");
+        _;
+    }
 
     /** Constructor  */
     constructor(
@@ -264,7 +259,7 @@ contract Utility is Ownable {
 
     function validateTradeAmounts(
         uint256[][2] memory trade_amounts
-    ) external view returns (bool) {
+    ) external pure returns (bool) {
         for (uint256 i = 0; i < trade_amounts[0].length; i++) {
             if(trade_amounts[0][i] == 0 || trade_amounts[1][i] == 0) {
                 return false;
@@ -306,11 +301,13 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) external returns (bool) {
+        // console.log("==================taker======================");
         bool takerTradeConfirmation = processChecks(
             participants[0],
             trade_amounts[0],
             pair[0]
         );
+        // console.log("==================maker======================");
         bool makerTradeConfirmation = processChecks(
             participants[1],
             trade_amounts[1],
@@ -490,6 +487,45 @@ contract Utility is Ownable {
                 );
             }
         }
+    }
+
+    function debitAssetInterest(address user, address token) external checkRoleAuthority {
+        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+
+        uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+        address orderBookProvider = Executor.fetchOrderBookProvider();
+        address daoWallet = Executor.fetchDaoWallet();
+
+        uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
+            usersEarningRateIndex,
+            currentReateIndex,
+            token
+        );
+
+        // console.log("averageCumulativeDepositInterest", averageCumulativeDepositInterest);
+
+        (
+            uint256 interestCharge,
+            uint256 OrderBookProviderCharge,
+            uint256 DaoInterestCharge
+        ) = EVO_LIBRARY.calculateCompoundedAssets(
+                currentReateIndex,
+                averageCumulativeDepositInterest,
+                assets,
+                usersEarningRateIndex
+            );
+        
+        Datahub.alterUsersEarningRateIndex(user, token);
+        // console.log("////////////////interest charge//////////////////", interestCharge);
+        Datahub.addAssets(user, token, interestCharge);
+        Datahub.addAssets(daoWallet, token, DaoInterestCharge);
+
+        Datahub.addAssets(
+            orderBookProvider,
+            token,
+            OrderBookProviderCharge
+        );
     }
 /*
     /// @notice Explain to an end user what this does

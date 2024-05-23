@@ -36,7 +36,7 @@ interface IUtilityContract {
         address user,
         address token,
         uint256 amount
-    ) external returns (uint256);
+    ) external view returns (uint256);
 
     function returnAssets(
         address user,
@@ -106,4 +106,6 @@ interface IUtilityContract {
         address out_token,
         uint256 amount
     ) external;
+
+    function debitAssetInterest(address user, address token) external;
 }

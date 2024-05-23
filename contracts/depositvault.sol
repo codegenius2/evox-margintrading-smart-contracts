@@ -8,6 +8,7 @@ import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./libraries/EVO_LIBRARY.sol";
 import "./interfaces/IExecutor.sol";
 import "./interfaces/IinterestData.sol";
+import "./interfaces/IUtilityContract.sol";
 import "hardhat/console.sol";
 
 contract DepositVault is Ownable {
@@ -18,11 +19,13 @@ contract DepositVault is Ownable {
         address initialOwner,
         address dataHub,
         address executor,
-        address interest
+        address interest,
+        address _utility
     ) Ownable(initialOwner) {
         Datahub = IDataHub(dataHub);
         Executor = IExecutor(executor);
         interestContract = IInterestData(interest);
+        utility = IUtilityContract(_utility);
     }
 
     modifier checkRoleAuthority() {
@@ -34,22 +37,31 @@ contract DepositVault is Ownable {
     function alterAdminRoles(
         address dataHub,
         address executor,
-        address interest
+        address interest,
+        address _utility
     ) public onlyOwner {
+
         admins[address(Datahub)]= false; 
         admins[dataHub] = true;
         Datahub = IDataHub(dataHub);
+
         admins[address(Executor)] = false;
         admins[executor] = true;
         Executor = IExecutor(executor);
+
         admins[address(interestContract)] = false;
         admins[interest] = true;
         interestContract = IInterestData(interest);
+
+        admins[address(utility)] = false;
+        admins[_utility] = true;
+        utility = IUtilityContract(_utility);
     }
 
     IDataHub public Datahub;
     IExecutor public Executor;
     IInterestData public interestContract;
+    IUtilityContract public utility;
 
     using EVO_LIBRARY for uint256;
 
@@ -215,7 +227,7 @@ contract DepositVault is Ownable {
         if (assets == 0 && exactAmountTransfered > liabilities) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
         } else {
-            debitAssetInterest(msg.sender, token);
+            utility.debitAssetInterest(msg.sender, token);
         }
 
         ///
@@ -292,7 +304,7 @@ contract DepositVault is Ownable {
             "this asset is not available to be deposited or traded"
         );
 
-        debitAssetInterest(msg.sender, token);
+        utility.debitAssetInterest(msg.sender, token);
 
         (uint256 assets, , uint256 pending, , ) = Datahub.ReadUserData(
             msg.sender,
@@ -375,43 +387,6 @@ contract DepositVault is Ownable {
         }
     }
 
-    function debitAssetInterest(address user, address token) public {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
-
-        uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
-        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-        address orderBookProvider = Executor.fetchOrderBookProvider();
-        address daoWallet = Executor.fetchDaoWallet();
-
-        uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
-            usersEarningRateIndex,
-            currentReateIndex,
-            token
-        );
-
-        (
-            uint256 interestCharge,
-            uint256 OrderBookProviderCharge,
-            uint256 DaoInterestCharge
-        ) = EVO_LIBRARY.calculateCompoundedAssets(
-                currentReateIndex,
-                averageCumulativeDepositInterest,
-                assets,
-                usersEarningRateIndex
-            );
-        
-        Datahub.alterUsersEarningRateIndex(user, token);
-
-        Datahub.addAssets(user, token, interestCharge);
-        Datahub.addAssets(daoWallet, token, DaoInterestCharge);
-
-        Datahub.addAssets(
-            orderBookProvider,
-            token,
-            OrderBookProviderCharge
-        );
-    }
-
     /* DEPOSIT FOR FUNCTION */
     function deposit_token_for(
         address beneficiary,
@@ -450,7 +425,7 @@ contract DepositVault is Ownable {
         if (assets == 0 && exactAmountTransfered > liabilities) {
             Datahub.alterUsersEarningRateIndex(beneficiary, token);
         } else {
-            debitAssetInterest(beneficiary, token);
+            utility.debitAssetInterest(beneficiary, token);
         }
 
         if (liabilities > 0) {
