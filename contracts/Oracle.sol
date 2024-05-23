@@ -299,12 +299,7 @@ contract Oracle is Ownable{
                 uint256 decimals = DepositVault.fetchDecimals(pair[1]);
                 Datahub.toggleAssetPrice(
                     pair[1],
-                    ((OrderDetails[requestId].taker_amounts[
-                        OrderDetails[requestId].taker_amounts.length - 1
-                    ] * (10 ** decimals)) /
-                        OrderDetails[requestId].maker_amounts[
-                            OrderDetails[requestId].maker_amounts.length - 1
-                        ])
+                    ((OrderDetails[requestId].taker_amounts[OrderDetails[requestId].taker_amounts.length - 1] * (10 ** decimals)) / OrderDetails[requestId].maker_amounts[OrderDetails[requestId].maker_amounts.length - 1])
                 );
             } else {
                 // console.log("maker amount", OrderDetails[requestId].maker_amounts[

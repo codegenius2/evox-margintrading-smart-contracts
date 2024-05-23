@@ -297,7 +297,7 @@ contract interestData {
 
         return
             (cumulativeInterestRates / (endIndex - (startIndex - 1))) *
-            (cumulativeBorrowProportion / (endIndex - (startIndex - 1)));
+            (cumulativeBorrowProportion / (endIndex - (startIndex - 1))) / 10 ** 18;
     }
 
     /// @notice updates intereest epochs, fills in the struct of data for a new index

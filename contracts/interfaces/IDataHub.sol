@@ -19,7 +19,7 @@ interface IDataHub {
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
         uint256 collateralMultiplier;
         uint256 assetPrice;
-        uint256[3] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
+        uint256[2] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
         // uint256 initialMarginFee; // assigned in function Ex
         // uint256 liquidationFee;
         // uint256 tokenTransferFee;  // add zero for normal token, add transfer fee amount if there is fee on transfer 
