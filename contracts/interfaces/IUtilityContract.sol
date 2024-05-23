@@ -36,7 +36,7 @@ interface IUtilityContract {
         address user,
         address token,
         uint256 amount
-    ) external view returns (uint256);
+    ) external returns (uint256);
 
     function returnAssets(
         address user,

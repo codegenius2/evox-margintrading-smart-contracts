@@ -158,8 +158,13 @@ contract Utility is Ownable {
         address user,
         address token,
         uint256 amount
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        if(assets > 0) {
+            debitAssetInterest(user, token);
+            (assets, , , , ) = Datahub.ReadUserData(user, token);
+        }
+        
         return amount > assets ? amount - assets : 0;
     }
     /// @notice Cycles through two lists of users and checks how many liabilities are going to be issued to each user
@@ -167,7 +172,7 @@ contract Utility is Ownable {
         address[2] memory pair,
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
-    ) public view returns (uint256[] memory, uint256[] memory) {
+    ) public returns (uint256[] memory, uint256[] memory) {
         // console.log("================calculateTradeLiabilityAddtions Function=====================");
         uint256[] memory TakerliabilityAmounts = new uint256[](
             participants[0].length
@@ -489,7 +494,7 @@ contract Utility is Ownable {
         }
     }
 
-    function debitAssetInterest(address user, address token) external checkRoleAuthority {
+    function debitAssetInterest(address user, address token) public checkRoleAuthority {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
 
         uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
