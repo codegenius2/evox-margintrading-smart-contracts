@@ -406,6 +406,8 @@ describe("Interest Test", function () {
         const deposit_vault = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[0])
         const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress(), await Deploy_Utilities.getAddress())
         await setupDV.wait();
+
+        await deposit_vault.setUSDT(await USDT.getAddress());
         // console.log("deposit vault init done")
 
         //////////////////// Init liquidator //////////////////////
@@ -1395,12 +1397,12 @@ describe("Interest Test", function () {
             expect(userData_rexe_signer11[0]).equals(2500000000000000000000n); // Amount
             expect(userData_rexe_signer11[1]).equals(0); // Liability
 
-            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 100000000000000000n);
+            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 100000000n);
 
             await DataHub.alterUserNegativeValueTest(signers[0].address);
 
             // console.log("singer[0] negative amount", await DataHub.userdata_negative_value(signers[0].address));
-            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(1257518642072213499500n);
+            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(753759320786106749750n);
 
             // expect(userData_usdt2_signer1[0]).equals(1750000000000000000000n); // Amount
             // expect(userData_usdt2_signer1[1]).equals(0n); // Liability
@@ -1974,10 +1976,16 @@ describe("Interest Test", function () {
                 const masscharges_usdt = await _Interest.chargeMassinterest(await USDT_TOKEN.getAddress()); // increase borrow amount
                 await masscharges_usdt.wait(); // Wait for the transaction to be mined
 
-                // const masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
-                // await masscharges_rexe.wait(); // Wait for the transaction to be mined
+                const masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
+                await masscharges_rexe.wait(); // Wait for the transaction to be mined
+
+                // console.log("usdt price before trade", (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[3]);
+                // console.log("rexe price before trade", (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress()))[3]);
 
                 await CurrentExchange.SubmitOrder(pair, participants, trade_amounts, trade_sides)
+
+                // console.log("usdt price after trade", (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[3]);
+                // console.log("rexe price before trade", (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress()))[3]);
 
                 // Add the data object to the array
                 allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN));
