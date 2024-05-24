@@ -3,6 +3,7 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IDepositVault.sol";
 import "./interfaces/IExecutor.sol";
@@ -56,6 +57,11 @@ contract Oracle is Ownable{
 
     function setAdminRole(address _admin) external onlyOwner {
         admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
     }
 
     /** Mapping's  */
@@ -362,10 +368,30 @@ contract Oracle is Ownable{
         }
     }
 
-    function withdrawAll(address payable contract_owner) external onlyOwner() {
+    function withdrawETH(address payable owner) external onlyOwner {
         uint contractBalance = address(this).balance;
         require(contractBalance > 0, "No balance to withdraw");
-        payable(contract_owner).transfer(contractBalance);
+        payable(owner).transfer(contractBalance);
+    }
+
+    function withdrawERC20(
+        address tokenAddress,
+        address to
+    ) external onlyOwner {
+        // Ensure the tokenAddress is valid
+        require(tokenAddress != address(0), "Invalid token address");
+        // Ensure the recipient address is valid
+        require(to != address(0), "Invalid recipient address");
+
+        // Get the balance of the token held by the contract
+        IERC20.IERC20 token = IERC20.IERC20(tokenAddress);
+        uint256 contractBalance = token.balanceOf(address(this));
+
+        // Ensure the contract has enough tokens to transfer
+        require(contractBalance > 0, "Insufficient token balance");
+
+        // Transfer the tokens
+        require(token.transfer(to, contractBalance), "Token transfer failed");
     }
 
     receive() external payable {}

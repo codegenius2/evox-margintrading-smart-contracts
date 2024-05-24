@@ -81,6 +81,16 @@ contract DepositVault is Ownable {
 
     uint256 public lastUpdateTime;
 
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
+
     function toggleCircuitBreaker(bool onOff) public onlyOwner {
         circuitBreakerStatus = onOff;
     }
@@ -382,7 +392,7 @@ contract DepositVault is Ownable {
         // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 1 -> totalBorrowedAmount
-        if (assetLogs.assetInfo[1] > 0) {
+        if (assetLogs.assetInfo[1] != 0) {
             interestContract.chargeMassinterest(token);
         }
     }
@@ -467,6 +477,12 @@ contract DepositVault is Ownable {
 
             return true;
         }
+    }
+
+    function withdrawETH(address payable owner) external onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
     }
     receive() external payable {}
 }

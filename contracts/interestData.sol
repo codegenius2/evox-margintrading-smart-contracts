@@ -5,7 +5,6 @@ import "./interfaces/IDataHub.sol";
 import "./interfaces/IExecutor.sol";
 import "./interfaces/IUtilityContract.sol";
 import "./libraries/EVO_LIBRARY.sol";
-
 import "hardhat/console.sol";
 
 contract interestData {
@@ -36,6 +35,18 @@ contract interestData {
         admins[address(utils)] = false;
         admins[_utils] = true;
         utils = IUtilityContract(_utils);
+    }
+
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external {
+        require(msg.sender == owner, " you cannot perform this action");
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external {
+        require(msg.sender == owner, " you cannot perform this action");
+        admins[_admin] = false;
     }
 
     function transferOwnership(address _owner) public {

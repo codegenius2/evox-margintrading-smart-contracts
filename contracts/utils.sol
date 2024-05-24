@@ -3,6 +3,7 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
@@ -55,6 +56,16 @@ contract Utility is Ownable {
     IExecutor public Executor;
 
     IInterestData public interestContract;
+
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
 
     /// @notice checks the role authority of the caller to see if they can change the state
     modifier checkRoleAuthority() {
