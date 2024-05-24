@@ -458,33 +458,33 @@ contract EVO_EXCHANGE is Ownable {
         Utilities.Modifyimr(user, in_token, out_token, amount);
     }
 
-    /// @notice This fetches a users accrued deposit interest
-    /// @dev when a user deposits to the exchange they earn interest on their deposit paid for by margined users who have liabilities
-    /// @param user the user we are wishing to see the deposit interest for
-    /// @param token the token the user is earning deposit interest on
-    /// @return interestCharge the amount of deposit interest the user has accrued
-    function fetchUsersDepositInterest(
-        address user,
-        address token
-    ) public view returns (uint256) {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
-        uint256 userEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-        uint256 currentrateIndex = interestContract.fetchCurrentRateIndex(token);
-        uint256 cumulativeinterest = interestContract
-            .calculateAverageCumulativeDepositInterest(
-                userEarningRateIndex,
-                currentrateIndex,
-                token
-            );
+    // /// @notice This fetches a users accrued deposit interest
+    // /// @dev when a user deposits to the exchange they earn interest on their deposit paid for by margined users who have liabilities
+    // /// @param user the user we are wishing to see the deposit interest for
+    // /// @param token the token the user is earning deposit interest on
+    // /// @return interestCharge the amount of deposit interest the user has accrued
+    // function fetchUsersDepositInterest(
+    //     address user,
+    //     address token
+    // ) public view returns (uint256) {
+    //     (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+    //     uint256 userEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+    //     uint256 currentrateIndex = interestContract.fetchCurrentRateIndex(token);
+    //     uint256 cumulativeinterest = interestContract
+    //         .calculateAverageCumulativeDepositInterest(
+    //             userEarningRateIndex,
+    //             currentrateIndex,
+    //             token
+    //         );
 
-        (uint256 interestCharge, , ) = EVO_LIBRARY.calculateCompoundedAssets(
-            userEarningRateIndex,
-            (cumulativeinterest / 10 ** 18),
-            assets,
-            userEarningRateIndex
-        );
-        return interestCharge;
-    }
+    //     (uint256 interestCharge, , ) = EVO_LIBRARY.calculateCompoundedAssets(
+    //         userEarningRateIndex,
+    //         (cumulativeinterest / 10 ** 18),
+    //         assets,
+    //         userEarningRateIndex
+    //     );
+    //     return interestCharge;
+    // }
 
     /// @notice This will charge interest to a user if they are accuring new liabilities
     /// @param user the address of the user beign confirmed
