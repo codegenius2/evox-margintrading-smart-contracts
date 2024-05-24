@@ -133,10 +133,10 @@ contract interestData {
         uint256 biggestPossibleStartTimeframe;
         uint256 adjustedIndex;
         
-        if(startIndex != 1) {
-            startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        if(startIndex == endIndex) {
+            return 0;
         }
-        // startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
 
         for (uint256 i = 0; i < timeframes.length; i++) {
             if ( startIndex + timeframes[i] - 1 <= endIndex) { // For spliting
@@ -224,8 +224,8 @@ contract interestData {
         uint256 biggestPossibleStartTimeframe;
         uint256 adjustedIndex;
 
-        if(startIndex != 1) {
-            startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
+        if(startIndex == endIndex) {
+            return 0;
         }
         // startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
         
