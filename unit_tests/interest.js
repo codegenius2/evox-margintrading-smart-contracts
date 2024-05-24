@@ -71,6 +71,29 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_
     // console.log("REXE interestadjustedLiabilities", interestadjustedLiabilities_rexe);
 
     // Get liability
+    let userData_usdt_singer1 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+    let liabilitiesValue_usdt_signer1 = userData_usdt_singer1[1];
+    // console.log("USDT liabilitiesValue", liabilitiesValue_usdt);
+
+    let userData_rexe_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+    let liabilitiesValue_rexe_signer1 = userData_rexe_signer1[1];
+    // console.log("REXE liabilitiesValue", liabilitiesValue_rexe);
+
+    // Get interestadjustedliability
+    let interestadjustedLiabilities_usdt_signer1 = await _Interest.returnInterestCharge(
+        signers[1].address,
+        await USDT_TOKEN.getAddress(),
+        0
+    )
+    // console.log("USDT interestadjustedLiabilities", interestadjustedLiabilities_usdt);
+
+    let interestadjustedLiabilities_rexe_signer1 = await _Interest.returnInterestCharge(
+        signers[1].address,
+        await REXE_TOKEN.getAddress(),
+        0
+    )
+
+    // Get liability
     let userData_usdt_singer2 = await DataHub.ReadUserData(signers[2].address, await USDT_TOKEN.getAddress());
     let liabilitiesValue_usdt_signer2 = userData_usdt_singer2[1];
     // console.log("USDT liabilitiesValue", liabilitiesValue_usdt);
@@ -105,6 +128,12 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_
     let usdt_amount_signer0 = user_usdt_data_signer0[0];    
     let rexe_amount_signer0 = rexe_usdt_data_signer0[0];
 
+    let user_usdt_data_signer1 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+    let rexe_usdt_data_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+
+    let usdt_amount_signer1 = user_usdt_data_signer1[0];    
+    let rexe_amount_signer1 = rexe_usdt_data_signer1[0];
+
     let user_usdt_data_signer2 = await DataHub.ReadUserData(signers[2].address, await USDT_TOKEN.getAddress());
     let rexe_usdt_data_signer2 = await DataHub.ReadUserData(signers[2].address, await REXE_TOKEN.getAddress());
 
@@ -127,6 +156,17 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_
             "liabilities": Number(Number(liabilitiesValue_usdt_signer0) + Number(interestadjustedLiabilities_usdt_singer0)) / 10 ** 18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
+        "USDT-1" : {
+            "index": Number(interestIndex_usdt.toString()),
+            // "loop #": i,
+            "usdt_amount": Number(usdt_amount_signer1.toString()) / 10 ** 18,
+            "usdt_supply" : Number(usdt_supply.toString()) / 10 ** 18,
+            "total-borrowed": Number(borrowed_usdt.toString()) / 10 ** 18,
+            "rate": Number(Rate_usdt.toString()) / 10 ** 18,
+            "hourly-rate": Number(hourly_rate_usdt) / 10 ** 18,
+            "liabilities": Number(Number(liabilitiesValue_usdt_signer1) + Number(interestadjustedLiabilities_usdt_signer1)) / 10 ** 18,
+            "timestamp": Number(scaledTimestamp.toString()),
+        },
         "USDT-2" : {
             "index": Number(interestIndex_usdt.toString()),
             // "loop #": i,
@@ -138,7 +178,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_
             "liabilities": Number(Number(liabilitiesValue_usdt_signer2) + Number(interestadjustedLiabilities_usdt_signer2)) / 10 ** 18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
-        "REXE-1" : {
+        "REXE-0" : {
             "index": Number(interestIndex_rexe.toString()),
             // "loop #": i,
             "rexe_amount" : Number(rexe_amount_signer0.toString()) / 10 ** 18,
@@ -147,6 +187,17 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_
             "rate": Number(Rate_rexe.toString()) / 10 ** 18,
             "hourly-rate": hourly_rate_rexe / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_rexe_signer0) + Number(interestadjustedLiabilities_rexe_signer0)) / 10 ** 18,
+            "timestamp": Number(scaledTimestamp.toString()),
+        },
+        "REXE-1" : {
+            "index": Number(interestIndex_rexe.toString()),
+            // "loop #": i,
+            "rexe_amount" : Number(rexe_amount_signer1.toString()) / 10 ** 18,
+            "rexe_supply" : Number(rexe_supply.toString()) / 10 ** 18,
+            "total-borrowed": Number(borrowed_rexe.toString()) / 10 ** 18,
+            "rate": Number(Rate_rexe.toString()) / 10 ** 18,
+            "hourly-rate": hourly_rate_rexe / 10 ** 18,
+            "liabilities": Number(Number(liabilitiesValue_rexe_signer1) + Number(interestadjustedLiabilities_rexe_signer1)) / 10 ** 18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
         "REXE-2" : {
@@ -355,6 +406,8 @@ describe("Interest Test", function () {
         const deposit_vault = new hre.ethers.Contract(await Deploy_depositVault.getAddress(), depositABI.abi, signers[0])
         const setupDV = await deposit_vault.alterAdminRoles(await Deploy_dataHub.getAddress(), await Deploy_Exchange.getAddress(), await Deploy_interest.getAddress(), await Deploy_Utilities.getAddress())
         await setupDV.wait();
+
+        await deposit_vault.setUSDT(await USDT.getAddress());
         // console.log("deposit vault init done")
 
         //////////////////// Init liquidator //////////////////////
@@ -1344,12 +1397,12 @@ describe("Interest Test", function () {
             expect(userData_rexe_signer11[0]).equals(2500000000000000000000n); // Amount
             expect(userData_rexe_signer11[1]).equals(0); // Liability
 
-            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 100000000000000000n);
+            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 100000000n);
 
             await DataHub.alterUserNegativeValueTest(signers[0].address);
 
             // console.log("singer[0] negative amount", await DataHub.userdata_negative_value(signers[0].address));
-            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(1257518642072213499500n);
+            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(753759320786106749750n);
 
             // expect(userData_usdt2_signer1[0]).equals(1750000000000000000000n); // Amount
             // expect(userData_usdt2_signer1[1]).equals(0n); // Liability
@@ -1853,6 +1906,110 @@ describe("Interest Test", function () {
             const trade_amounts = [[Data1.taker_out_token_amount], [Data1.maker_out_token_amount]];
 
             await expect(CurrentExchange.SubmitOrder(pair, participants_1, trade_amounts, trade_sides)).to.be.revertedWith("Never 0 trades");
+        })
+
+        it("Test 50 ", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+            let deposit_amount = 1_000_000000000000000000n;
+
+            let transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait();
+
+            transfer = await USDT_TOKEN.connect(signers[0]).transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+
+            let approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined
+
+            approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined        
+
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
+
+            // // USDT Deposit
+            // deposit_amount = 1_000_000000000000000000n
+            // approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            // await approvalTx.wait();  // Wait for the transaction to be mined
+            // await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            const Data = {
+                "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
+                "maker_out_token": await REXE_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
+                "takers": signers[1].address, //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+                "makers": signers[0].address, //0x70997970c51812dc3a010c7d01b50e0d17dc79c8
+                "taker_out_token_amount": 4_710000000000000000n, // 12000000000000000000 // 1250
+                "maker_out_token_amount": 1_000000000000000000n, // 12000000000000000000  // 2500
+            }
+            /// 
+            const trade_sides = [[true], [false]];
+            const pair = [Data.taker_out_token, Data.maker_out_token];
+            const participants = [[Data.takers], [Data.makers]];
+            const trade_amounts = [[Data.taker_out_token_amount], [Data.maker_out_token_amount]];
+
+            // const EX = new hre.ethers.Contract(await Deploy_Exchange.getAddress(), ExecutorAbi.abi, signers[0]);
+
+            const originTimestamp = await getTimeStamp(hre.ethers.provider);
+            // console.log('Origin timestamp:', originTimestamp);
+
+            // let test = await _Interest.fetchCurrentRateIndex(await USDT_TOKEN.getAddress());
+            // // console.log("USDT rate", test);
+
+            ///////////////////////////////////////////////////// SUBMIT ORDER ////////////////////////////////////////////////////
+
+            let allData = [];
+            // for (let i = 0; i <= 174; i++) {
+            for (let i = 0; i < 50; i++) {
+
+                // console.log("////////////////////////////////////////////////////////// LOOP " + i + " /////////////////////////////////////////////////////////////");
+                const scaledTimestamp = originTimestamp + i * 10;
+
+                // await hre.ethers.provider.send("evm_setNextBlockTimestamp", [scaledTimestamp]);
+                // await network.provider.send("evm_mine");
+                setTimeStamp(hre.ethers.provider, network, scaledTimestamp);
+                // await increaseTime()
+                // console.log(`Loop ${i}: Set timestamp to ${scaledTimestamp}`);
+
+                const masscharges_usdt = await _Interest.chargeMassinterest(await USDT_TOKEN.getAddress()); // increase borrow amount
+                await masscharges_usdt.wait(); // Wait for the transaction to be mined
+
+                const masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
+                await masscharges_rexe.wait(); // Wait for the transaction to be mined
+
+                // console.log("usdt price before trade", (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[3]);
+                // console.log("rexe price before trade", (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress()))[3]);
+
+                await CurrentExchange.SubmitOrder(pair, participants, trade_amounts, trade_sides)
+
+                // console.log("usdt price after trade", (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[3]);
+                // console.log("rexe price before trade", (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress()))[3]);
+
+                // Add the data object to the array
+                allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN));
+            }
+
+            // File path for the JSON file
+            const filePath = './data_50_trade.json';
+
+            // Write all collected data to the JSON file
+            fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
+
+            const test_val = await createNewData(0, signers, DataHub, _Interest, USDT_TOKEN, REXE_TOKEN);
+
+            // const filePath = './data_regular_trade.json';
+
+            // // Write all collected data to the JSON file
+            // fs.writeFileSync(filePath, JSON.stringify(test_val, null, 2));
+            // console.log('All data recorded successfully.');
+            // expect(Number(test_val["USDT-0"].usdt_amount)).equals(0);
+            // expect(Number(test_val["USDT-1"].usdt_amount)).equals(5000);
+            // expect(Number(test_val["REXE-0"].rexe_amount)).equals(5000);
+            // expect(Number(test_val["REXE-1"].rexe_amount)).equals(0);
+
+            // console.log('All data recorded successfully.');
         })
 
         it("Test withdraw token with 0", async function () {
