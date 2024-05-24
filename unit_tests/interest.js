@@ -2019,6 +2019,7 @@ describe("Interest Test", function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
             const result = await _Interest.calculateCompoundedAssetsTest(30000, 109090572904986170n, 9412667466204455n, 1);
             // console.log("result", result);
+            expect(result[0]).equals(3421867552326560n);
         })
 
         it("AlterTotalBorrow Function Test", async function () {
