@@ -291,7 +291,7 @@ contract EVO_EXCHANGE is Ownable {
             // uint256 trade1 = Datahub.tradeFee(out_token, 1);
             if (msg.sender != address(Liquidator)) {
                 if (trade_side[i] == true) {} else {
-                    processFee(amountToAddToLiabilities, out_token);
+                    amountToAddToLiabilities = processFee(amountToAddToLiabilities, out_token);
                     // address daoWallet = fetchDaoWallet();
                     // uint256 trade0 = Datahub.tradeFee(out_token, 0);
                     // uint256 trade1 = Datahub.tradeFee(out_token, 1);
@@ -306,7 +306,7 @@ contract EVO_EXCHANGE is Ownable {
                     //     (amountToAddToLiabilities * trade1) /
                     //     10 ** 18;
                 }
-            }
+            }       
 
             // (uint256 assets, uint256 liabilities, uint256 pending, bool margined, ) = Datahub.ReadUserData(
             //     fetchDaoWallet(),
