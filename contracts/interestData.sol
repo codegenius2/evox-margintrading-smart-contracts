@@ -477,11 +477,7 @@ contract interestData {
         // console.log("liabilities", liabilities);
         // console.log("fetchcurrentreateIndex", fetchCurrentRateIndex(token));
         // console.log("userearningrateIndex", Datahub.viewUsersInterestRateIndex(user, token));
-        // console.log("calculate avareage cumulative interest", calculateAverageCumulativeInterest(
-        //     Datahub.viewUsersInterestRateIndex(user, token),
-        //     fetchCurrentRateIndex(token),
-        //     token
-        // ));
+        // console.log("calculate avareage cumulative interest", cumulativeInterest);
         // console.log("liabilitiesAccrued", liabilitiesAccrued);
         // console.log("viewUsersInterestRateIndex", Datahub.viewUsersInterestRateIndex(user, token));
 

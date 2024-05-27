@@ -2,58 +2,58 @@
   {
     "USDT-0": {
       "index": 1,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 0,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.5572344322344,
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 500,
-      "timestamp": 1716662671
+      "liabilities": 502.5572344322344,
+      "earningrates": 0,
+      "timestamp": 1716845755
     },
     "USDT-1": {
       "index": 1,
       "usdt_amount": 1000,
-      "usdt_supply": 2500,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 5000,
-      "timestamp": 1716662671
-    },
-    "USDT-2": {
-      "index": 1,
-      "usdt_amount": 1000,
-      "usdt_supply": 2500,
-      "total-borrowed": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.5572344322344,
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 1000,
-      "timestamp": 1716662671
+      "timestamp": 1716845755
     },
-    "REXE-0": {
+    "USDT-2": {
       "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.5572344322344,
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 0,
-      "timestamp": 1716662671
+      "timestamp": 1716845755
     },
-    "REXE-1": {
+    "REXE-0": {
       "index": 1,
-      "rexe_amount": 5000,
+      "rexe_amount": 2500,
       "rexe_supply": 5000,
       "total-borrowed": 0,
       "rate": 0.005,
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
-      "earningrates": 5000,
-      "timestamp": 1716662671
+      "earningrates": 2500,
+      "timestamp": 1716845755
+    },
+    "REXE-1": {
+      "index": 1,
+      "rexe_amount": 2500,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 2500,
+      "timestamp": 1716845755
     },
     "REXE-2": {
       "index": 1,
@@ -64,42 +64,42 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 0,
-      "timestamp": 1716662671
+      "timestamp": 1716845755
     }
   },
   {
     "USDT-0": {
       "index": 2,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5026573129252,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 502.5026573129252,
+      "usdt_supply": 500,
+      "total-borrowed": 502.6147615881905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.6147615881905,
       "earningrates": 0,
-      "timestamp": 1716666271
+      "timestamp": 1716849355
     },
     "USDT-1": {
       "index": 2,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5026573129252,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.6147615881905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716666271
+      "earningrates": 1000,
+      "timestamp": 1716849355
     },
     "USDT-2": {
       "index": 2,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5026573129252,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.6147615881905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500,
-      "timestamp": 1716666271
+      "earningrates": 0,
+      "timestamp": 1716849355
     },
     "REXE-0": {
       "index": 1,
@@ -110,20 +110,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716666271
+      "timestamp": 1716849355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716666271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -132,42 +121,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716666271
+      "timestamp": 1716849355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716849355
     }
   },
   {
     "USDT-0": {
       "index": 3,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5053398542478,
-      "rate": 0.04663593446307095,
-      "hourly-rate": 0.0000053383624614321135,
-      "liabilities": 502.5053398542478,
+      "usdt_supply": 500,
+      "total-borrowed": 502.67229532921476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.67229532921476,
       "earningrates": 0,
-      "timestamp": 1716669871
+      "timestamp": 1716852955
     },
     "USDT-1": {
       "index": 3,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5053398542478,
-      "rate": 0.04663593446307095,
-      "hourly-rate": 0.0000053383624614321135,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.67229532921476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716669871
+      "earningrates": 1000.0920566337439,
+      "timestamp": 1716852955
     },
     "USDT-2": {
       "index": 3,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5053398542478,
-      "rate": 0.04663593446307095,
-      "hourly-rate": 0.0000053383624614321135,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.67229532921476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500,
-      "timestamp": 1716669871
+      "earningrates": 0,
+      "timestamp": 1716852955
     },
     "REXE-0": {
       "index": 1,
@@ -178,20 +178,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716669871
+      "timestamp": 1716852955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716669871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -200,42 +189,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716669871
+      "timestamp": 1716852955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716852955
     }
   },
   {
     "USDT-0": {
       "index": 4,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.50802242267577,
-      "rate": 0.04663615673078053,
-      "hourly-rate": 0.000005338387904164438,
-      "liabilities": 502.50802242267577,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7298356560611,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.7298356560611,
       "earningrates": 0,
-      "timestamp": 1716673471
+      "timestamp": 1716856555
     },
     "USDT-1": {
       "index": 4,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.50802242267577,
-      "rate": 0.04663615673078053,
-      "hourly-rate": 0.000005338387904164438,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7298356560611,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716673471
+      "earningrates": 1000.184132633798,
+      "timestamp": 1716856555
     },
     "USDT-2": {
       "index": 4,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.50802242267577,
-      "rate": 0.04663615673078053,
-      "hourly-rate": 0.000005338387904164438,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7298356560611,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0004292100408,
-      "timestamp": 1716673471
+      "earningrates": 0,
+      "timestamp": 1716856555
     },
     "REXE-0": {
       "index": 1,
@@ -246,20 +246,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716673471
+      "timestamp": 1716856555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716673471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -268,42 +257,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716673471
+      "timestamp": 1716856555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716856555
     }
   },
   {
     "USDT-0": {
       "index": 5,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51070501820976,
-      "rate": 0.04663637900073599,
-      "hourly-rate": 0.0000053384133471538456,
-      "liabilities": 502.5107050182097,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7873825694832,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.7873825694832,
       "earningrates": 0,
-      "timestamp": 1716677071
+      "timestamp": 1716860155
     },
     "USDT-1": {
       "index": 5,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51070501820976,
-      "rate": 0.04663637900073599,
-      "hourly-rate": 0.0000053384133471538456,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7873825694832,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716677071
+      "earningrates": 1000.2762293297297,
+      "timestamp": 1716860155
     },
     "USDT-2": {
       "index": 5,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51070501820976,
-      "rate": 0.04663637900073599,
-      "hourly-rate": 0.0000053384133471538456,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.7873825694832,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00085842480235,
-      "timestamp": 1716677071
+      "earningrates": 0,
+      "timestamp": 1716860155
     },
     "REXE-0": {
       "index": 1,
@@ -314,20 +314,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716677071
+      "timestamp": 1716860155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716677071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -336,42 +325,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716677071
+      "timestamp": 1716860155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716860155
     }
   },
   {
     "USDT-0": {
       "index": 6,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51338764085,
-      "rate": 0.046636601272937374,
-      "hourly-rate": 0.000005338438790400341,
-      "liabilities": 502.51338764084994,
+      "usdt_supply": 500,
+      "total-borrowed": 502.84493607023524,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.84493607023524,
       "earningrates": 0,
-      "timestamp": 1716680671
+      "timestamp": 1716863755
     },
     "USDT-1": {
       "index": 6,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51338764085,
-      "rate": 0.046636601272937374,
-      "hourly-rate": 0.000005338438790400341,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.84493607023524,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716680671
+      "earningrates": 1000.3683469922895,
+      "timestamp": 1716863755
     },
     "USDT-2": {
       "index": 6,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51338764085,
-      "rate": 0.046636601272937374,
-      "hourly-rate": 0.000005338438790400341,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.84493607023524,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00128764434226,
-      "timestamp": 1716680671
+      "earningrates": 0,
+      "timestamp": 1716863755
     },
     "REXE-0": {
       "index": 1,
@@ -382,20 +382,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716680671
+      "timestamp": 1716863755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716680671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -404,42 +393,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716680671
+      "timestamp": 1716863755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716863755
     }
   },
   {
     "USDT-0": {
       "index": 7,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51607029059693,
-      "rate": 0.046636823547384715,
-      "hourly-rate": 0.000005338464233903928,
-      "liabilities": 502.51607029059693,
+      "usdt_supply": 500,
+      "total-borrowed": 502.9024961590711,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.90249615907106,
       "earningrates": 0,
-      "timestamp": 1716684271
+      "timestamp": 1716867355
     },
     "USDT-1": {
       "index": 7,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51607029059693,
-      "rate": 0.046636823547384715,
-      "hourly-rate": 0.000005338464233903928,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.9024961590711,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716684271
+      "earningrates": 1000.460485715771,
+      "timestamp": 1716867355
     },
     "USDT-2": {
       "index": 7,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51607029059693,
-      "rate": 0.046636823547384715,
-      "hourly-rate": 0.000005338464233903928,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.9024961590711,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00171686867213,
-      "timestamp": 1716684271
+      "earningrates": 0,
+      "timestamp": 1716867355
     },
     "REXE-0": {
       "index": 1,
@@ -450,20 +450,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716684271
+      "timestamp": 1716867355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716684271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -472,42 +461,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716684271
+      "timestamp": 1716867355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716867355
     }
   },
   {
     "USDT-0": {
       "index": 8,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51875296745106,
-      "rate": 0.04663704582407803,
-      "hourly-rate": 0.00000533848967766461,
-      "liabilities": 502.518752967451,
+      "usdt_supply": 500,
+      "total-borrowed": 502.96006283674507,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 502.96006283674495,
       "earningrates": 0,
-      "timestamp": 1716687871
+      "timestamp": 1716870955
     },
     "USDT-1": {
       "index": 8,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51875296745106,
-      "rate": 0.04663704582407803,
-      "hourly-rate": 0.00000533848967766461,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 502.96006283674507,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716687871
+      "earningrates": 1000.5526455440546,
+      "timestamp": 1716870955
     },
     "USDT-2": {
       "index": 8,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.51875296745106,
-      "rate": 0.04663704582407803,
-      "hourly-rate": 0.00000533848967766461,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 502.96006283674507,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0021460977959,
-      "timestamp": 1716687871
+      "earningrates": 0,
+      "timestamp": 1716870955
     },
     "REXE-0": {
       "index": 1,
@@ -518,20 +518,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716687871
+      "timestamp": 1716870955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716687871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -540,42 +529,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716687871
+      "timestamp": 1716870955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716870955
     }
   },
   {
     "USDT-0": {
       "index": 9,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52143567141275,
-      "rate": 0.046637268103017375,
-      "hourly-rate": 0.000005338515121682392,
-      "liabilities": 502.5214356714127,
+      "usdt_supply": 500,
+      "total-borrowed": 503.0176361040111,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.0176361040111,
       "earningrates": 0,
-      "timestamp": 1716691471
+      "timestamp": 1716874555
     },
     "USDT-1": {
       "index": 9,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52143567141275,
-      "rate": 0.046637268103017375,
-      "hourly-rate": 0.000005338515121682392,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.0176361040111,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716691471
+      "earningrates": 1000.6448265021172,
+      "timestamp": 1716874555
     },
     "USDT-2": {
       "index": 9,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52143567141275,
-      "rate": 0.046637268103017375,
-      "hourly-rate": 0.000005338515121682392,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.0176361040111,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0025753317152,
-      "timestamp": 1716691471
+      "earningrates": 0,
+      "timestamp": 1716874555
     },
     "REXE-0": {
       "index": 1,
@@ -586,20 +586,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716691471
+      "timestamp": 1716874555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716691471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -608,42 +597,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716691471
+      "timestamp": 1716874555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716874555
     }
   },
   {
     "USDT-0": {
       "index": 10,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5241184024823,
-      "rate": 0.04663749038420277,
-      "hourly-rate": 0.000005338540565957276,
-      "liabilities": 502.5241184024823,
+      "usdt_supply": 500,
+      "total-borrowed": 503.07521596162377,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.07521596162377,
       "earningrates": 0,
-      "timestamp": 1716695071
+      "timestamp": 1716878155
     },
     "USDT-1": {
       "index": 10,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5241184024823,
-      "rate": 0.04663749038420277,
-      "hourly-rate": 0.000005338540565957276,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.07521596162377,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716695071
+      "earningrates": 1000.7370286065357,
+      "timestamp": 1716878155
     },
     "USDT-2": {
       "index": 10,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5241184024823,
-      "rate": 0.04663749038420277,
-      "hourly-rate": 0.000005338540565957276,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.07521596162377,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.003004570431,
-      "timestamp": 1716695071
+      "earningrates": 0,
+      "timestamp": 1716878155
     },
     "REXE-0": {
       "index": 1,
@@ -654,20 +654,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716695071
+      "timestamp": 1716878155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716695071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -676,42 +665,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716695071
+      "timestamp": 1716878155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716878155
     }
   },
   {
     "USDT-0": {
       "index": 11,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52680116066034,
-      "rate": 0.04663771266763425,
-      "hourly-rate": 0.000005338566010489268,
-      "liabilities": 502.5268011606602,
+      "usdt_supply": 500,
+      "total-borrowed": 503.1328024103373,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.13280241033726,
       "earningrates": 0,
-      "timestamp": 1716698671
+      "timestamp": 1716881755
     },
     "USDT-1": {
       "index": 11,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52680116066034,
-      "rate": 0.04663771266763425,
-      "hourly-rate": 0.000005338566010489268,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.1328024103373,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716698671
+      "earningrates": 1000.8292518696877,
+      "timestamp": 1716881755
     },
     "USDT-2": {
       "index": 11,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52680116066034,
-      "rate": 0.04663771266763425,
-      "hourly-rate": 0.000005338566010489268,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.1328024103373,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00343381394384,
-      "timestamp": 1716698671
+      "earningrates": 0,
+      "timestamp": 1716881755
     },
     "REXE-0": {
       "index": 1,
@@ -722,20 +722,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716698671
+      "timestamp": 1716881755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716698671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -744,42 +733,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716698671
+      "timestamp": 1716881755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716881755
     }
   },
   {
     "USDT-0": {
       "index": 12,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52948394594705,
-      "rate": 0.04663793495331186,
-      "hourly-rate": 0.000005338591455278372,
-      "liabilities": 502.529483945947,
+      "usdt_supply": 500,
+      "total-borrowed": 503.19039545090624,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.19039545090624,
       "earningrates": 0,
-      "timestamp": 1716702271
+      "timestamp": 1716885355
     },
     "USDT-1": {
       "index": 12,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52948394594705,
-      "rate": 0.04663793495331186,
-      "hourly-rate": 0.000005338591455278372,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.19039545090624,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716702271
+      "earningrates": 1000.9214963016615,
+      "timestamp": 1716885355
     },
     "USDT-2": {
       "index": 12,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.52948394594705,
-      "rate": 0.04663793495331186,
-      "hourly-rate": 0.000005338591455278372,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.19039545090624,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00386306225397,
-      "timestamp": 1716702271
+      "earningrates": 0,
+      "timestamp": 1716885355
     },
     "REXE-0": {
       "index": 1,
@@ -790,20 +790,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716702271
+      "timestamp": 1716885355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716702271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -812,42 +801,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716702271
+      "timestamp": 1716885355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716885355
     }
   },
   {
     "USDT-0": {
       "index": 13,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5321667583429,
-      "rate": 0.04663815724123561,
-      "hourly-rate": 0.000005338616900324589,
-      "liabilities": 502.5321667583429,
+      "usdt_supply": 500,
+      "total-borrowed": 503.2479950840852,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.2479950840851,
       "earningrates": 0,
-      "timestamp": 1716705871
+      "timestamp": 1716888955
     },
     "USDT-1": {
       "index": 13,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5321667583429,
-      "rate": 0.04663815724123561,
-      "hourly-rate": 0.000005338616900324589,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.2479950840852,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716705871
+      "earningrates": 1001.0137619112108,
+      "timestamp": 1716888955
     },
     "USDT-2": {
       "index": 13,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5321667583429,
-      "rate": 0.04663815724123561,
-      "hourly-rate": 0.000005338616900324589,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.2479950840852,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00429231536185,
-      "timestamp": 1716705871
+      "earningrates": 0,
+      "timestamp": 1716888955
     },
     "REXE-0": {
       "index": 1,
@@ -858,20 +858,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716705871
+      "timestamp": 1716888955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716705871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -880,42 +869,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716705871
+      "timestamp": 1716888955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716888955
     }
   },
   {
     "USDT-0": {
       "index": 14,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5348495978484,
-      "rate": 0.04663837953140555,
-      "hourly-rate": 0.000005338642345627925,
-      "liabilities": 502.53484959784834,
+      "usdt_supply": 500,
+      "total-borrowed": 503.30560131062873,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.3056013106286,
       "earningrates": 0,
-      "timestamp": 1716709471
+      "timestamp": 1716892555
     },
     "USDT-1": {
       "index": 14,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5348495978484,
-      "rate": 0.04663837953140555,
-      "hourly-rate": 0.000005338642345627925,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.30560131062873,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716709471
+      "earningrates": 1001.106048706269,
+      "timestamp": 1716892555
     },
     "USDT-2": {
       "index": 14,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5348495978484,
-      "rate": 0.04663837953140555,
-      "hourly-rate": 0.000005338642345627925,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.30560131062873,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00472157326743,
-      "timestamp": 1716709471
+      "earningrates": 0,
+      "timestamp": 1716892555
     },
     "REXE-0": {
       "index": 1,
@@ -926,20 +926,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716709471
+      "timestamp": 1716892555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716709471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -948,42 +937,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716709471
+      "timestamp": 1716892555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716892555
     }
   },
   {
     "USDT-0": {
       "index": 15,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.53753246446394,
-      "rate": 0.04663860182382173,
-      "hourly-rate": 0.000005338667791188385,
-      "liabilities": 502.5375324644639,
+      "usdt_supply": 500,
+      "total-borrowed": 503.36321413129156,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.3632141312915,
       "earningrates": 0,
-      "timestamp": 1716713071
+      "timestamp": 1716896155
     },
     "USDT-1": {
       "index": 15,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.53753246446394,
-      "rate": 0.04663860182382173,
-      "hourly-rate": 0.000005338667791188385,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.36321413129156,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716713071
+      "earningrates": 1001.1983566942423,
+      "timestamp": 1716896155
     },
     "USDT-2": {
       "index": 15,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.53753246446394,
-      "rate": 0.04663860182382173,
-      "hourly-rate": 0.000005338667791188385,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.36321413129156,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00515083597105,
-      "timestamp": 1716713071
+      "earningrates": 0,
+      "timestamp": 1716896155
     },
     "REXE-0": {
       "index": 1,
@@ -994,20 +994,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716713071
+      "timestamp": 1716896155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716713071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1016,42 +1005,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716713071
+      "timestamp": 1716896155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716896155
     }
   },
   {
     "USDT-0": {
       "index": 16,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5402153581898,
-      "rate": 0.046638824118484155,
-      "hourly-rate": 0.00000533869323700597,
-      "liabilities": 502.54021535818976,
+      "usdt_supply": 500,
+      "total-borrowed": 503.42083354682853,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.4208335468285,
       "earningrates": 0,
-      "timestamp": 1716716671
+      "timestamp": 1716899755
     },
     "USDT-1": {
       "index": 16,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5402153581898,
-      "rate": 0.046638824118484155,
-      "hourly-rate": 0.00000533869323700597,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.42083354682853,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716716671
+      "earningrates": 1001.2906858821867,
+      "timestamp": 1716899755
     },
     "USDT-2": {
       "index": 16,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5402153581898,
-      "rate": 0.046638824118484155,
-      "hourly-rate": 0.00000533869323700597,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.42083354682853,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00558010347265,
-      "timestamp": 1716716671
+      "earningrates": 0,
+      "timestamp": 1716899755
     },
     "REXE-0": {
       "index": 1,
@@ -1062,20 +1062,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716716671
+      "timestamp": 1716899755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716716671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1084,42 +1073,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716716671
+      "timestamp": 1716899755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716899755
     }
   },
   {
     "USDT-0": {
       "index": 17,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54289827902653,
-      "rate": 0.04663904641539287,
-      "hourly-rate": 0.000005338718683080685,
-      "liabilities": 502.5428982790265,
+      "usdt_supply": 500,
+      "total-borrowed": 503.47845955799465,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.47845955799454,
       "earningrates": 0,
-      "timestamp": 1716720271
+      "timestamp": 1716903355
     },
     "USDT-1": {
       "index": 17,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54289827902653,
-      "rate": 0.04663904641539287,
-      "hourly-rate": 0.000005338718683080685,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.47845955799465,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716720271
+      "earningrates": 1001.3830362769183,
+      "timestamp": 1716903355
     },
     "USDT-2": {
       "index": 17,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54289827902653,
-      "rate": 0.04663904641539287,
-      "hourly-rate": 0.000005338718683080685,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.47845955799465,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0060093757726,
-      "timestamp": 1716720271
+      "earningrates": 0,
+      "timestamp": 1716903355
     },
     "REXE-0": {
       "index": 1,
@@ -1130,20 +1130,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716720271
+      "timestamp": 1716903355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716720271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1152,42 +1141,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716720271
+      "timestamp": 1716903355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716903355
     }
   },
   {
     "USDT-0": {
       "index": 18,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5455812269745,
-      "rate": 0.04663926871454791,
-      "hourly-rate": 0.000005338744129412536,
-      "liabilities": 502.54558122697443,
+      "usdt_supply": 500,
+      "total-borrowed": 503.53609216554474,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.5360921655447,
       "earningrates": 0,
-      "timestamp": 1716723871
+      "timestamp": 1716906955
     },
     "USDT-1": {
       "index": 18,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5455812269745,
-      "rate": 0.04663926871454791,
-      "hourly-rate": 0.000005338744129412536,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.53609216554474,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716723871
+      "earningrates": 1001.4754078850834,
+      "timestamp": 1716906955
     },
     "USDT-2": {
       "index": 18,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5455812269745,
-      "rate": 0.04663926871454791,
-      "hourly-rate": 0.000005338744129412536,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.53609216554474,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0064386528708,
-      "timestamp": 1716723871
+      "earningrates": 0,
+      "timestamp": 1716906955
     },
     "REXE-0": {
       "index": 1,
@@ -1198,20 +1198,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716723871
+      "timestamp": 1716906955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716723871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1220,42 +1209,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716723871
+      "timestamp": 1716906955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716906955
     }
   },
   {
     "USDT-0": {
       "index": 19,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54826420203415,
-      "rate": 0.04663949101594931,
-      "hourly-rate": 0.000005338769576001523,
-      "liabilities": 502.54826420203403,
+      "usdt_supply": 500,
+      "total-borrowed": 503.593731370234,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.59373137023397,
       "earningrates": 0,
-      "timestamp": 1716727471
+      "timestamp": 1716910555
     },
     "USDT-1": {
       "index": 19,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54826420203415,
-      "rate": 0.04663949101594931,
-      "hourly-rate": 0.000005338769576001523,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.593731370234,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716727471
+      "earningrates": 1001.5678007132076,
+      "timestamp": 1716910555
     },
     "USDT-2": {
       "index": 19,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.54826420203415,
-      "rate": 0.04663949101594931,
-      "hourly-rate": 0.000005338769576001523,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.593731370234,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0068679347674,
-      "timestamp": 1716727471
+      "earningrates": 0,
+      "timestamp": 1716910555
     },
     "REXE-0": {
       "index": 1,
@@ -1266,20 +1266,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716727471
+      "timestamp": 1716910555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716727471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1288,42 +1277,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716727471
+      "timestamp": 1716910555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716910555
     }
   },
   {
     "USDT-0": {
       "index": 20,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5509472042058,
-      "rate": 0.04663971331959711,
-      "hourly-rate": 0.000005338795022847654,
-      "liabilities": 502.5509472042058,
+      "usdt_supply": 500,
+      "total-borrowed": 503.65137717281766,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.6513771728175,
       "earningrates": 0,
-      "timestamp": 1716731071
+      "timestamp": 1716914155
     },
     "USDT-1": {
       "index": 20,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5509472042058,
-      "rate": 0.04663971331959711,
-      "hourly-rate": 0.000005338795022847654,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.65137717281766,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716731071
+      "earningrates": 1001.6602147677273,
+      "timestamp": 1716914155
     },
     "USDT-2": {
       "index": 20,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5509472042058,
-      "rate": 0.04663971331959711,
-      "hourly-rate": 0.000005338795022847654,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.65137717281766,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0072972214625,
-      "timestamp": 1716731071
+      "earningrates": 0,
+      "timestamp": 1716914155
     },
     "REXE-0": {
       "index": 1,
@@ -1334,20 +1334,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716731071
+      "timestamp": 1716914155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716731071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1356,42 +1345,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716731071
+      "timestamp": 1716914155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716914155
     }
   },
   {
     "USDT-0": {
       "index": 21,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5536302334899,
-      "rate": 0.04663993562549133,
-      "hourly-rate": 0.000005338820469950932,
-      "liabilities": 502.55363023348974,
+      "usdt_supply": 500,
+      "total-borrowed": 503.70902957405076,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.7090295740507,
       "earningrates": 0,
-      "timestamp": 1716734671
+      "timestamp": 1716917755
     },
     "USDT-1": {
       "index": 21,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5536302334899,
-      "rate": 0.04663993562549133,
-      "hourly-rate": 0.000005338820469950932,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.70902957405076,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716734671
+      "earningrates": 1001.7526500550126,
+      "timestamp": 1716917755
     },
     "USDT-2": {
       "index": 21,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5536302334899,
-      "rate": 0.04663993562549133,
-      "hourly-rate": 0.000005338820469950932,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.70902957405076,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00772651295625,
-      "timestamp": 1716734671
+      "earningrates": 0,
+      "timestamp": 1716917755
     },
     "REXE-0": {
       "index": 1,
@@ -1402,20 +1402,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716734671
+      "timestamp": 1716917755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716734671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1424,42 +1413,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716734671
+      "timestamp": 1716917755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716917755
     }
   },
   {
     "USDT-0": {
       "index": 22,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.55631328988693,
-      "rate": 0.04664015793363203,
-      "hourly-rate": 0.000005338845917311358,
-      "liabilities": 502.5563132898868,
+      "usdt_supply": 500,
+      "total-borrowed": 503.7666885746888,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.7666885746887,
       "earningrates": 0,
-      "timestamp": 1716738271
+      "timestamp": 1716921355
     },
     "USDT-1": {
       "index": 22,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.55631328988693,
-      "rate": 0.04664015793363203,
-      "hourly-rate": 0.000005338845917311358,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.7666885746888,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716738271
+      "earningrates": 1001.8451065813837,
+      "timestamp": 1716921355
     },
     "USDT-2": {
       "index": 22,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.55631328988693,
-      "rate": 0.04664015793363203,
-      "hourly-rate": 0.000005338845917311358,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.7666885746888,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0081558092487,
-      "timestamp": 1716738271
+      "earningrates": 0,
+      "timestamp": 1716921355
     },
     "REXE-0": {
       "index": 1,
@@ -1470,20 +1470,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716738271
+      "timestamp": 1716921355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716738271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1492,42 +1481,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716738271
+      "timestamp": 1716921355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716921355
     }
   },
   {
     "USDT-0": {
       "index": 23,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5589963733972,
-      "rate": 0.0466403802440192,
-      "hourly-rate": 0.000005338871364928937,
-      "liabilities": 502.5589963733971,
+      "usdt_supply": 500,
+      "total-borrowed": 503.8243541754872,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.8243541754871,
       "earningrates": 0,
-      "timestamp": 1716741871
+      "timestamp": 1716924955
     },
     "USDT-1": {
       "index": 23,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5589963733972,
-      "rate": 0.0466403802440192,
-      "hourly-rate": 0.000005338871364928937,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.8243541754872,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716741871
+      "earningrates": 1001.9375843531228,
+      "timestamp": 1716924955
     },
     "USDT-2": {
       "index": 23,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5589963733972,
-      "rate": 0.0466403802440192,
-      "hourly-rate": 0.000005338871364928937,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.8243541754872,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00858511033977,
-      "timestamp": 1716741871
+      "earningrates": 0,
+      "timestamp": 1716924955
     },
     "REXE-0": {
       "index": 1,
@@ -1538,20 +1538,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716741871
+      "timestamp": 1716924955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716741871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1560,42 +1549,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716741871
+      "timestamp": 1716924955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716924955
     }
   },
   {
     "USDT-0": {
       "index": 24,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56167948402117,
-      "rate": 0.046640602556652914,
-      "hourly-rate": 0.0000053388968128036756,
-      "liabilities": 502.56167948402106,
+      "usdt_supply": 500,
+      "total-borrowed": 503.88202637720144,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.8820263772013,
       "earningrates": 0,
-      "timestamp": 1716745471
+      "timestamp": 1716928555
     },
     "USDT-1": {
       "index": 24,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56167948402117,
-      "rate": 0.046640602556652914,
-      "hourly-rate": 0.0000053388968128036756,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.88202637720144,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716745471
+      "earningrates": 1002.0300833764828,
+      "timestamp": 1716928555
     },
     "USDT-2": {
       "index": 24,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56167948402117,
-      "rate": 0.046640602556652914,
-      "hourly-rate": 0.0000053388968128036756,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.88202637720144,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00901441622983,
-      "timestamp": 1716745471
+      "earningrates": 0,
+      "timestamp": 1716928555
     },
     "REXE-0": {
       "index": 1,
@@ -1606,20 +1606,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716745471
+      "timestamp": 1716928555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716745471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1628,42 +1617,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716745471
+      "timestamp": 1716928555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716928555
     }
   },
   {
     "USDT-0": {
       "index": 25,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56436262175924,
-      "rate": 0.04664082487153318,
-      "hourly-rate": 0.0000053389222609355755,
-      "liabilities": 502.5643626217592,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9397051805871,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.93970518058705,
       "earningrates": 0,
-      "timestamp": 1716749071
+      "timestamp": 1716932155
     },
     "USDT-1": {
       "index": 25,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56436262175924,
-      "rate": 0.04664082487153318,
-      "hourly-rate": 0.0000053389222609355755,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9397051805871,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716749071
+      "earningrates": 1000.092291186758,
+      "timestamp": 1716932155
     },
     "USDT-2": {
       "index": 25,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56436262175924,
-      "rate": 0.04664082487153318,
-      "hourly-rate": 0.0000053389222609355755,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9397051805871,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0094437269188,
-      "timestamp": 1716749071
+      "earningrates": 0,
+      "timestamp": 1716932155
     },
     "REXE-0": {
       "index": 1,
@@ -1674,20 +1674,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716749071
+      "timestamp": 1716932155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716749071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1696,42 +1685,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716749071
+      "timestamp": 1716932155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716932155
     }
   },
   {
     "USDT-0": {
       "index": 26,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56704578661186,
-      "rate": 0.04664104718866006,
-      "hourly-rate": 0.00000533894770932464,
-      "liabilities": 502.56704578661174,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9973905863999,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 503.99739058639983,
       "earningrates": 0,
-      "timestamp": 1716752671
+      "timestamp": 1716935755
     },
     "USDT-1": {
       "index": 26,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56704578661186,
-      "rate": 0.04664104718866006,
-      "hourly-rate": 0.00000533894770932464,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9973905863999,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716752671
+      "earningrates": 1000.1846031786354,
+      "timestamp": 1716935755
     },
     "USDT-2": {
       "index": 26,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.56704578661186,
-      "rate": 0.04664104718866006,
-      "hourly-rate": 0.00000533894770932464,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 503.9973905863999,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0008585642822,
-      "timestamp": 1716752671
+      "earningrates": 0,
+      "timestamp": 1716935755
     },
     "REXE-0": {
       "index": 1,
@@ -1742,20 +1742,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716752671
+      "timestamp": 1716935755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716752671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1764,42 +1753,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716752671
+      "timestamp": 1716935755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716935755
     }
   },
   {
     "USDT-0": {
       "index": 27,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5697289785794,
-      "rate": 0.04664126950803355,
-      "hourly-rate": 0.000005338973157970874,
-      "liabilities": 502.5697289785793,
+      "usdt_supply": 500,
+      "total-borrowed": 504.05508259539556,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.0550825953955,
       "earningrates": 0,
-      "timestamp": 1716756271
+      "timestamp": 1716939355
     },
     "USDT-1": {
       "index": 27,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5697289785794,
-      "rate": 0.04664126950803355,
-      "hourly-rate": 0.000005338973157970874,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.05508259539556,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716756271
+      "earningrates": 1000.2769360285632,
+      "timestamp": 1716939355
     },
     "USDT-2": {
       "index": 27,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5697289785794,
-      "rate": 0.04664126950803355,
-      "hourly-rate": 0.000005338973157970874,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.05508259539556,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0012878535961,
-      "timestamp": 1716756271
+      "earningrates": 0,
+      "timestamp": 1716939355
     },
     "REXE-0": {
       "index": 1,
@@ -1810,20 +1810,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716756271
+      "timestamp": 1716939355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716756271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1832,42 +1821,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716756271
+      "timestamp": 1716939355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716939355
     }
   },
   {
     "USDT-0": {
       "index": 28,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5724121976623,
-      "rate": 0.04664149182965372,
-      "hourly-rate": 0.0000053389986068742814,
-      "liabilities": 502.5724121976621,
+      "usdt_supply": 500,
+      "total-borrowed": 504.11278120833003,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.11278120833,
       "earningrates": 0,
-      "timestamp": 1716759871
+      "timestamp": 1716942955
     },
     "USDT-1": {
       "index": 28,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5724121976623,
-      "rate": 0.04664149182965372,
-      "hourly-rate": 0.0000053389986068742814,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.11278120833003,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716759871
+      "earningrates": 1000.3692897825355,
+      "timestamp": 1716942955
     },
     "USDT-2": {
       "index": 28,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5724121976623,
-      "rate": 0.04664149182965372,
-      "hourly-rate": 0.0000053389986068742814,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.11278120833003,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0017171476947,
-      "timestamp": 1716759871
+      "earningrates": 0,
+      "timestamp": 1716942955
     },
     "REXE-0": {
       "index": 1,
@@ -1878,20 +1878,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716759871
+      "timestamp": 1716942955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716759871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1900,42 +1889,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716759871
+      "timestamp": 1716942955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716942955
     }
   },
   {
     "USDT-0": {
       "index": 29,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5750954438609,
-      "rate": 0.04664171415352059,
-      "hourly-rate": 0.0000053390240560348665,
-      "liabilities": 502.57509544386073,
+      "usdt_supply": 500,
+      "total-borrowed": 504.1704864259592,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.17048642595915,
       "earningrates": 0,
-      "timestamp": 1716763471
+      "timestamp": 1716946555
     },
     "USDT-1": {
       "index": 29,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5750954438609,
-      "rate": 0.04664171415352059,
-      "hourly-rate": 0.0000053390240560348665,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.1704864259592,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716763471
+      "earningrates": 1000.4616644808483,
+      "timestamp": 1716946555
     },
     "USDT-2": {
       "index": 29,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5750954438609,
-      "rate": 0.04664171415352059,
-      "hourly-rate": 0.0000053390240560348665,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.1704864259592,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0021464465796,
-      "timestamp": 1716763471
+      "earningrates": 0,
+      "timestamp": 1716946555
     },
     "REXE-0": {
       "index": 1,
@@ -1946,20 +1946,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716763471
+      "timestamp": 1716946555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716763471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -1968,42 +1957,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716763471
+      "timestamp": 1716946555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716946555
     }
   },
   {
     "USDT-0": {
       "index": 30,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5777787171757,
-      "rate": 0.046641936479634195,
-      "hourly-rate": 0.000005339049505452632,
-      "liabilities": 502.57777871717565,
+      "usdt_supply": 500,
+      "total-borrowed": 504.22819824903905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.228198249039,
       "earningrates": 0,
-      "timestamp": 1716767071
+      "timestamp": 1716950155
     },
     "USDT-1": {
       "index": 30,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5777787171757,
-      "rate": 0.046641936479634195,
-      "hourly-rate": 0.000005339049505452632,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.22819824903905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716767071
+      "earningrates": 1000.5540601590827,
+      "timestamp": 1716950155
     },
     "USDT-2": {
       "index": 30,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5777787171757,
-      "rate": 0.046641936479634195,
-      "hourly-rate": 0.000005339049505452632,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.22819824903905,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0025757502522,
-      "timestamp": 1716767071
+      "earningrates": 0,
+      "timestamp": 1716950155
     },
     "REXE-0": {
       "index": 1,
@@ -2014,20 +2014,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716767071
+      "timestamp": 1716950155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716767071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2036,42 +2025,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716767071
+      "timestamp": 1716950155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716950155
     }
   },
   {
     "USDT-0": {
       "index": 31,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.58046201760703,
-      "rate": 0.04664215880799456,
-      "hourly-rate": 0.000005339074955127582,
-      "liabilities": 502.580462017607,
+      "usdt_supply": 500,
+      "total-borrowed": 504.28591667832586,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.28591667832575,
       "earningrates": 0,
-      "timestamp": 1716770671
+      "timestamp": 1716953755
     },
     "USDT-1": {
       "index": 31,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.58046201760703,
-      "rate": 0.04664215880799456,
-      "hourly-rate": 0.000005339074955127582,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.28591667832586,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716770671
+      "earningrates": 1000.6464768488906,
+      "timestamp": 1716953755
     },
     "USDT-2": {
       "index": 31,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.58046201760703,
-      "rate": 0.04664215880799456,
-      "hourly-rate": 0.000005339074955127582,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.28591667832586,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00300505871377,
-      "timestamp": 1716770671
+      "earningrates": 0,
+      "timestamp": 1716953755
     },
     "REXE-0": {
       "index": 1,
@@ -2082,20 +2082,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716770671
+      "timestamp": 1716953755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716770671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2104,42 +2093,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716770671
+      "timestamp": 1716953755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716953755
     }
   },
   {
     "USDT-0": {
       "index": 32,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5831453451554,
-      "rate": 0.04664238113860173,
-      "hourly-rate": 0.000005339100405059722,
-      "liabilities": 502.5831453451553,
+      "usdt_supply": 500,
+      "total-borrowed": 504.34364171457565,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.34364171457554,
       "earningrates": 0,
-      "timestamp": 1716774271
+      "timestamp": 1716957355
     },
     "USDT-1": {
       "index": 32,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5831453451554,
-      "rate": 0.04664238113860173,
-      "hourly-rate": 0.000005339100405059722,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.34364171457565,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716774271
+      "earningrates": 1000.7389145786296,
+      "timestamp": 1716957355
     },
     "USDT-2": {
       "index": 32,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5831453451554,
-      "rate": 0.04664238113860173,
-      "hourly-rate": 0.000005339100405059722,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.34364171457565,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00343437196534,
-      "timestamp": 1716774271
+      "earningrates": 0,
+      "timestamp": 1716957355
     },
     "REXE-0": {
       "index": 1,
@@ -2150,20 +2150,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716774271
+      "timestamp": 1716957355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716774271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2172,42 +2161,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716774271
+      "timestamp": 1716957355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716957355
     }
   },
   {
     "USDT-0": {
       "index": 33,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5858286998211,
-      "rate": 0.046642603471455726,
-      "hourly-rate": 0.000005339125855249053,
-      "liabilities": 502.58582869982087,
+      "usdt_supply": 500,
+      "total-borrowed": 504.40137335854484,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.40137335854473,
       "earningrates": 0,
-      "timestamp": 1716777871
+      "timestamp": 1716960955
     },
     "USDT-1": {
       "index": 33,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5858286998211,
-      "rate": 0.046642603471455726,
-      "hourly-rate": 0.000005339125855249053,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.40137335854484,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716777871
+      "earningrates": 1000.8313733738776,
+      "timestamp": 1716960955
     },
     "USDT-2": {
       "index": 33,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5858286998211,
-      "rate": 0.046642603471455726,
-      "hourly-rate": 0.000005339125855249053,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.40137335854484,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.003863690008,
-      "timestamp": 1716777871
+      "earningrates": 0,
+      "timestamp": 1716960955
     },
     "REXE-0": {
       "index": 1,
@@ -2218,20 +2218,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716777871
+      "timestamp": 1716960955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716777871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2240,42 +2229,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716777871
+      "timestamp": 1716960955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716960955
     }
   },
   {
     "USDT-0": {
       "index": 34,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5885120816046,
-      "rate": 0.046642825806556605,
-      "hourly-rate": 0.000005339151305695582,
-      "liabilities": 502.58851208160445,
+      "usdt_supply": 500,
+      "total-borrowed": 504.4591116109897,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.4591116109896,
       "earningrates": 0,
-      "timestamp": 1716781471
+      "timestamp": 1716964555
     },
     "USDT-1": {
       "index": 34,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5885120816046,
-      "rate": 0.046642825806556605,
-      "hourly-rate": 0.000005339151305695582,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.4591116109897,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716781471
+      "earningrates": 1000.9238532578536,
+      "timestamp": 1716964555
     },
     "USDT-2": {
       "index": 34,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5885120816046,
-      "rate": 0.046642825806556605,
-      "hourly-rate": 0.000005339151305695582,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.4591116109897,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0042930128425,
-      "timestamp": 1716781471
+      "earningrates": 0,
+      "timestamp": 1716964555
     },
     "REXE-0": {
       "index": 1,
@@ -2286,20 +2286,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716781471
+      "timestamp": 1716964555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716781471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2308,42 +2297,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716781471
+      "timestamp": 1716964555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716964555
     }
   },
   {
     "USDT-0": {
       "index": 35,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5911954905064,
-      "rate": 0.04664304814390438,
-      "hourly-rate": 0.000005339176756399311,
-      "liabilities": 502.59119549050615,
+      "usdt_supply": 500,
+      "total-borrowed": 504.51685647266675,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.5168564726667,
       "earningrates": 0,
-      "timestamp": 1716785071
+      "timestamp": 1716968155
     },
     "USDT-1": {
       "index": 35,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5911954905064,
-      "rate": 0.04664304814390438,
-      "hourly-rate": 0.000005339176756399311,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.51685647266675,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716785071
+      "earningrates": 1001.0163542517668,
+      "timestamp": 1716968155
     },
     "USDT-2": {
       "index": 35,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5911954905064,
-      "rate": 0.04664304814390438,
-      "hourly-rate": 0.000005339176756399311,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.51685647266675,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0047223404695,
-      "timestamp": 1716785071
+      "earningrates": 0,
+      "timestamp": 1716968155
     },
     "REXE-0": {
       "index": 1,
@@ -2354,20 +2354,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716785071
+      "timestamp": 1716968155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716785071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2376,42 +2365,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716785071
+      "timestamp": 1716968155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716968155
     }
   },
   {
     "USDT-0": {
       "index": 36,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5938789265267,
-      "rate": 0.046643270483499095,
-      "hourly-rate": 0.0000053392022073602445,
-      "liabilities": 502.5938789265265,
+      "usdt_supply": 500,
+      "total-borrowed": 504.5746079443326,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.57460794433246,
       "earningrates": 0,
-      "timestamp": 1716788671
+      "timestamp": 1716971755
     },
     "USDT-1": {
       "index": 36,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5938789265267,
-      "rate": 0.046643270483499095,
-      "hourly-rate": 0.0000053392022073602445,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.5746079443326,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716788671
+      "earningrates": 1001.1088763751022,
+      "timestamp": 1716971755
     },
     "USDT-2": {
       "index": 36,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5938789265267,
-      "rate": 0.046643270483499095,
-      "hourly-rate": 0.0000053392022073602445,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.5746079443326,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00515167288995,
-      "timestamp": 1716788671
+      "earningrates": 0,
+      "timestamp": 1716971755
     },
     "REXE-0": {
       "index": 1,
@@ -2422,20 +2422,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716788671
+      "timestamp": 1716971755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716788671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2444,42 +2433,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716788671
+      "timestamp": 1716971755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716971755
     }
   },
   {
     "USDT-0": {
       "index": 37,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5965623896661,
-      "rate": 0.046643492825340784,
-      "hourly-rate": 0.000005339227658578387,
-      "liabilities": 502.596562389666,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6323660267438,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.6323660267437,
       "earningrates": 0,
-      "timestamp": 1716792271
+      "timestamp": 1716975355
     },
     "USDT-1": {
       "index": 37,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5965623896661,
-      "rate": 0.046643492825340784,
-      "hourly-rate": 0.000005339227658578387,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6323660267438,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716792271
+      "earningrates": 1001.2014196458608,
+      "timestamp": 1716975355
     },
     "USDT-2": {
       "index": 37,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5965623896661,
-      "rate": 0.046643492825340784,
-      "hourly-rate": 0.000005339227658578387,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6323660267438,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0055810101042,
-      "timestamp": 1716792271
+      "earningrates": 0,
+      "timestamp": 1716975355
     },
     "REXE-0": {
       "index": 1,
@@ -2490,20 +2490,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716792271
+      "timestamp": 1716975355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716792271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2512,42 +2501,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716792271
+      "timestamp": 1716975355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716975355
     }
   },
   {
     "USDT-0": {
       "index": 38,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5992458799249,
-      "rate": 0.04664371516942948,
-      "hourly-rate": 0.000005339253110053741,
-      "liabilities": 502.5992458799248,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6901307206571,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.69013072065707,
       "earningrates": 0,
-      "timestamp": 1716795871
+      "timestamp": 1716978955
     },
     "USDT-1": {
       "index": 38,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5992458799249,
-      "rate": 0.04664371516942948,
-      "hourly-rate": 0.000005339253110053741,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6901307206571,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716795871
+      "earningrates": 1001.293984080762,
+      "timestamp": 1716978955
     },
     "USDT-2": {
       "index": 38,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.5992458799249,
-      "rate": 0.04664371516942948,
-      "hourly-rate": 0.000005339253110053741,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.6901307206571,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.006010352113,
-      "timestamp": 1716795871
+      "earningrates": 0,
+      "timestamp": 1716978955
     },
     "REXE-0": {
       "index": 1,
@@ -2558,20 +2558,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716795871
+      "timestamp": 1716978955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716795871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2580,42 +2569,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716795871
+      "timestamp": 1716978955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716978955
     }
   },
   {
     "USDT-0": {
       "index": 39,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60192939730365,
-      "rate": 0.046643937515765205,
-      "hourly-rate": 0.00000533927856178631,
-      "liabilities": 502.6019293973034,
+      "usdt_supply": 500,
+      "total-borrowed": 504.7479020268294,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.74790202682925,
       "earningrates": 0,
-      "timestamp": 1716799471
+      "timestamp": 1716982555
     },
     "USDT-1": {
       "index": 39,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60192939730365,
-      "rate": 0.046643937515765205,
-      "hourly-rate": 0.00000533927856178631,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.7479020268294,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716799471
+      "earningrates": 1001.3865696954092,
+      "timestamp": 1716982555
     },
     "USDT-2": {
       "index": 39,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60192939730365,
-      "rate": 0.046643937515765205,
-      "hourly-rate": 0.00000533927856178631,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.7479020268294,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0064396989165,
-      "timestamp": 1716799471
+      "earningrates": 0,
+      "timestamp": 1716982555
     },
     "REXE-0": {
       "index": 1,
@@ -2626,20 +2626,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716799471
+      "timestamp": 1716982555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716799471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2648,42 +2637,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716799471
+      "timestamp": 1716982555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716982555
     }
   },
   {
     "USDT-0": {
       "index": 40,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60461294180266,
-      "rate": 0.046644159864348014,
-      "hourly-rate": 0.000005339304013776101,
-      "liabilities": 502.60461294180254,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8056799460174,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.8056799460173,
       "earningrates": 0,
-      "timestamp": 1716803071
+      "timestamp": 1716986155
     },
     "USDT-1": {
       "index": 40,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60461294180266,
-      "rate": 0.046644159864348014,
-      "hourly-rate": 0.000005339304013776101,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8056799460174,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716803071
+      "earningrates": 1001.4791765044374,
+      "timestamp": 1716986155
     },
     "USDT-2": {
       "index": 40,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.60461294180266,
-      "rate": 0.046644159864348014,
-      "hourly-rate": 0.000005339304013776101,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8056799460174,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00686905051566,
-      "timestamp": 1716803071
+      "earningrates": 0,
+      "timestamp": 1716986155
     },
     "REXE-0": {
       "index": 1,
@@ -2694,20 +2694,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716803071
+      "timestamp": 1716986155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716803071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2716,42 +2705,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716803071
+      "timestamp": 1716986155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716986155
     }
   },
   {
     "USDT-0": {
       "index": 41,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6072965134223,
-      "rate": 0.046644382215177936,
-      "hourly-rate": 0.000005339329466023115,
-      "liabilities": 502.607296513422,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8634644789783,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.86346447897813,
       "earningrates": 0,
-      "timestamp": 1716806671
+      "timestamp": 1716989755
     },
     "USDT-1": {
       "index": 41,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6072965134223,
-      "rate": 0.046644382215177936,
-      "hourly-rate": 0.000005339329466023115,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8634644789783,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716806671
+      "earningrates": 1001.5718045216305,
+      "timestamp": 1716989755
     },
     "USDT-2": {
       "index": 41,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6072965134223,
-      "rate": 0.046644382215177936,
-      "hourly-rate": 0.000005339329466023115,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.8634644789783,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0072984069104,
-      "timestamp": 1716806671
+      "earningrates": 0,
+      "timestamp": 1716989755
     },
     "REXE-0": {
       "index": 1,
@@ -2762,20 +2762,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716806671
+      "timestamp": 1716989755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716806671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2784,42 +2773,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716806671
+      "timestamp": 1716989755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716989755
     }
   },
   {
     "USDT-0": {
       "index": 42,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.609980112163,
-      "rate": 0.04664460456825499,
-      "hourly-rate": 0.000005339354918527357,
-      "liabilities": 502.60998011216293,
+      "usdt_supply": 500,
+      "total-borrowed": 504.921255626469,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.9212556264689,
       "earningrates": 0,
-      "timestamp": 1716810271
+      "timestamp": 1716993355
     },
     "USDT-1": {
       "index": 42,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.609980112163,
-      "rate": 0.04664460456825499,
-      "hourly-rate": 0.000005339354918527357,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.921255626469,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716810271
+      "earningrates": 1001.6644537600282,
+      "timestamp": 1716993355
     },
     "USDT-2": {
       "index": 42,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.609980112163,
-      "rate": 0.04664460456825499,
-      "hourly-rate": 0.000005339354918527357,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.921255626469,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00772776810163,
-      "timestamp": 1716810271
+      "earningrates": 0,
+      "timestamp": 1716993355
     },
     "REXE-0": {
       "index": 1,
@@ -2830,20 +2830,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716810271
+      "timestamp": 1716993355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716810271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2852,42 +2841,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716810271
+      "timestamp": 1716993355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716993355
     }
   },
   {
     "USDT-0": {
       "index": 43,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6126637380252,
-      "rate": 0.04664482692357921,
-      "hourly-rate": 0.00000533938037128883,
-      "liabilities": 502.6126637380249,
+      "usdt_supply": 500,
+      "total-borrowed": 504.97905338924676,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 504.97905338924664,
       "earningrates": 0,
-      "timestamp": 1716813871
+      "timestamp": 1716996955
     },
     "USDT-1": {
       "index": 43,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6126637380252,
-      "rate": 0.04664482692357921,
-      "hourly-rate": 0.00000533938037128883,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 504.97905338924676,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716813871
+      "earningrates": 1001.7571242320136,
+      "timestamp": 1716996955
     },
     "USDT-2": {
       "index": 43,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6126637380252,
-      "rate": 0.04664482692357921,
-      "hourly-rate": 0.00000533938037128883,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 504.97905338924676,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0081571340892,
-      "timestamp": 1716813871
+      "earningrates": 0,
+      "timestamp": 1716996955
     },
     "REXE-0": {
       "index": 1,
@@ -2898,20 +2898,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716813871
+      "timestamp": 1716996955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716813871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2920,42 +2909,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716813871
+      "timestamp": 1716996955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1716996955
     }
   },
   {
     "USDT-0": {
       "index": 44,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6153473910093,
-      "rate": 0.046645049281150666,
-      "hourly-rate": 0.000005339405824307539,
-      "liabilities": 502.6153473910092,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0368577680688,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.03685776806867,
       "earningrates": 0,
-      "timestamp": 1716817471
+      "timestamp": 1717000555
     },
     "USDT-1": {
       "index": 44,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6153473910093,
-      "rate": 0.046645049281150666,
-      "hourly-rate": 0.000005339405824307539,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0368577680688,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716817471
+      "earningrates": 1001.8498159493897,
+      "timestamp": 1717000555
     },
     "USDT-2": {
       "index": 44,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6153473910093,
-      "rate": 0.046645049281150666,
-      "hourly-rate": 0.000005339405824307539,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0368577680688,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00858650487345,
-      "timestamp": 1716817471
+      "earningrates": 0,
+      "timestamp": 1717000555
     },
     "REXE-0": {
       "index": 1,
@@ -2966,20 +2966,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716817471
+      "timestamp": 1717000555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716817471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -2988,42 +2977,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716817471
+      "timestamp": 1717000555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717000555
     }
   },
   {
     "USDT-0": {
       "index": 45,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6180310711158,
-      "rate": 0.04664527164096934,
-      "hourly-rate": 0.000005339431277583487,
-      "liabilities": 502.6180310711155,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0946687636924,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.09466876369225,
       "earningrates": 0,
-      "timestamp": 1716821071
+      "timestamp": 1717004155
     },
     "USDT-1": {
       "index": 45,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6180310711158,
-      "rate": 0.04664527164096934,
-      "hourly-rate": 0.000005339431277583487,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0946687636924,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716821071
+      "earningrates": 1001.9425289234465,
+      "timestamp": 1717004155
     },
     "USDT-2": {
       "index": 45,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6180310711158,
-      "rate": 0.04664527164096934,
-      "hourly-rate": 0.000005339431277583487,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.0946687636924,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0090158804551,
-      "timestamp": 1716821071
+      "earningrates": 0,
+      "timestamp": 1717004155
     },
     "REXE-0": {
       "index": 1,
@@ -3034,20 +3034,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716821071
+      "timestamp": 1717004155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716821071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3056,42 +3045,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716821071
+      "timestamp": 1717004155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717004155
     }
   },
   {
     "USDT-0": {
       "index": 46,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.620714778345,
-      "rate": 0.04664549400303531,
-      "hourly-rate": 0.00000533945673111668,
-      "liabilities": 502.6207147783448,
+      "usdt_supply": 500,
+      "total-borrowed": 505.1524863768751,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.1524863768749,
       "earningrates": 0,
-      "timestamp": 1716824671
+      "timestamp": 1717007755
     },
     "USDT-1": {
       "index": 46,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.620714778345,
-      "rate": 0.04664549400303531,
-      "hourly-rate": 0.00000533945673111668,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.1524863768751,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716824671
+      "earningrates": 1002.0352631650169,
+      "timestamp": 1717007755
     },
     "USDT-2": {
       "index": 46,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.620714778345,
-      "rate": 0.04664549400303531,
-      "hourly-rate": 0.00000533945673111668,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.1524863768751,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00944526083435,
-      "timestamp": 1716824671
+      "earningrates": 0,
+      "timestamp": 1717007755
     },
     "REXE-0": {
       "index": 1,
@@ -3102,20 +3102,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716824671
+      "timestamp": 1717007755
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716824671
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3124,42 +3113,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716824671
+      "timestamp": 1717007755
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717007755
     }
   },
   {
     "USDT-0": {
       "index": 47,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.62339851269735,
-      "rate": 0.046645716367348586,
-      "hourly-rate": 0.000005339482184907118,
-      "liabilities": 502.62339851269724,
+      "usdt_supply": 500,
+      "total-borrowed": 505.21031060837424,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.21031060837413,
       "earningrates": 0,
-      "timestamp": 1716828271
+      "timestamp": 1717011355
     },
     "USDT-1": {
       "index": 47,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.62339851269735,
-      "rate": 0.046645716367348586,
-      "hourly-rate": 0.000005339482184907118,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.21031060837424,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716828271
+      "earningrates": 1002.1280186845278,
+      "timestamp": 1717011355
     },
     "USDT-2": {
       "index": 47,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.62339851269735,
-      "rate": 0.046645716367348586,
-      "hourly-rate": 0.000005339482184907118,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.21031060837424,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00987464601104,
-      "timestamp": 1716828271
+      "earningrates": 0,
+      "timestamp": 1717011355
     },
     "REXE-0": {
       "index": 1,
@@ -3170,20 +3170,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716828271
+      "timestamp": 1717011355
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716828271
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3192,42 +3181,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716828271
+      "timestamp": 1717011355
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717011355
     }
   },
   {
     "USDT-0": {
       "index": 48,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6260822741732,
-      "rate": 0.04664593873390921,
-      "hourly-rate": 0.000005339507638954809,
-      "liabilities": 502.6212839429549,
+      "usdt_supply": 500,
+      "total-borrowed": 505.2681414589476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.2106029693216,
       "earningrates": 0,
-      "timestamp": 1716831871
+      "timestamp": 1717014955
     },
     "USDT-1": {
       "index": 48,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6260822741732,
-      "rate": 0.04664593873390921,
-      "hourly-rate": 0.000005339507638954809,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.2681414589476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716831871
+      "earningrates": 1002.0774287243723,
+      "timestamp": 1717014955
     },
     "USDT-2": {
       "index": 48,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6260822741732,
-      "rate": 0.04664593873390921,
-      "hourly-rate": 0.000005339507638954809,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.2681414589476,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0090770775678,
-      "timestamp": 1716831871
+      "earningrates": 0,
+      "timestamp": 1717014955
     },
     "REXE-0": {
       "index": 1,
@@ -3238,20 +3238,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716831871
+      "timestamp": 1717014955
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716831871
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3260,42 +3249,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716831871
+      "timestamp": 1717014955
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717014955
     }
   },
   {
     "USDT-0": {
       "index": 49,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.628766062773,
-      "rate": 0.04664616110271721,
-      "hourly-rate": 0.000005339533093259754,
-      "liabilities": 502.62396770594466,
+      "usdt_supply": 500,
+      "total-borrowed": 505.3259789293527,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.2684338548134,
       "earningrates": 0,
-      "timestamp": 1716835471
+      "timestamp": 1717018555
     },
     "USDT-1": {
       "index": 49,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.628766062773,
-      "rate": 0.04664616110271721,
-      "hourly-rate": 0.000005339533093259754,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.3259789293527,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716835471
+      "earningrates": 1002.1692244037713,
+      "timestamp": 1717018555
     },
     "USDT-2": {
       "index": 49,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.628766062773,
-      "rate": 0.04664616110271721,
-      "hourly-rate": 0.000005339533093259754,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.3259789293527,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.00949794474906,
-      "timestamp": 1716835471
+      "earningrates": 0,
+      "timestamp": 1717018555
     },
     "REXE-0": {
       "index": 1,
@@ -3306,20 +3306,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716835471
+      "timestamp": 1717018555
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716835471
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3328,42 +3317,53 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716835471
+      "timestamp": 1717018555
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717018555
     }
   },
   {
     "USDT-0": {
       "index": 50,
       "usdt_amount": 0,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6314498784973,
-      "rate": 0.046646383473772625,
-      "hourly-rate": 0.000005339558547821958,
-      "liabilities": 502.6266514960577,
+      "usdt_supply": 500,
+      "total-borrowed": 505.38382302034734,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
+      "liabilities": 505.32627136008193,
       "earningrates": 0,
-      "timestamp": 1716839071
+      "timestamp": 1717022155
     },
     "USDT-1": {
       "index": 50,
-      "usdt_amount": 2500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6314498784973,
-      "rate": 0.046646383473772625,
-      "hourly-rate": 0.000005339558547821958,
+      "usdt_amount": 1000,
+      "usdt_supply": 500,
+      "total-borrowed": 505.38382302034734,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716839071
+      "earningrates": 1002.2610811893342,
+      "timestamp": 1717022155
     },
     "USDT-2": {
       "index": 50,
-      "usdt_amount": 500,
-      "usdt_supply": 2500,
-      "total-borrowed": 502.6314498784973,
-      "rate": 0.046646383473772625,
-      "hourly-rate": 0.000005339558547821958,
+      "usdt_amount": 0,
+      "usdt_supply": 500,
+      "total-borrowed": 505.38382302034734,
+      "rate": 1,
+      "hourly-rate": 0.00011446886446886447,
       "liabilities": 0,
-      "earningrates": 500.0099191718016,
-      "timestamp": 1716839071
+      "earningrates": 0,
+      "timestamp": 1717022155
     },
     "REXE-0": {
       "index": 1,
@@ -3374,20 +3374,9 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716839071
+      "timestamp": 1717022155
     },
     "REXE-1": {
-      "index": 1,
-      "rexe_amount": 0,
-      "rexe_supply": 5000,
-      "total-borrowed": 0,
-      "rate": 0.005,
-      "hourly-rate": 5.723443223443223e-7,
-      "liabilities": 0,
-      "earningrates": 0,
-      "timestamp": 1716839071
-    },
-    "REXE-2": {
       "index": 1,
       "rexe_amount": 2500,
       "rexe_supply": 5000,
@@ -3396,7 +3385,18 @@
       "hourly-rate": 5.723443223443223e-7,
       "liabilities": 0,
       "earningrates": 2500,
-      "timestamp": 1716839071
+      "timestamp": 1717022155
+    },
+    "REXE-2": {
+      "index": 1,
+      "rexe_amount": 0,
+      "rexe_supply": 5000,
+      "total-borrowed": 0,
+      "rate": 0.005,
+      "hourly-rate": 5.723443223443223e-7,
+      "liabilities": 0,
+      "earningrates": 0,
+      "timestamp": 1717022155
     }
   }
 ]

@@ -47,7 +47,10 @@ contract MockDatahub is DataHub {
       address token,
       uint256 amount
   ) external {
+      // console.log("==========remove liabilities test function==========");
+      // console.log("user liability", userdata[user].liability_info[token]);
       userdata[user].liability_info[token] -= amount;
+      // console.log("user liability after", userdata[user].liability_info[token]);
   }
   
   function settotalAssetSupplyTest(address token, uint256 amount, bool pos_neg) public {
@@ -55,6 +58,14 @@ contract MockDatahub is DataHub {
       assetdata[token].assetInfo[0] += amount; // 0 -> totalAssetSupply
     } else {
       assetdata[token].assetInfo[0] -= amount; // 0 -> totalAssetSupply
+    }
+  }
+
+  function settotalBorrowAmountTest(address token, uint256 amount, bool pos_neg) public {
+    if (pos_neg == true) {
+      assetdata[token].assetInfo[1] += amount; // 0 -> totalAssetSupply
+    } else {
+      assetdata[token].assetInfo[1] -= amount; // 0 -> totalAssetSupply
     }
   }
 

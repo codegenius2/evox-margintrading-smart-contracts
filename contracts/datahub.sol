@@ -276,12 +276,11 @@ contract DataHub is Ownable {
         uint256 amount
     ) external checkRoleAuthority {
         // check that we are not removing  balance twice 
-        uint256 pendingamount ;
+        uint256 pendingamount;
         uint256 assets =  userdata[user].asset_info[token];
 
         if (amount > assets ){
-
-            pendingamount = assets ;
+            pendingamount = assets;
         }
         else{ 
             pendingamount = amount;
@@ -290,7 +289,6 @@ contract DataHub is Ownable {
         userdata[user].pending_balances[token] += pendingamount;
         // subracts from assest
         removeAssets(user , token , pendingamount);
-
     }
     /// @notice This removes a pending balance for the user on a token they are trading
     /// @dev We do this when the trade is cleared by the oracle and the trade is executed.

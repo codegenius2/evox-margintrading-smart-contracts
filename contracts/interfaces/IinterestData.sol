@@ -42,7 +42,7 @@ interface IInterestData {
 
     function chargeMassinterest(address token) external;
 
-        function returnInterestCharge(
+    function returnInterestCharge(
         address user,
         address token,
         uint256 liabilitiesAccrued

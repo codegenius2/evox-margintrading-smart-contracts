@@ -201,4 +201,103 @@ contract MockInterestData is interestData {
         (uint256 interestCharge, uint256 OrderBookProviderCharge, uint256 DaoInterestCharge) = EVO_LIBRARY.calculateCompoundedAssets(currentIndex, AverageCumulativeDepositInterest, usersAssets, usersOriginIndex);
         return (interestCharge, OrderBookProviderCharge, DaoInterestCharge);
     }
+
+    function calculateCompoundedLiabilitiesTest(
+        uint256 currentIndex, // token index
+        uint256 AverageCumulativeInterest,
+        IDataHub.AssetData memory assetdata,
+        IInterestData.interestDetails memory interestRateInfo,
+        uint256 newLiabilities,
+        uint256 usersLiabilities,
+        uint256 usersOriginIndex
+    ) public pure returns (uint256) {
+        uint256 amountOfBilledHours = currentIndex - usersOriginIndex;
+        uint256 adjustedNewLiabilities = (newLiabilities * (1e18 + (EVO_LIBRARY.calculateInterestRate(newLiabilities, assetdata, interestRateInfo) / 8736))) / (10 ** 18);
+        uint256 initalMarginFeeAmount;
+
+        uint256 interestCharge;
+        uint256 averageHourly = 1e18 + AverageCumulativeInterest / 8736;
+        (uint256 averageHourlyBase, int256 averageHourlyExp) = EVO_LIBRARY.normalize(
+            averageHourly
+        );
+        averageHourlyExp = averageHourlyExp - 18;
+
+        uint256 hourlyChargesBase = 1;
+        int256 hourlyChargesExp = 0;
+
+        while (amountOfBilledHours > 0) {
+            if (amountOfBilledHours % 2 == 1) {
+                (uint256 _base, int256 _exp) = EVO_LIBRARY.normalize(
+                    (hourlyChargesBase * averageHourlyBase)
+                );
+
+                hourlyChargesBase = _base;
+                hourlyChargesExp =
+                    hourlyChargesExp +
+                    averageHourlyExp +
+                    _exp;
+            }
+            (uint256 _bases, int256 _exps) = EVO_LIBRARY.normalize(
+                (averageHourlyBase * averageHourlyBase)
+            );
+            averageHourlyBase = _bases;
+            averageHourlyExp = averageHourlyExp + averageHourlyExp + _exps;
+
+            amountOfBilledHours /= 2;
+        }
+
+        uint256 compoundedLiabilities = usersLiabilities *
+            hourlyChargesBase;
+
+        unchecked {
+            if (hourlyChargesExp >= 0) {
+                compoundedLiabilities =
+                    compoundedLiabilities *
+                    (10 ** uint256(hourlyChargesExp));
+            } else {
+                compoundedLiabilities =
+                    compoundedLiabilities /
+                    (10 ** uint256(-hourlyChargesExp));
+            }
+
+            interestCharge =
+                (compoundedLiabilities +
+                    adjustedNewLiabilities +
+                    initalMarginFeeAmount) -
+                (usersLiabilities + newLiabilities);
+            return interestCharge;
+        }
+    }
+
+    function returnInterestChargeTest(
+        address user,
+        address token,
+        uint256 liabilitiesAccrued
+    ) public view returns (uint256) {
+        // console.log("========================return interest charge function========================");
+        (, uint256 liabilities, , , ) = Datahub.ReadUserData(user, token);
+
+        uint256 interestRateIndex = Datahub.viewUsersInterestRateIndex(user, token);
+        uint256 currentRateIndex = fetchCurrentRateIndex(token);
+        IInterestData.interestDetails memory rateInfo = fetchRateInfo(token, currentRateIndex);
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
+        uint256 cumulativeInterest = calculateAverageCumulativeInterest(
+            interestRateIndex,
+            currentRateIndex,
+            token
+        );
+        // console.log("cumulativeInterest", cumulativeInterest);
+
+        uint256 interestCharge = calculateCompoundedLiabilitiesTest(
+            currentRateIndex,
+            cumulativeInterest,
+            assetLogs,
+            rateInfo,
+            liabilitiesAccrued,
+            liabilities,
+            interestRateIndex
+        );
+        // console.log("interest charge", interestCharge);
+        return interestCharge;
+    }
 }
