@@ -49,7 +49,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
     // Get liability
     let userData_usdt_signer0 = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
     let liabilitiesValue_usdt_signer0 = userData_usdt_signer0[1];
-    // console.log("USDT liabilitiesValue", userData_usdt_signer0);
+    // console.log("USDT liabilitiesValue_usdt_signer0", liabilitiesValue_usdt_signer0);
 
     let userData_rexe_signer0 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
     let liabilitiesValue_rexe_signer0 = userData_rexe_signer0[1];
@@ -59,7 +59,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
     let user_rexe_earning_rate0 = await Utils.returnEarningRateProfit(signers[0].address, await REXE_TOKEN.getAddress());
 
     // Get interestadjustedliability
-    let interestadjustedLiabilities_usdt_singer0 = await _Interest.returnInterestChargeTest(
+    let interestadjustedLiabilities_usdt_singer0 = await _Interest.returnInterestCharge(
         signers[0].address,
         await USDT_TOKEN.getAddress(),
         0
@@ -72,11 +72,15 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
         0
     )
     // console.log("REXE interestadjustedLiabilities", interestadjustedLiabilities_rexe);
+    let signer0_feeInfo = (await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())).feeInfo[0];
+    let singer0_liabilities = 500_000000000000000000n;
+    const singer0IMF = await _Interest.calculateIMF(signer0_feeInfo, singer0_liabilities);
+    // console.log(singer0IMF);
 
     // Get liability
     let userData_usdt_singer1 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
     let liabilitiesValue_usdt_signer1 = userData_usdt_singer1[1];
-    // console.log("USDT liabilitiesValue", liabilitiesValue_usdt);
+    // console.log("USDT liabilitiesValue_usdt_signer1", liabilitiesValue_usdt_signer1);
 
     let userData_rexe_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
     let liabilitiesValue_rexe_signer1 = userData_rexe_signer1[1];
@@ -166,6 +170,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "liabilities": Number(Number(liabilitiesValue_usdt_signer0) + Number(interestadjustedLiabilities_usdt_singer0)) / 10 ** 18,
             "earningrates": Number(Number(usdt_amount_signer0.toString()) + Number(user_usdt_earning_rate0.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
+            "liability_charge": Number(Number(interestadjustedLiabilities_usdt_singer0)) / 10 ** 18,
         },
         "USDT-1" : {
             "index": Number(interestIndex_usdt.toString()),
@@ -178,6 +183,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "liabilities": Number(Number(liabilitiesValue_usdt_signer1) + Number(interestadjustedLiabilities_usdt_signer1)) / 10 ** 18,
             "earningrates": Number(Number(usdt_amount_signer1.toString()) + Number(user_usdt_earning_rate1.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
+            "earningreate_charge": Number(user_usdt_earning_rate1.toString()) / 10 **18,
         },
         "USDT-2" : {
             "index": Number(interestIndex_usdt.toString()),

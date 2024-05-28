@@ -21,7 +21,7 @@ contract MockUtils is Utility {
     address orderBookProvider = Executor.fetchOrderBookProvider();
     address daoWallet = Executor.fetchDaoWallet();
 
-    uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
+    (uint256 averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
         usersEarningRateIndex,
         currentReateIndex,
         token
