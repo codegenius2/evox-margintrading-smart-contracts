@@ -201,4 +201,7 @@ contract MockInterestData is interestData {
         (uint256 interestCharge, uint256 OrderBookProviderCharge, uint256 DaoInterestCharge) = EVO_LIBRARY.calculateCompoundedAssets(currentIndex, AverageCumulativeDepositInterest, usersAssets, usersOriginIndex);
         return (interestCharge, OrderBookProviderCharge, DaoInterestCharge);
     }
+    function calculateIMF(uint256 feeInfo, uint256 liabilities) public pure returns(uint256) {
+        return (feeInfo * liabilities) / 10 ** 18; // 0 -> initialMarginFee
+    }
 }

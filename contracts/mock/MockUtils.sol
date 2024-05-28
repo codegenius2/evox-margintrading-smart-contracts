@@ -13,6 +13,7 @@ contract MockUtils is Utility {
   constructor(address initialOwner, address _DataHub, address _deposit_vault, address oracle, address _executor, address _interest) Utility(initialOwner, _DataHub, _deposit_vault, oracle, _executor, _interest) {}
 
   function returnEarningRateProfit(address user, address token) public view returns(uint256) {
+    // console.log("=============== returnEarningReateProfit ==================");
     (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
 
     uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
@@ -20,7 +21,7 @@ contract MockUtils is Utility {
     address orderBookProvider = Executor.fetchOrderBookProvider();
     address daoWallet = Executor.fetchDaoWallet();
 
-    uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
+    (uint256 averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
         usersEarningRateIndex,
         currentReateIndex,
         token
@@ -38,6 +39,7 @@ contract MockUtils is Utility {
             assets,
             usersEarningRateIndex
         );
+    // console.log("interest rate", interestCharge);
     return interestCharge + OrderBookProviderCharge + DaoInterestCharge;
   }
 }
