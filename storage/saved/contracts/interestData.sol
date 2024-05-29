@@ -184,7 +184,7 @@ contract interestData is Ownable {
                 ) /
                 8736;
 
-            console.log(averageHourly, "average hourly");
+            // console.log(averageHourly, "average hourly");
 
             (uint256 averageHourlyBase, int256 averageHourlyExp) = REX_LIBRARY
                 .normalize(averageHourly);
@@ -218,7 +218,7 @@ contract interestData is Ownable {
                 hourlyChargesBase;
 
             // hourlyChargesBase;
-            console.log(compoundedLiabilities, "compoundede libs");
+            // console.log(compoundedLiabilities, "compoundede libs");
 
             unchecked {
                 if (hourlyChargesExp >= 0) {
@@ -237,7 +237,7 @@ contract interestData is Ownable {
                         initalMarginFeeAmount) -
                     (usersLiabilities + newLiabilities);
             }
-            console.log(interestCharge, "interestssss less gooo");
+            // console.log(interestCharge, "interestssss less gooo");
             return interestCharge;
         }
     }
@@ -361,7 +361,7 @@ contract interestData is Ownable {
 
         if (index % 24 == 0) {
             // 168
-            console.log("SET DAILY RATE");
+            // console.log("SET DAILY RATE");
             InterestRateEpochs[1][token][uint(currentInterestIndex[token] / 24)]
                 .interestRate = REX_LIBRARY.calculateAverage(
                 fetchRatesList(
@@ -382,7 +382,7 @@ contract interestData is Ownable {
             ].rateInfo;
         }
         if (index % 168 == 0) {
-            console.log("SET WEEKLY RATE");
+            // console.log("SET WEEKLY RATE");
             InterestRateEpochs[2][token][
                 uint(currentInterestIndex[token] / 168)
             ].interestRate = REX_LIBRARY.calculateAverage(
@@ -413,7 +413,7 @@ contract interestData is Ownable {
             ].rateInfo;
         }
         if (index % 672 == 0) {
-            console.log("SET MONTHLY RATE");
+            // console.log("SET MONTHLY RATE");
             InterestRateEpochs[3][token][
                 uint(currentInterestIndex[token] / 672) //8736, 672, 168, 24
             ].interestRate = REX_LIBRARY.calculateAverage(

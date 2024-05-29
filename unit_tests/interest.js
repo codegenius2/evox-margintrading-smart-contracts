@@ -55,8 +55,8 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
     let liabilitiesValue_rexe_signer0 = userData_rexe_signer0[1];
     // console.log("REXE liabilitiesValue", liabilitiesValue_rexe);
 
-    let user_usdt_earning_rate0 = await Utils.returnEarningRateProfit(signers[0].address, await USDT_TOKEN.getAddress());
-    let user_rexe_earning_rate0 = await Utils.returnEarningRateProfit(signers[0].address, await REXE_TOKEN.getAddress());
+    // let user_usdt_earning_rate0 = await Utils.returnEarningRateProfit(signers[0].address, await USDT_TOKEN.getAddress());
+    // let user_rexe_earning_rate0 = await Utils.returnEarningRateProfit(signers[0].address, await REXE_TOKEN.getAddress());
 
     // Get interestadjustedliability
     let interestadjustedLiabilities_usdt_singer0 = await _Interest.returnInterestCharge(
@@ -88,7 +88,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
 
     let user_usdt_earning_rate1 = await Utils.returnEarningRateProfit(signers[1].address, await USDT_TOKEN.getAddress());
     // console.log("=====================user_usdt_earning_rate1=========================", user_usdt_earning_rate1);
-    let user_rexe_earning_rate1 = await Utils.returnEarningRateProfit(signers[1].address, await REXE_TOKEN.getAddress());
+    // let user_rexe_earning_rate1 = await Utils.returnEarningRateProfit(signers[1].address, await REXE_TOKEN.getAddress());
 
     // Get interestadjustedliability
     let interestadjustedLiabilities_usdt_signer1 = await _Interest.returnInterestCharge(
@@ -113,8 +113,8 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
     let liabilitiesValue_rexe_signer2 = userData_rexe_signer2[1];
     // console.log("REXE liabilitiesValue", liabilitiesValue_rexe);
 
-    let user_usdt_earning_rate2 = await Utils.returnEarningRateProfit(signers[2].address, await USDT_TOKEN.getAddress());
-    let user_rexe_earning_rate2 = await Utils.returnEarningRateProfit(signers[2].address, await REXE_TOKEN.getAddress());
+    // let user_usdt_earning_rate2 = await Utils.returnEarningRateProfit(signers[2].address, await USDT_TOKEN.getAddress());
+    // let user_rexe_earning_rate2 = await Utils.returnEarningRateProfit(signers[2].address, await REXE_TOKEN.getAddress());
 
     // Get interestadjustedliability
     let interestadjustedLiabilities_usdt_signer2 = await _Interest.returnInterestCharge(
@@ -168,7 +168,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_usdt.toString()) / 10 ** 18,
             "hourly-rate": Number(hourly_rate_usdt) / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_usdt_signer0) + Number(interestadjustedLiabilities_usdt_singer0)) / 10 ** 18,
-            "earningrates": Number(Number(usdt_amount_signer0.toString()) + Number(user_usdt_earning_rate0.toString())) / 10 **18,
+            // "earningrates": Number(Number(usdt_amount_signer0.toString()) + Number(user_usdt_earning_rate0.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
             "liability_charge": Number(Number(interestadjustedLiabilities_usdt_singer0)) / 10 ** 18,
         },
@@ -181,7 +181,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_usdt.toString()) / 10 ** 18,
             "hourly-rate": Number(hourly_rate_usdt) / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_usdt_signer1) + Number(interestadjustedLiabilities_usdt_signer1)) / 10 ** 18,
-            "earningrates": Number(Number(usdt_amount_signer1.toString()) + Number(user_usdt_earning_rate1.toString())) / 10 **18,
+            // "earningrates": Number(Number(usdt_amount_signer1.toString()) + Number(user_usdt_earning_rate1.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
             "earningreate_charge": Number(user_usdt_earning_rate1.toString()) / 10 **18,
         },
@@ -194,7 +194,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_usdt.toString()) / 10 ** 18,
             "hourly-rate": Number(hourly_rate_usdt) / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_usdt_signer2) + Number(interestadjustedLiabilities_usdt_signer2)) / 10 ** 18,
-            "earningrates": Number(Number(usdt_amount_signer2.toString()) + Number(user_usdt_earning_rate2.toString())) / 10 **18,
+            // "earningrates": Number(Number(usdt_amount_signer2.toString()) + Number(user_usdt_earning_rate2.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
         "REXE-0" : {
@@ -206,7 +206,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_rexe.toString()) / 10 ** 18,
             "hourly-rate": hourly_rate_rexe / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_rexe_signer0) + Number(interestadjustedLiabilities_rexe_signer0)) / 10 ** 18,
-            "earningrates": Number(Number(rexe_amount_signer0.toString()) + Number(user_rexe_earning_rate0.toString())) / 10 **18,
+            // "earningrates": Number(Number(rexe_amount_signer0.toString()) + Number(user_rexe_earning_rate0.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
         "REXE-1" : {
@@ -218,7 +218,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_rexe.toString()) / 10 ** 18,
             "hourly-rate": hourly_rate_rexe / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_rexe_signer1) + Number(interestadjustedLiabilities_rexe_signer1)) / 10 ** 18,
-            "earningrates": Number(Number(rexe_amount_signer1.toString()) + Number(user_rexe_earning_rate1.toString())) / 10 **18,
+            // "earningrates": Number(Number(rexe_amount_signer1.toString()) + Number(user_rexe_earning_rate1.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
         },
         "REXE-2" : {
@@ -230,7 +230,7 @@ async function createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils
             "rate": Number(Rate_rexe.toString()) / 10 ** 18,
             "hourly-rate": hourly_rate_rexe / 10 ** 18,
             "liabilities": Number(Number(liabilitiesValue_rexe_signer2) + Number(interestadjustedLiabilities_rexe_signer2)) / 10 ** 18,
-            "earningrates": Number(Number(rexe_amount_signer2.toString()) + Number(user_rexe_earning_rate2.toString())) / 10 **18,
+            // "earningrates": Number(Number(rexe_amount_signer2.toString()) + Number(user_rexe_earning_rate2.toString())) / 10 **18,
             "timestamp": Number(scaledTimestamp.toString()),
         }
     };
@@ -2046,18 +2046,27 @@ describe("Interest Test", function () {
             await approvalTx.wait();  // Wait for the transaction to be mined       
             await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
 
+            deposit_amount = 1_000_000000000000000000n;
+            let transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
             // REXE Deposit
             deposit_amount = 5_000_000000000000000000n;
-            approvalTx = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait(); 
+            approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
             await approvalTx.wait();  // Wait for the transaction to be mined
-            await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
 
             const Data1 = {
                 "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
                 "maker_out_token": await REXE_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
                 "takers": signers[0].address, //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
                 "makers": signers[1].address, //0x70997970c51812dc3a010c7d01b50e0d17dc79c8
-                "taker_out_token_amount": 1000_000000000000000000n, // 12000000000000000000 // 1250
+                "taker_out_token_amount": 900_000000000000000000n, // 12000000000000000000 // 1250
                 "maker_out_token_amount": 2_500_000000000000000000n, // 12000000000000000000  // 2500
             }
             const trade_sides = [[true], [false]];
@@ -2078,7 +2087,7 @@ describe("Interest Test", function () {
             let allData = [];
             let scaledTimestamp;
             // for (let i = 0; i <= 174; i++) {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 8; i++) {
 
                 // console.log("////////////////////////////////////////////////////////// LOOP " + i + " /////////////////////////////////////////////////////////////");
                 scaledTimestamp = originTimestamp + i * 3600;
@@ -2108,8 +2117,13 @@ describe("Interest Test", function () {
 
             // Write all collected data to the JSON file
             fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
+
+            // for (let index = 1; index < 6; index++) {
+            //     console.log("rate interest index", (await _Interest.fetchTimeScaledRateIndex(0, await USDT_TOKEN.getAddress(), index))[3]);
+            // }
+
             // console.log('All data recorded successfully.');
-            const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+            // const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
             // console.log("test", Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities));
             // expect(Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities)).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
@@ -2184,7 +2198,7 @@ describe("Interest Test", function () {
             }
             // for (let index = 0; index < 32; index++) {
             //     temp = await _Interest.fetchTimeScaledRateIndex(0, await USDT_TOKEN.getAddress(), index + 1);
-            //     // console.log("data", temp.interestRate);
+            //     console.log("data", temp.interestRate);
             // }
             // console.log("=======================1=============================");
             // for(let index = 0; index < 16; index++) {
@@ -2277,9 +2291,9 @@ describe("Interest Test", function () {
 
         it("calculateCompoundedAssets Function Test", async function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
-            const result = await _Interest.calculateCompoundedAssetsTest(30000, 109090572904986170n, 9412667466204455n, 1);
+            const result = await _Interest.calculateCompoundedAssetsTest(30000, 109090572904986170n, 59090572904986170n, 9412667466204455n, 1);
             // console.log("result", result);
-            expect(result[0]).equals(3421867552326560n);
+            expect(result[0]).equals(202200114071920n);
         })
 
         it("AlterTotalBorrow Function Test", async function () {

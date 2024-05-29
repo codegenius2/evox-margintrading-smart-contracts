@@ -513,13 +513,13 @@ contract Utility is Ownable {
         address orderBookProvider = Executor.fetchOrderBookProvider();
         address daoWallet = Executor.fetchDaoWallet();
 
-        uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
+        (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProposition) = interestContract.calculateAverageCumulativeDepositInterest(
             usersEarningRateIndex,
             currentReateIndex,
             token
         );
 
-        // console.log("averageCumulativeDepositInterest", averageCumulativeDepositInterest);
+        // console.log("averageCumulativeDepositInterest - averageBorrowProposition", averageCumulativeDepositInterest, averageBorrowProposition);
 
         (
             uint256 interestCharge,
@@ -528,9 +528,12 @@ contract Utility is Ownable {
         ) = EVO_LIBRARY.calculateCompoundedAssets(
                 currentReateIndex,
                 averageCumulativeDepositInterest,
+                averageBorrowProposition,
                 assets,
                 usersEarningRateIndex
             );
+        
+        // console.log("interestCharge - OrderBookProviderCharge - DaoInterestCharge", interestCharge, OrderBookProviderCharge, DaoInterestCharge);
         
         Datahub.alterUsersEarningRateIndex(user, token);
         // console.log("////////////////interest charge//////////////////", interestCharge);

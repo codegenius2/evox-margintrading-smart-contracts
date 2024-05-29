@@ -246,6 +246,7 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
+        // console.log("amount", amount);
         userdata[user].liability_info[token] += amount;
     }
 
