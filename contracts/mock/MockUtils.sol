@@ -21,13 +21,13 @@ contract MockUtils is Utility {
     address orderBookProvider = Executor.fetchOrderBookProvider();
     address daoWallet = Executor.fetchDaoWallet();
 
-    (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProposition) = interestContract.calculateAverageCumulativeDepositInterest(
+    (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
         usersEarningRateIndex,
         currentRateIndex,
         token
     );
     // console.log("endindex-startindex", usersEarningRateIndex, currentRateIndex);
-    // console.log("averageCumulativeDepositInterest - averageBorrowProposition", averageCumulativeDepositInterest, averageBorrowProposition);
+    // console.log("averageCumulativeDepositInterest - averageBorrowProportion", averageCumulativeDepositInterest, averageBorrowProportion);
     // console.log("asset", assets);
     (
         uint256 interestCharge,
@@ -36,7 +36,7 @@ contract MockUtils is Utility {
     ) = EVO_LIBRARY.calculateCompoundedAssets(
             currentRateIndex,
             averageCumulativeDepositInterest,
-            averageBorrowProposition,
+            averageBorrowProportion,
             assets,
             usersEarningRateIndex
         );

@@ -195,11 +195,11 @@ contract MockInterestData is interestData {
     function calculateCompoundedAssetsTest(
         uint256 currentIndex,
         uint256 AverageCumulativeDepositInterest,
-        uint256 AverageBorrowProposition,
+        uint256 AverageBorrowProportion,
         uint256 usersAssets,
         uint256 usersOriginIndex
     ) public pure returns (uint256, uint256, uint256) {
-        (uint256 interestCharge, uint256 OrderBookProviderCharge, uint256 DaoInterestCharge) = EVO_LIBRARY.calculateCompoundedAssets(currentIndex, AverageCumulativeDepositInterest, AverageBorrowProposition, usersAssets, usersOriginIndex);
+        (uint256 interestCharge, uint256 OrderBookProviderCharge, uint256 DaoInterestCharge) = EVO_LIBRARY.calculateCompoundedAssets(currentIndex, AverageCumulativeDepositInterest, AverageBorrowProportion, usersAssets, usersOriginIndex);
         return (interestCharge, OrderBookProviderCharge, DaoInterestCharge);
     }
     function calculateIMF(uint256 feeInfo, uint256 liabilities) public pure returns(uint256) {

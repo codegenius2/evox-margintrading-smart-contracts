@@ -428,15 +428,15 @@ contract Utility is Ownable {
         } else {
             uint256 length = Datahub.returnUsersAssetTokens(user).length;
             address[] memory tokens;
-            uint256 partMMROfUser;
+            uint256 pairMMROfUser;
             for (uint256 i = 0; i < length; i++) {
                 tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
+                pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
                 Datahub.removeMaintenanceMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    pairMMROfUser
                 );
             }
         }
@@ -491,15 +491,15 @@ contract Utility is Ownable {
         } else {
             uint256 length = Datahub.returnUsersAssetTokens(user).length;
             address[] memory tokens;
-            uint256 partMMROfUser;
+            uint256 pairMMROfUser;
             for (uint256 i = 0; i < length; i++) {
                 tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
+                pairMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
                 Datahub.removeInitialMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    pairMMROfUser
                 );
             }
         }
@@ -508,27 +508,27 @@ contract Utility is Ownable {
     function debitAssetInterest(address user, address token) public checkRoleAuthority {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
 
-        uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
         uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
         address orderBookProvider = Executor.fetchOrderBookProvider();
         address daoWallet = Executor.fetchDaoWallet();
 
-        (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProposition) = interestContract.calculateAverageCumulativeDepositInterest(
+        (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
             usersEarningRateIndex,
-            currentReateIndex,
+            currentRateIndex,
             token
         );
 
-        // console.log("averageCumulativeDepositInterest - averageBorrowProposition", averageCumulativeDepositInterest, averageBorrowProposition);
+        // console.log("averageCumulativeDepositInterest - averageBorrowProportion", averageCumulativeDepositInterest, averageBorrowProportion);
 
         (
             uint256 interestCharge,
             uint256 OrderBookProviderCharge,
             uint256 DaoInterestCharge
         ) = EVO_LIBRARY.calculateCompoundedAssets(
-                currentReateIndex,
+                currentRateIndex,
                 averageCumulativeDepositInterest,
-                averageBorrowProposition,
+                averageBorrowProportion,
                 assets,
                 usersEarningRateIndex
             );
