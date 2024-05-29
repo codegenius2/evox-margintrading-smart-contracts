@@ -29,7 +29,7 @@ interface IInterestData {
         uint256 startIndex,
         uint256 endIndex,
         address token
-    ) external view returns (uint256);
+    ) external view returns (uint256, uint256);
 
     function fetchRateInfo(
         address token,

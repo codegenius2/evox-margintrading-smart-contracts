@@ -66,13 +66,13 @@ contract REX_EXCHANGE is Ownable {
                 : 0;
 
             if (newLiabilitiesIssued > 0) {
-                console.log(
-                    REX_LIBRARY.calculateBorrowProportionAfterTrades(
-                        Datahub.returnAssetLogs(pair[i]),
-                        newLiabilitiesIssued
-                    ),
-                    "borrow proportion after trade"
-                );
+                // console.log(
+                //     REX_LIBRARY.calculateBorrowProportionAfterTrades(
+                //         Datahub.returnAssetLogs(pair[i]),
+                //         newLiabilitiesIssued
+                //     ),
+                //     "borrow proportion after trade"
+                // );
 
                 require(
                     REX_LIBRARY.calculateBorrowProportionAfterTrades(
