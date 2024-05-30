@@ -9,7 +9,7 @@ import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./interfaces/IUtilityContract.sol";
 import "./libraries/EVO_LIBRARY.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 
 /// @title This is the EVO Exchange contract
 /// @author EVO X Labs.

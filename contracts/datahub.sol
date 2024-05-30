@@ -4,46 +4,33 @@ pragma solidity =0.8.20;
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
+import "./interfaces/IInterestData.sol";
 import "hardhat/console.sol";
-
-interface IInterestData {
-    function fetchCurrentRateIndex(
-        address token
-    ) external view returns (uint256);
-}
 
 contract DataHub is Ownable {
     struct UserData {
-        mapping(address => uint256) asset_info; // tracks their portfolio (margined, and depositted)
+        mapping(address => uint256) asset_info; // user's asset amount
+        mapping(address => uint256) lending_pool_info; // user's lending pool amount
         mapping(address => uint256) liability_info; // tracks what they owe per token * price
         mapping(address => mapping(address => uint256)) maintenance_margin_requirement; // tracks the MMR per token the user has in liabilities
-        mapping(address => mapping(address => uint256)) initial_margin_requirement;
-        mapping(address => uint256) pending_balances;
-        mapping(address => uint256) interestRateIndex;
-        mapping(address => uint256) earningRateIndex;
-        uint256 negative_value;
+        mapping(address => mapping(address => uint256)) initial_margin_requirement; // tracks the IMR per token the user has in liabilities
+        mapping(address => uint256) pending_balances; // user's pending balance while trading
+        mapping(address => uint256) interestRateIndex; // interest rate index for charging
+        mapping(address => uint256) earningRateIndex; // earning rate index for charging
+        uint256 negative_value; // display negative value if totoalCollateral < totalBorrowedAmount
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
     struct AssetData {
-        bool initialized;
+        bool initialized; // flag if the token is initialized
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
-        uint256 collateralMultiplier;
-        uint256 assetPrice;
+        uint256 collateralMultiplier; // collateral multiplier for check margin trading
+        uint256 assetPrice; // token price
+        uint256[3] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount, 2 -> lendingPoolSupply
         uint256[2] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee
-        // uint256 initialMarginFee; // assigned in function Ex
-        // uint256 liquidationFee;
-        // uint256 tokenTransferFee;  // add zero for normal token, add transfer fee amount if there is fee on transfer 
         uint256[2] marginRequirement; // 0 -> initialMarginRequirement, 1 -> MaintenanceMarginRequirement
-        // uint256 initialMarginRequirement; // not for potantial removal - unnessecary
-        // uint256 MaintenanceMarginRequirement;
-        uint256[2] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        // uint256 totalAssetSupply;
-        // uint256 totalBorrowedAmount;
         uint256[2] borrowPosition; // 0 -> optimalBorrowProportion, 1 -> maximumBorrowProportion
-        // uint256 optimalBorrowProportion; // need to brainsotrm on how to set this information
-        // uint256 maximumBorrowProportion; // we need an on the fly function for the current maximum borrowable AMOUNT  -- cant borrow the max available supply
-        uint256 totalDepositors;
+        uint256 totalDepositors; // reserved
     }
 
     IInterestData public interestContract;
@@ -510,49 +497,6 @@ contract DataHub is Ownable {
         // Return true if the token is found for at least one user
         return tokenFound;
     }
-
-    /// -----------------------------------------------------------------------
-    /// Asset Pool functions  -->
-    /// -----------------------------------------------------------------------
-
-    /// @notice This increases or decreases the asset supply of a given tokens
-    /// @param token the token being targetted
-    /// @param amount the amount to add or remove
-    /// @param pos_neg if its adding or removing asset supply
-    // function settotalAssetSupply(
-    //     address token,
-    //     uint256 amount,
-    //     bool pos_neg
-    // ) external checkRoleAuthority {
-    //     // console.log("===============settotalAssetSupply Function==================");
-    //     // console.log("address", token);
-    //     // console.log("amount", amount);
-    //     // console.log("total supply before update", assetdata[token].totalAssetSupply);
-    //     if (pos_neg == true) {
-    //         assetdata[token].assetInfo[0] += amount; // totalAssetSupply
-    //     } else {
-    //         assetdata[token].assetInfo[0] -= amount; // totalAssetSupply
-    //     }
-    //     // console.log("total supply after update", assetdata[token].totalAssetSupply);
-    // }
-
-    // /// @notice This increases or decreases the total borrowed amount of a given tokens
-    // /// @dev TODO: change to modifytotalborrowedamount --> set implies we are making a new value not modifying an existing value
-    // /// @param token the token being targetted
-    // /// @param amount the amount to add or remove
-    // /// @param pos_neg if its adding or removing from the borrowed amount
-    // function setTotalBorrowedAmount(
-    //     address token,
-    //     uint256 amount,
-    //     bool pos_neg
-    // ) external checkRoleAuthority {
-    //     if (pos_neg == true) {
-    //         assetdata[token].assetInfo[0] += amount;
-    //     } else {
-    //         assetdata[token].assetInfo[0] -= amount;
-    //     }
-    // }
-
     function setAssetInfo(
         uint8 id,
         address token,
@@ -569,10 +513,6 @@ contract DataHub is Ownable {
             }
         }
     }
-
-    /// -----------------------------------------------------------------------
-    /// Asset Data functions  -->
-    /// -----------------------------------------------------------------------
 
     /// @notice This returns the asset data of a given asset see Idatahub for more details on what it returns
     /// @param token the token being targetted
@@ -599,40 +539,12 @@ contract DataHub is Ownable {
         uint256[2] memory _marginRequirement,
         uint256[2] memory _borrowPosition,
         uint256[2] memory _feeInfo
-        // uint256 initialMarginFee,
-        // uint256 liquidationFee,
-        // uint256 initialMarginRequirement,
-        // uint256 MaintenanceMarginRequirement,
-        // uint256 optimalBorrowProportion,
-        // uint256 maximumBorrowProportion
     ) external onlyOwner {
-        require(
-            !assetdata[token].initialized,
-            "token has to be not already initialized"
-        );
-        require(
-            _feeInfo[1] < _marginRequirement[1],
-            "liq must be smaller than mmr"
-        );
-        require(
-            tradeFees[0] >= tradeFees[1],
-            "taker fee must be bigger than maker fee"
-        );
-        uint256[2] memory _assetInfo;
-        // uint256[2] memory _marginRequirement;
-        // uint256[2] memory _borrowPosition;
-        // uint256[3] memory _feeInfo;
-
-        // _marginRequirement[0] = initialMarginRequirement; // 0 -> initialMarginRequirement
-        // _marginRequirement[1] = MaintenanceMarginRequirement; // 1 -> MaintenanceMarginRequirement
-
-        // _borrowPosition[0] = optimalBorrowProportion; // 0 -> optimalBorrowProportion
-        // _borrowPosition[1] = maximumBorrowProportion; // 1 -> maximumBorrowProportion
-
-        // // 0 -> initialMarginFee, 1 -> liquidationFee
-        // _feeInfo[0] = initialMarginFee; // 
-        // _feeInfo[1] = liquidationFee;
-        // _feeInfo[2] = 0;
+        require(!assetdata[token].initialized, "token has to be not already initialized");
+        require(_feeInfo[1] < _marginRequirement[1], "liq must be smaller than mmr");
+        require(tradeFees[0] >= tradeFees[1], "taker fee must be bigger than maker fee");
+        
+        uint256[3] memory _assetInfo;
 
         assetdata[token] = AssetData({
             initialized: true,

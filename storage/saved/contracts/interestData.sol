@@ -5,7 +5,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IExecutor.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 import "hardhat/console.sol";
 import "./libraries/REX_LIBRARY.sol";
 
