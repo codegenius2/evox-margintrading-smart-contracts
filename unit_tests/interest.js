@@ -2312,8 +2312,8 @@ describe("Interest Test", function () {
             expect(await DataHub.dao_role(signers[2].address)).equals(true);
 
             await DataHub.connect(signers[2]).changeTotalBorrowedAmountOfAsset(await USDT_TOKEN.getAddress(), 100_000000000000000000n);
-            // console.log((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[6][1]);
-            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[6][1]).equals(100_000000000000000000n);
+            // console.log((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress())));
+            expect((await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress()))[4][1]).equals(100_000000000000000000n);
 
             await DataHub.connect(signers[1]).setDaoRole(signers[2].address, false);
             expect(await DataHub.dao_role(signers[2].address)).equals(false);
