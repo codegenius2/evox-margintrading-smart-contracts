@@ -213,21 +213,19 @@ contract interestData {
                 // console.log("runningDownIndex", runningDownIndex);
             }
         }
+        // console.log("endindex - startindex", endIndex, startIndex);
+        // console.log("cumulativeInterestRates", cumulativeInterestRates);
 
-        if (
-            cumulativeInterestRates == 0 || (endIndex - (startIndex - 1)) == 0
-        ) {
-            return 0;
-        }
+        // console.log("cumulativeInterestRates", cumulativeInterestRates / (endIndex - startIndex + 1));
         // Return the cumulative interest rates
-        return cumulativeInterestRates / (endIndex - (startIndex  - 1));
+        return cumulativeInterestRates / (endIndex - startIndex + 1);
     }
 
     function calculateAverageCumulativeDepositInterest(
         uint256 startIndex,
         uint256 endIndex,
         address token
-    ) public view returns (uint256) {
+    ) public view returns (uint256, uint256) {
         uint256 cumulativeInterestRates = 0;
         uint16[5] memory timeframes = [8736, 672, 168, 24, 1];
 
@@ -239,7 +237,7 @@ contract interestData {
         uint256 adjustedIndex;
 
         if(startIndex == endIndex) {
-            return 0;
+            return (0, 0);
         }
         // if (startIndex != 1) {
         //     startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
@@ -270,6 +268,7 @@ contract interestData {
                         runningUpIndex / timeframes[i] // 168 / 168 = 1
                     ).interestRate *
                     timeframes[i];
+                // console.log("cumulativeInterestRates", cumulativeInterestRates);
 
                 cumulativeBorrowProportion +=
                     fetchTimeScaledRateIndex(
@@ -278,6 +277,7 @@ contract interestData {
                         runningUpIndex / timeframes[i] // 168 / 168 = 1
                     ).borrowProportionAtIndex *
                     timeframes[i];
+                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion);
 
                 runningUpIndex += timeframes[i];
             }
@@ -293,7 +293,7 @@ contract interestData {
                         runningDownIndex / timeframes[i]
                     ).interestRate *
                     timeframes[i];
-
+                // console.log("cumulativeInterestRates", cumulativeInterestRates);
                 cumulativeBorrowProportion +=
                     fetchTimeScaledRateIndex(
                         adjustedIndex,
@@ -301,20 +301,19 @@ contract interestData {
                         runningUpIndex / timeframes[i] // 168 / 168 = 1
                     ).borrowProportionAtIndex *
                     timeframes[i];
-
+                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion);
                 runningDownIndex -= timeframes[i];
             }
         }
 
-        if (
-            cumulativeInterestRates == 0 || (endIndex - (startIndex - 1)) == 0
-        ) {
-            return 0;
+        if(endIndex == startIndex) {
+            return (cumulativeInterestRates, cumulativeBorrowProportion);
         }
 
-        return
-            (cumulativeInterestRates / (endIndex - (startIndex - 1))) *
-            (cumulativeBorrowProportion / (endIndex - (startIndex - 1))) / 10 ** 18;
+        // console.log("endindex-startindex", cumulativeInterestRates, cumulativeBorrowProportion);
+        // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex + 1));
+        // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex));
+        return (cumulativeInterestRates / (endIndex - startIndex + 1), cumulativeBorrowProportion / (endIndex - startIndex));
     }
 
     /// @notice updates intereest epochs, fills in the struct of data for a new index
@@ -340,6 +339,8 @@ contract interestData {
             Datahub.returnAssetLogs(token)
         );
 
+        // console.log("borrowProportion", borrowProportion);
+
         setInterestRateEpoch(
             0,
             token,
@@ -361,6 +362,7 @@ contract interestData {
                         token
                     )
                 );
+                // console.log("average borrow proportion", borrowProportion);
                 interestReate = EVO_LIBRARY.calculateAverage(
                     utils.fetchRatesList(
                         i - 1,
@@ -445,6 +447,7 @@ contract interestData {
 
             // console.log("current index after update",  fetchRateInfo(token, fetchCurrentRateIndex(token)).interestRate);
             uint256 currentInterestRateHourly = interestRate / 8736;
+            // console.log("currentInterestRateHourly", currentInterestRateHourly);
             uint256 calculatedBorroedAmount = ((assetLogs.assetInfo[1]) * (currentInterestRateHourly)) / 10 ** 18; // 1 -> totalBorrowedAmount
             // console.log("current interestrate hourly", currentInterestRateHourly);
             // total borroed amount * current interest rate -> up total borrowed amount by this fucking value
@@ -475,13 +478,9 @@ contract interestData {
         );
 
         // console.log("liabilities", liabilities);
-        // console.log("fetchcurrentreateIndex", fetchCurrentRateIndex(token));
+        // console.log("fetchcurrentrateIndex", fetchCurrentRateIndex(token));
         // console.log("userearningrateIndex", Datahub.viewUsersInterestRateIndex(user, token));
-        // console.log("calculate avareage cumulative interest", calculateAverageCumulativeInterest(
-        //     Datahub.viewUsersInterestRateIndex(user, token),
-        //     fetchCurrentRateIndex(token),
-        //     token
-        // ));
+        // console.log("calculate avareage cumulative interest", cumulativeInterest);
         // console.log("liabilitiesAccrued", liabilitiesAccrued);
         // console.log("viewUsersInterestRateIndex", Datahub.viewUsersInterestRateIndex(user, token));
 
@@ -494,7 +493,7 @@ contract interestData {
             liabilities,
             interestRateIndex
         );
-        // console.log("interest charge", interestCharge);
+        // console.log("interest charge in return interest charge function", interestCharge);
         return interestCharge;
     }
 

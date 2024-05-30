@@ -226,6 +226,7 @@ contract DepositVault is Ownable {
                 token,
                 0
             );
+            // console.log("interest charge in deposit function", interestCharge);
     
             Datahub.addLiabilities(msg.sender, token, interestCharge);
             liabilities = liabilities + interestCharge;
@@ -276,6 +277,7 @@ contract DepositVault is Ownable {
                 // uint256 exactAmountTransferedAddedtoAssets = exactAmountTransfered - liabilities; // exactAmountTransfered - outstanding liabilities
 
                 // Datahub.addAssets(msg.sender, token, exactAmountTransferedAddedtoAssets); // add to assets
+                // console.log("transfer amount", exactAmountTransfered - liabilities);
 
                 Datahub.addAssets(msg.sender, token, exactAmountTransfered - liabilities); // add to assets
 

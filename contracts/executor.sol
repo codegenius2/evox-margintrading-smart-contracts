@@ -291,7 +291,7 @@ contract EVO_EXCHANGE is Ownable {
             // uint256 trade1 = Datahub.tradeFee(out_token, 1);
             if (msg.sender != address(Liquidator)) {
                 if (trade_side[i] == true) {} else {
-                    processFee(amountToAddToLiabilities, out_token);
+                    amountToAddToLiabilities = processFee(amountToAddToLiabilities, out_token);
                     // address daoWallet = fetchDaoWallet();
                     // uint256 trade0 = Datahub.tradeFee(out_token, 0);
                     // uint256 trade1 = Datahub.tradeFee(out_token, 1);
@@ -306,7 +306,7 @@ contract EVO_EXCHANGE is Ownable {
                     //     (amountToAddToLiabilities * trade1) /
                     //     10 ** 18;
                 }
-            }
+            }       
 
             // (uint256 assets, uint256 liabilities, uint256 pending, bool margined, ) = Datahub.ReadUserData(
             //     fetchDaoWallet(),
@@ -436,6 +436,7 @@ contract EVO_EXCHANGE is Ownable {
                 // console.log("----------input amount-----------", input_amount);
                 // add remaining amount not subtracted from liabilities to assets
                 Datahub.addAssets(users[i], in_token, input_amount);
+                // console.log("----------added successfully----------");
             }
         }
     }
@@ -445,6 +446,7 @@ contract EVO_EXCHANGE is Ownable {
         uint256 trade0 = Datahub.tradeFee(out_token, 0);
         uint256 trade1 = Datahub.tradeFee(out_token, 1);
         uint256 addToLiabilities = (amountToAddToLiabilities * (trade0 - trade1)) / 10 ** 18;
+        // console.log("amount to add liabilities", amountToAddToLiabilities);
         // This is where we take trade fees it is not called if the msg.sender is the liquidator
         Datahub.addAssets(
             daoWallet,
