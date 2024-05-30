@@ -3,46 +3,34 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
+import "./interfaces/IInterestData.sol";
 import "hardhat/console.sol";
-
-interface IInterestData {
-    function fetchCurrentRateIndex(
-        address token
-    ) external view returns (uint256);
-}
 
 contract DataHub is Ownable {
     struct UserData {
-        mapping(address => uint256) asset_info; // tracks their portfolio (margined, and depositted)
+        mapping(address => uint256) asset_info; // user's asset amount
+        mapping(address => uint256) lending_pool_info; // user's lending pool amount
         mapping(address => uint256) liability_info; // tracks what they owe per token * price
         mapping(address => mapping(address => uint256)) maintenance_margin_requirement; // tracks the MMR per token the user has in liabilities
-        mapping(address => mapping(address => uint256)) initial_margin_requirement;
-        mapping(address => uint256) pending_balances;
-        mapping(address => uint256) interestRateIndex;
-        mapping(address => uint256) earningRateIndex;
+        mapping(address => mapping(address => uint256)) initial_margin_requirement; // tracks the IMR per token the user has in liabilities
+        mapping(address => uint256) pending_balances; // user's pending balance while trading
+        mapping(address => uint256) interestRateIndex; // interest rate index for charging
+        mapping(address => uint256) earningRateIndex; // earning rate index for charging
+        uint256 negative_value; // display negative value if totoalCollateral < totalBorrowedAmount
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
-
     struct AssetData {
-        bool initialized;
+        bool initialized; // flag if the token is initialized
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
-        uint256 collateralMultiplier;
-        uint256 assetPrice;
-        uint256[3] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
-        // uint256 initialMarginFee; // assigned in function Ex
-        // uint256 liquidationFee;
-        // uint256 tokenTransferFee;  // add zero for normal token, add transfer fee amount if there is fee on transfer 
+        uint256 collateralMultiplier; // collateral multiplier for check margin trading
+        uint256 assetPrice; // token price
+        uint256[3] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount, 2 -> lendingPoolSupply
+        uint256[2] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee
         uint256[2] marginRequirement; // 0 -> initialMarginRequirement, 1 -> MaintenanceMarginRequirement
-        // uint256 initialMarginRequirement; // not for potantial removal - unnessecary
-        // uint256 MaintenanceMarginRequirement;
-        uint256[2] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        // uint256 totalAssetSupply;
-        // uint256 totalBorrowedAmount;
         uint256[2] borrowPosition; // 0 -> optimalBorrowProportion, 1 -> maximumBorrowProportion
-        // uint256 optimalBorrowProportion; // need to brainsotrm on how to set this information
-        // uint256 maximumBorrowProportion; // we need an on the fly function for the current maximum borrowable AMOUNT  -- cant borrow the max available supply
-        uint256 totalDepositors;
+        uint256 totalDepositors; // reserved
     }
 
     IInterestData public interestContract;
@@ -51,6 +39,21 @@ contract DataHub is Ownable {
         require(admins[msg.sender] == true, "Unauthorized");
         _;
     }
+
+    /// @notice Keeps track of a users data
+    /// @dev Go to IDatahub for more details
+    mapping(address => UserData) public userdata;
+
+    /// @notice Keeps track of an assets data
+    /// @dev Go to IDatahub for more details
+    mapping(address => AssetData) public assetdata;
+
+    /// @notice Keeps track of contract admins
+    mapping(address => bool) public admins;
+
+    mapping(address => bool) public dao_role;
+
+    address public DAO_WALLET;
 
     constructor(
         address initialOwner,
@@ -75,24 +78,40 @@ contract DataHub is Ownable {
         address _interest,
         address _utils
     ) public onlyOwner {
+        delete admins[_executor];
         admins[_executor] = true;
+        delete admins[_deposit_vault];
         admins[_deposit_vault] = true;
+         delete admins[_oracle];
         admins[_oracle] = true;
+         delete admins[_interest];
         admins[_interest] = true;
+         delete admins[_utils];
         admins[_utils] = true;
         interestContract = IInterestData(_interest);
     }
 
-    /// @notice Keeps track of a users data
-    /// @dev Go to IDatahub for more details
-    mapping(address => UserData) public userdata;
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
 
-    /// @notice Keeps track of an assets data
-    /// @dev Go to IDatahub for more details
-    mapping(address => AssetData) public assetdata;
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
 
-    /// @notice Keeps track of contract admins
-    mapping(address => bool) public admins;
+    /// @notice Sets a new DAO wallet
+    function setDaoWallet(address _dao) public onlyOwner {
+        DAO_WALLET = _dao;
+    }
+    function setDaoRole(
+        address _wallet,
+        bool _flag
+    ) public {
+        require(DAO_WALLET == msg.sender, "Only dao wallet can set the role!");
+        dao_role[_wallet] = _flag;
+    }
 
     /// @notice Alters the users interest rate index (or epoch)
     /// @dev This is to change the users rate epoch, it would be changed after they pay interest.
@@ -149,7 +168,9 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
+        // console.log("user - token - amount", user, token, amount);
         userdata[user].asset_info[token] += amount;
+        // console.log("user amount", userdata[user].asset_info[token]);
     }
 
     /// @notice This removes balance from the users assets
@@ -161,15 +182,28 @@ contract DataHub is Ownable {
         address user,
         address token,
         uint256 amount
-    ) external checkRoleAuthority {
+    ) public checkRoleAuthority {
         userdata[user].asset_info[token] -= amount;
     }
 
     function changeTotalBorrowedAmountOfAsset(
         address token,
         uint256 _updated_value
-    ) external checkRoleAuthority {
+    ) external {
+        require((admins[msg.sender] == true) || (dao_role[msg.sender] == true), "Unauthorized");
         assetdata[token].assetInfo[1] = _updated_value; //  totalBorrowedAmount
+    }
+
+    function alterUserNegativeValue(address user) external checkRoleAuthority {
+        uint256 sumOfAssets;
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            userdata[user].negative_value = userLiabilities - sumOfAssets;
+        } else {
+            userdata[user].negative_value = 0;
+        }
     }
 
     /// -----------------------------------------------------------------------
@@ -199,6 +233,7 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
+        // console.log("amount", amount);
         userdata[user].liability_info[token] += amount;
     }
 
@@ -228,9 +263,21 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
-        userdata[user].pending_balances[token] += amount;
-    }
+        // check that we are not removing  balance twice 
+        uint256 pendingamount;
+        uint256 assets =  userdata[user].asset_info[token];
 
+        if (amount > assets ){
+            pendingamount = assets;
+        }
+        else{ 
+            pendingamount = amount;
+        }
+        // cant have negative balance for the user 
+        userdata[user].pending_balances[token] += pendingamount;
+        // subracts from assest
+        removeAssets(user , token , pendingamount);
+    }
     /// @notice This removes a pending balance for the user on a token they are trading
     /// @dev We do this when the trade is cleared by the oracle and the trade is executed.
     /// @param user being targetted
@@ -241,7 +288,9 @@ contract DataHub is Ownable {
         address token,
         uint256 amount
     ) external checkRoleAuthority {
-        userdata[user].pending_balances[token] -= amount;
+    uint256 pendingBalances = userdata[user].pending_balances[token];
+    uint256 amountToRemove = amount >  pendingBalances ? pendingBalances : amount ;
+       userdata[user].pending_balances[token] -= amountToRemove;
     }
 
     function alterMMR(
@@ -448,49 +497,6 @@ contract DataHub is Ownable {
         // Return true if the token is found for at least one user
         return tokenFound;
     }
-
-    /// -----------------------------------------------------------------------
-    /// Asset Pool functions  -->
-    /// -----------------------------------------------------------------------
-
-    /// @notice This increases or decreases the asset supply of a given tokens
-    /// @param token the token being targetted
-    /// @param amount the amount to add or remove
-    /// @param pos_neg if its adding or removing asset supply
-    // function settotalAssetSupply(
-    //     address token,
-    //     uint256 amount,
-    //     bool pos_neg
-    // ) external checkRoleAuthority {
-    //     // console.log("===============settotalAssetSupply Function==================");
-    //     // console.log("address", token);
-    //     // console.log("amount", amount);
-    //     // console.log("total supply before update", assetdata[token].totalAssetSupply);
-    //     if (pos_neg == true) {
-    //         assetdata[token].assetInfo[0] += amount; // totalAssetSupply
-    //     } else {
-    //         assetdata[token].assetInfo[0] -= amount; // totalAssetSupply
-    //     }
-    //     // console.log("total supply after update", assetdata[token].totalAssetSupply);
-    // }
-
-    // /// @notice This increases or decreases the total borrowed amount of a given tokens
-    // /// @dev TODO: change to modifytotalborrowedamount --> set implies we are making a new value not modifying an existing value
-    // /// @param token the token being targetted
-    // /// @param amount the amount to add or remove
-    // /// @param pos_neg if its adding or removing from the borrowed amount
-    // function setTotalBorrowedAmount(
-    //     address token,
-    //     uint256 amount,
-    //     bool pos_neg
-    // ) external checkRoleAuthority {
-    //     if (pos_neg == true) {
-    //         assetdata[token].assetInfo[0] += amount;
-    //     } else {
-    //         assetdata[token].assetInfo[0] -= amount;
-    //     }
-    // }
-
     function setAssetInfo(
         uint8 id,
         address token,
@@ -500,13 +506,13 @@ contract DataHub is Ownable {
         if (pos_neg == true) {
             assetdata[token].assetInfo[id] += amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
         } else {
-            assetdata[token].assetInfo[id] -= amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            if( assetdata[token].assetInfo[id] < amount) {
+                assetdata[token].assetInfo[id] = 0; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            } else {
+                assetdata[token].assetInfo[id] -= amount; // 0 -> totalSupply, 1 -> totalBorrowedAmount
+            }
         }
     }
-
-    /// -----------------------------------------------------------------------
-    /// Asset Data functions  -->
-    /// -----------------------------------------------------------------------
 
     /// @notice This returns the asset data of a given asset see Idatahub for more details on what it returns
     /// @param token the token being targetted
@@ -514,9 +520,6 @@ contract DataHub is Ownable {
     function returnAssetLogs(
         address token
     ) public view returns (AssetData memory) {
-        // console.log("================returnAssetLogs Function===============");
-        // console.log("return asset token address", token);
-        // console.log("total supply in return Assetlogs", assetdata[token].totalAssetSupply);
         return assetdata[token];
     }
 
@@ -527,7 +530,7 @@ contract DataHub is Ownable {
     /// @param tradeFees the trade fees they pay while trading
     /// @param _marginRequirement 0 -> InitialMarginRequirement 1 -> MaintenanceMarginRequirement
     /// @param _borrowPosition 0 -> OptimalBorrowProportion 1 -> MaximumBorrowProportion
-    /// @param _feeInfo // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
+    /// @param _feeInfo // 0 -> initialMarginFee, 1 -> liquidationFee
     function InitTokenMarket(
         address token,
         uint256 assetPrice,
@@ -535,41 +538,13 @@ contract DataHub is Ownable {
         uint256[2] memory tradeFees,
         uint256[2] memory _marginRequirement,
         uint256[2] memory _borrowPosition,
-        uint256[3] memory _feeInfo
-        // uint256 initialMarginFee,
-        // uint256 liquidationFee,
-        // uint256 initialMarginRequirement,
-        // uint256 MaintenanceMarginRequirement,
-        // uint256 optimalBorrowProportion,
-        // uint256 maximumBorrowProportion
+        uint256[2] memory _feeInfo
     ) external onlyOwner {
-        require(
-            !assetdata[token].initialized,
-            "token has to be not already initialized"
-        );
-        require(
-            _feeInfo[1] < _marginRequirement[1],
-            "liq must be smaller than mmr"
-        );
-        require(
-            tradeFees[0] >= tradeFees[1],
-            "taker fee must be bigger than maker fee"
-        );
-        uint256[2] memory _assetInfo;
-        // uint256[2] memory _marginRequirement;
-        // uint256[2] memory _borrowPosition;
-        // uint256[3] memory _feeInfo;
-
-        // _marginRequirement[0] = initialMarginRequirement; // 0 -> initialMarginRequirement
-        // _marginRequirement[1] = MaintenanceMarginRequirement; // 1 -> MaintenanceMarginRequirement
-
-        // _borrowPosition[0] = optimalBorrowProportion; // 0 -> optimalBorrowProportion
-        // _borrowPosition[1] = maximumBorrowProportion; // 1 -> maximumBorrowProportion
-
-        // // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
-        // _feeInfo[0] = initialMarginFee; // 
-        // _feeInfo[1] = liquidationFee;
-        // _feeInfo[2] = 0;
+        require(!assetdata[token].initialized, "token has to be not already initialized");
+        require(_feeInfo[1] < _marginRequirement[1], "liq must be smaller than mmr");
+        require(tradeFees[0] >= tradeFees[1], "taker fee must be bigger than maker fee");
+        
+        uint256[3] memory _assetInfo;
 
         assetdata[token] = AssetData({
             initialized: true,
@@ -582,13 +557,6 @@ contract DataHub is Ownable {
             borrowPosition: _borrowPosition,
             totalDepositors: 0           
         });
-    }
-
-    function setTokenTransferFee(
-        address token,
-        uint256 value
-    ) external checkRoleAuthority {
-        assetdata[token].feeInfo[2] = value;// 2 -> tokenTransferFee
     }
 
     function tradeFee(
@@ -678,6 +646,25 @@ contract DataHub is Ownable {
         return calculateTotalAssetValue(user) - calculateLiabilitiesValue(user);
     }
 
+    function calculateTotalAssetCollateralAmount(
+        address user
+    ) internal view returns (uint256) {
+        uint256 sumOfAssets;
+        address token;
+        // console.log("user - token length",user, userdata[user].tokens.length);
+        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
+            token = userdata[user].tokens[i];
+            // console.log("token", token);
+            // console.log("price", assetdata[token].assetPrice);
+            // console.log("amount", userdata[user].asset_info[token]);
+            // console.log("asset amount", ((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18));
+            // console.log("collateral multiplier", assetdata[token].collateralMultiplier);
+            sumOfAssets += (((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) /
+                10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        return sumOfAssets;
+    }
+
     /// @notice calculates the total dollar value of the users Collateral
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
@@ -694,6 +681,11 @@ contract DataHub is Ownable {
                     assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
+
+        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+            return 0;
+        }
+
         return sumOfAssets - calculateLiabilitiesValue(user);
     }
 
@@ -704,16 +696,11 @@ contract DataHub is Ownable {
         address user
     ) external view returns (uint256) {
         uint256 sumOfAssets;
-        address token;
-        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
-            token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
-        }
-        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+        uint256 userLiabilities;
+        sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        userLiabilities = calculateLiabilitiesValue(user);
+        if(sumOfAssets < userLiabilities) {
+            // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
         return sumOfAssets - calculateLiabilitiesValue(user);
@@ -787,8 +774,27 @@ contract DataHub is Ownable {
         return AMMR;
     }
 
-    function tokenTransferFees(address token)external view returns(uint256 fee){
-        return assetdata[token].feeInfo[2]; // 2 -> tokenTransferFee
+    function withdrawETH(address payable owner) external onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+    }
+
+    function withdrawERC20(address tokenAddress, address to) external onlyOwner {
+        // Ensure the tokenAddress is valid
+        require(tokenAddress != address(0), "Invalid token address");
+        // Ensure the recipient address is valid
+        require(to != address(0), "Invalid recipient address");
+
+        // Get the balance of the token held by the contract
+        IERC20.IERC20 token = IERC20.IERC20(tokenAddress);
+        uint256 contractBalance = token.balanceOf(address(this));
+
+        // Ensure the contract has enough tokens to transfer
+        require(contractBalance > 0, "Insufficient token balance");
+
+        // Transfer the tokens
+        require(token.transfer(to, contractBalance), "Token transfer failed");
     }
     receive() external payable {}
 }

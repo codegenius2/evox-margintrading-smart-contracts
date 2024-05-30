@@ -3,12 +3,13 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./interfaces/IUtilityContract.sol";
 import "./libraries/EVO_LIBRARY.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 
 /// @title This is the EVO Exchange contract
 /// @author EVO X Labs.
@@ -57,17 +58,28 @@ contract EVO_EXCHANGE is Ownable {
         address _util,
         address _int,
         address _liquidator
-    ) public onlyOwner {
+    ) public {
+        admins[address(Datahub)] = false;
         admins[_datahub] = true;
         Datahub = IDataHub(_datahub);
+        
+        admins[address(DepositVault)] = false;
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
+
+        admins[address(Oracle)] = false;
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
+
+        admins[address(Utilities)] = false;
         admins[_util] = true;
         Utilities = IUtilityContract(_util);
+
+        admins[address(interestContract)] = false;
         admins[_int] = true;
         interestContract = IInterestData(_int);
+
+        admins[address(Liquidator)]= false;
         admins[_liquidator] = true;
         Liquidator = _liquidator;
     }
@@ -98,6 +110,16 @@ contract EVO_EXCHANGE is Ownable {
         OrderBookProviderWallet = msg.sender;
         DAO = msg.sender;
         Liquidator = _liquidator;
+    }
+
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
     }
 
     /// @notice checks the role authority of the caller to see if they can change the state
@@ -147,7 +169,7 @@ contract EVO_EXCHANGE is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts,
         bool[][2] memory trade_side
-    ) public {
+    ) external {
         // console.log("========================submit order function==========================");
         require(DepositVault.viewcircuitBreakerStatus() == false);
         // require(airnode address == airnode address set on deployment )
@@ -170,6 +192,8 @@ contract EVO_EXCHANGE is Ownable {
         // console.log("maker liabilities", makerLiabilities[0]);
 
         // this checks if the asset they are trying to trade isn't pass max borrow
+
+        require(Utilities.validateTradeAmounts(trade_amounts), "Never 0 trades");
         require(
             Utilities.maxBorrowCheck(pair, participants, trade_amounts),
             "This trade puts the protocol above maximum borrow proportion and cannot be completed"
@@ -259,7 +283,7 @@ contract EVO_EXCHANGE is Ownable {
             // here is the amount we are adding to their liabilities it is calculated using the difference between their assets and the trade amounts
             // this is calcualte above in submit order
             amountToAddToLiabilities = liabilityAmounts[i];
-            console.log("amount to add to liabilities", amountToAddToLiabilities);
+            // console.log("amount to add to liabilities", amountToAddToLiabilities);
             // console.log("tradefee0", Datahub.tradeFee(out_token, 0));
             // console.log("tradefee1", Datahub.tradeFee(out_token, 1));
             // address daoWallet = fetchDaoWallet();
@@ -267,7 +291,7 @@ contract EVO_EXCHANGE is Ownable {
             // uint256 trade1 = Datahub.tradeFee(out_token, 1);
             if (msg.sender != address(Liquidator)) {
                 if (trade_side[i] == true) {} else {
-                    processFee(amountToAddToLiabilities, out_token);
+                    amountToAddToLiabilities = processFee(amountToAddToLiabilities, out_token);
                     // address daoWallet = fetchDaoWallet();
                     // uint256 trade0 = Datahub.tradeFee(out_token, 0);
                     // uint256 trade1 = Datahub.tradeFee(out_token, 1);
@@ -282,7 +306,7 @@ contract EVO_EXCHANGE is Ownable {
                     //     (amountToAddToLiabilities * trade1) /
                     //     10 ** 18;
                 }
-            }
+            }       
 
             // (uint256 assets, uint256 liabilities, uint256 pending, bool margined, ) = Datahub.ReadUserData(
             //     fetchDaoWallet(),
@@ -313,6 +337,7 @@ contract EVO_EXCHANGE is Ownable {
 
                 // console.log("amountToAddToLiabilities after charge", amountToAddToLiabilities);
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(in_token);
+                
                 uint256 initialRequirementForTrade = EVO_LIBRARY.calculateInitialRequirementForTrade( // 150
                     assetLogs,
                     amountToAddToLiabilities
@@ -321,8 +346,8 @@ contract EVO_EXCHANGE is Ownable {
                     assetLogs,
                     amountToAddToLiabilities
                 );
-                console.log("maintenancerequirementfortrade", maintenanceRequirementForTrade);
-                console.log("initialRequirementForTrade", initialRequirementForTrade);
+                // console.log("maintenancerequirementfortrade", maintenanceRequirementForTrade);
+                // console.log("initialRequirementForTrade", initialRequirementForTrade);
 
                 Datahub.addInitialMarginRequirement(
                     users[i],
@@ -345,7 +370,16 @@ contract EVO_EXCHANGE is Ownable {
             }
             // if the amount coming into their wallet is larger than their current liabilities
             usersLiabilities = Utilities.returnliabilities(users[i], in_token);
-            console.log("amount in - liability", amounts_in_token[i], usersLiabilities);
+            if(usersLiabilities > 0) {
+                uint256 interestCharge = interestContract.returnInterestCharge(
+                    msg.sender,
+                    in_token,
+                    0
+                );
+                usersLiabilities = usersLiabilities + interestCharge;
+            }            
+
+            // console.log("amount in - liability", amounts_in_token[i], usersLiabilities);
             if ( amounts_in_token[i] <= usersLiabilities ) {
                 // charge interest and subtract from their liabilities, do not add to assets just subtract from liabilities
                 chargeinterest(users[i], in_token, amounts_in_token[i], true);
@@ -362,6 +396,7 @@ contract EVO_EXCHANGE is Ownable {
                 Datahub.changeMarginStatus(msg.sender);
 
                 uint256 input_amount = amounts_in_token[i];
+                // console.log("input amount", input_amount);
 
                 if (msg.sender != address(Liquidator)) {
                     // below we charge trade fees it is not called if the msg.sender is the liquidator
@@ -374,7 +409,10 @@ contract EVO_EXCHANGE is Ownable {
                 }
 
                 if (usersLiabilities > 0) {
-                    input_amount -= usersLiabilities;
+                    // console.log("usersliabilities", usersLiabilities);
+                    // console.log("input amount", input_amount);
+                    input_amount = input_amount - usersLiabilities;
+                    // console.log("input amount", input_amount);
                     // Charge a user interest and subtract from their liabilities
                     chargeinterest(
                         users[i],
@@ -391,11 +429,14 @@ contract EVO_EXCHANGE is Ownable {
                     );
                 }
                 // remove their pending balances
-                unFreezeBalance(users[i], out_token, amounts_out_token[i]);
+                Datahub.removePendingBalances(users[i], out_token, amounts_out_token[i]);
                 // give users their deposit interest accrued
-                debitAssetInterest(users[i], in_token);
+                Utilities.debitAssetInterest(users[i], in_token);
+                // console.log("===========================after debit interest===========================");
+                // console.log("----------input amount-----------", input_amount);
                 // add remaining amount not subtracted from liabilities to assets
                 Datahub.addAssets(users[i], in_token, input_amount);
+                // console.log("----------added successfully----------");
             }
         }
     }
@@ -405,6 +446,7 @@ contract EVO_EXCHANGE is Ownable {
         uint256 trade0 = Datahub.tradeFee(out_token, 0);
         uint256 trade1 = Datahub.tradeFee(out_token, 1);
         uint256 addToLiabilities = (amountToAddToLiabilities * (trade0 - trade1)) / 10 ** 18;
+        // console.log("amount to add liabilities", amountToAddToLiabilities);
         // This is where we take trade fees it is not called if the msg.sender is the liquidator
         Datahub.addAssets(
             daoWallet,
@@ -430,142 +472,33 @@ contract EVO_EXCHANGE is Ownable {
         Utilities.Modifyimr(user, in_token, out_token, amount);
     }
 
-    /// @notice This unfreezes the users out_token balance, we do this so a user can't take out more trades as their trade is being processed
-    /// @dev Explain to a developer any extra details
-    /// @param user the user who we are unfreezing the balance of
-    /// @param token the token that was involved in their trade
-    /// @param amount the amount to be removed from pending
-    function unFreezeBalance(
-        address user,
-        address token,
-        uint256 amount
-    ) private {
-        uint256 pendingAmount = Utilities.returnPending(user, token);
-        // console.log("pending amount", pendingAmount);
-        amount > pendingAmount
-            ? Datahub.removePendingBalances(
-                user,
-                token,
-                Utilities.returnPending(user, token)
-            )
-            : Datahub.removePendingBalances(user, token, amount);
-    }
+    // /// @notice This fetches a users accrued deposit interest
+    // /// @dev when a user deposits to the exchange they earn interest on their deposit paid for by margined users who have liabilities
+    // /// @param user the user we are wishing to see the deposit interest for
+    // /// @param token the token the user is earning deposit interest on
+    // /// @return interestCharge the amount of deposit interest the user has accrued
+    // function fetchUsersDepositInterest(
+    //     address user,
+    //     address token
+    // ) public view returns (uint256) {
+    //     (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+    //     uint256 userEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+    //     uint256 currentrateIndex = interestContract.fetchCurrentRateIndex(token);
+    //     uint256 cumulativeinterest = interestContract
+    //         .calculateAverageCumulativeDepositInterest(
+    //             userEarningRateIndex,
+    //             currentrateIndex,
+    //             token
+    //         );
 
-    /// @notice This pays out the user for depositted assets
-    /// @param user the user to be debitted
-    /// @param token the token they have accred deposit interest on
-    function debitAssetInterest(address user, address token) private {
-        // console.log("====================debit asset interest function======================");
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
-        // console.log("assets", assets);
-        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-        uint256 currentIndex = interestContract.fetchCurrentRateIndex(token);
-        address daoWallet = fetchDaoWallet();
-        address otherBookProvider = fetchOrderBookProvider();
-
-        uint256 cumulativeinterest = interestContract
-            .calculateAverageCumulativeDepositInterest(
-                usersEarningRateIndex,
-                currentIndex,
-                token
-            );
-        
-        // console.log("cumulative interest", cumulativeinterest);
-
-        (
-            uint256 interestCharge,
-            uint256 OrderBookProviderCharge,
-            uint256 DaoInterestCharge
-        ) = EVO_LIBRARY.calculateCompoundedAssets(
-                currentIndex,
-                (cumulativeinterest / 10 ** 18),
-                assets,
-                usersEarningRateIndex
-            );
-
-        // console.log("interestCharge", interestCharge);
-        // console.log("OrderBookProviderCharge", OrderBookProviderCharge);
-        // console.log("DaoInterestCharge", DaoInterestCharge);
-
-        Datahub.alterUsersEarningRateIndex(user, token);
-
-        // console.log("currentUsersEarningRateIndex", usersEarningRateIndex);
-
-        Datahub.addAssets(user, token, (interestCharge / 10 ** 18));
-
-        // (uint256 assets_test, uint256 liabilities, uint256 pending, bool margined, ) = Datahub.ReadUserData(
-        //     user,
-        //     token
-        // );
-
-        // console.log("assets after after add assets", assets_test);
-        // console.log("liabilities after add assets", liabilities);
-        // console.log("pending after add assets", pending);
-        // console.log("margined after add assets", margined);
-        // console.log("tokens after add assets", tokens);
-
-        Datahub.addAssets(
-            daoWallet,
-            token,
-            (DaoInterestCharge / 10 ** 18)
-        );
-
-        // (assets, liabilities, pending, margined, ) = Datahub.ReadUserData(
-        //     daoWallet,
-        //     token
-        // );
-
-        // console.log("assets after after add assets", assets);
-        // console.log("liabilities after add assets", liabilities);
-        // console.log("pending after add assets", pending);
-        // console.log("margined after add assets", margined);
-        // console.log("tokens after add assets", tokens);
-
-        Datahub.addAssets(
-            otherBookProvider,
-            token,
-            (OrderBookProviderCharge / 10 ** 18)
-        );
-
-        // (assets, liabilities, pending, margined, ) = Datahub.ReadUserData(
-        //     otherBookProvider,
-        //     token
-        // );
-
-        // console.log("assets after after add assets", assets);
-        // console.log("liabilities after add assets", liabilities);
-        // console.log("pending after add assets", pending);
-        // console.log("margined after add assets", margined);
-        // console.log("tokens after add assets", tokens);
-    }
-
-    /// @notice This fetches a users accrued deposit interest
-    /// @dev when a user deposits to the exchange they earn interest on their deposit paid for by margined users who have liabilities
-    /// @param user the user we are wishing to see the deposit interest for
-    /// @param token the token the user is earning deposit interest on
-    /// @return interestCharge the amount of deposit interest the user has accrued
-    function fetchUsersDepositInterest(
-        address user,
-        address token
-    ) public view returns (uint256) {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
-        uint256 userEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-        uint256 currentrateIndex = interestContract.fetchCurrentRateIndex(token);
-        uint256 cumulativeinterest = interestContract
-            .calculateAverageCumulativeDepositInterest(
-                userEarningRateIndex,
-                currentrateIndex,
-                token
-            );
-
-        (uint256 interestCharge, , ) = EVO_LIBRARY.calculateCompoundedAssets(
-            userEarningRateIndex,
-            (cumulativeinterest / 10 ** 18),
-            assets,
-            userEarningRateIndex
-        );
-        return interestCharge;
-    }
+    //     (uint256 interestCharge, , ) = EVO_LIBRARY.calculateCompoundedAssets(
+    //         userEarningRateIndex,
+    //         (cumulativeinterest / 10 ** 18),
+    //         assets,
+    //         userEarningRateIndex
+    //     );
+    //     return interestCharge;
+    // }
 
     /// @notice This will charge interest to a user if they are accuring new liabilities
     /// @param user the address of the user beign confirmed
@@ -596,7 +529,7 @@ contract EVO_EXCHANGE is Ownable {
 
         // console.log("total borrow amount after charge massin interest", Datahub.returnAssetLogs(token).totalBorrowedAmount);
 
-        if (minus == false) {
+        if (!minus) {
             //Step 2) calculate the trade's liabilities + interest
             uint256 interestCharge = interestContract.returnInterestCharge(
                 user,
@@ -677,6 +610,32 @@ contract EVO_EXCHANGE is Ownable {
 
             Datahub.alterUsersInterestRateIndex(user, token);
         }
+    }
+
+    function withdrawETH(address payable owner) external onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+    }
+
+    function withdrawERC20(
+        address tokenAddress,
+        address to
+    ) external onlyOwner {
+        // Ensure the tokenAddress is valid
+        require(tokenAddress != address(0), "Invalid token address");
+        // Ensure the recipient address is valid
+        require(to != address(0), "Invalid recipient address");
+
+        // Get the balance of the token held by the contract
+        IERC20.IERC20 token = IERC20.IERC20(tokenAddress);
+        uint256 contractBalance = token.balanceOf(address(this));
+
+        // Ensure the contract has enough tokens to transfer
+        require(contractBalance > 0, "Insufficient token balance");
+
+        // Transfer the tokens
+        require(token.transfer(to, contractBalance), "Token transfer failed");
     }
 
     receive() external payable {}

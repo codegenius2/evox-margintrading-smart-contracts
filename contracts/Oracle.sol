@@ -3,6 +3,7 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IDepositVault.sol";
 import "./interfaces/IExecutor.sol";
@@ -15,7 +16,7 @@ contract Oracle is Ownable{
     IExecutor public Executor;
     IDepositVault public DepositVault;
 
-    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
+    // address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
 
     uint256 public lastOracleFufillTime;
 
@@ -39,11 +40,28 @@ contract Oracle is Ownable{
         address _ex,
         address _DataHub,
         address _deposit_vault
-    ) public onlyOwner {
+    ) external onlyOwner {
+
+        admins[address(Executor)]=false;
         admins[_ex] = true;
-        Datahub = IDataHub(_DataHub);
-        DepositVault = IDepositVault(_deposit_vault);
         Executor = IExecutor(_ex);
+
+        admins[address(Datahub)]=false;
+        Datahub = IDataHub(_DataHub);
+        admins[_DataHub]=true;
+        
+        admins[address(DepositVault)]=false;
+        DepositVault = IDepositVault(_deposit_vault);
+        admins[_deposit_vault]=true;
+    }
+
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
     }
 
     /** Mapping's  */
@@ -89,7 +107,7 @@ contract Oracle is Ownable{
 
 
 
-    function revertTrade(bytes32 requestId) public {
+    function revertTrade(bytes32 requestId) external {
         if (
             incomingFulfillments[requestId] =
                 true &&
@@ -181,9 +199,9 @@ contract Oracle is Ownable{
                 participants[i],
                 pair
             );
-            if (tradeside[i] == true) {} else {
-                uint256 trade1 = Datahub.tradeFee(pair, 1);
-                tradeAmounts[i] = (trade1 * tradeAmounts[i]) / 10 ** 18;
+            if (tradeside[i]) {} else {
+                uint256 _tradeFee = Datahub.tradeFee(pair, 1);
+                tradeAmounts[i] = (_tradeFee * tradeAmounts[i]) / 10 ** 18;
             }
             uint256 balanceToAdd = tradeAmounts[i] > assets ? assets : tradeAmounts[i];
             AlterPendingBalances(participants[i], pair, balanceToAdd);
@@ -200,7 +218,8 @@ contract Oracle is Ownable{
         address asset,
         uint256 trade_amount
     ) private {
-        Datahub.removeAssets(participant, asset, trade_amount);
+        // Datahub.removeAssets(participant, asset, trade_amount);
+        // removes assest 
         Datahub.addPendingBalances(participant, asset, trade_amount);
     }
 
@@ -269,7 +288,7 @@ contract Oracle is Ownable{
 
             // The reason why we update price AFTER we make the call to the executor is because if it fails, the prices wont update
             // and the update prices wll not be included in the  TX
-            if (pair[0] == USDT) {
+            if (pair[0] == DepositVault._USDT()) {
                 // console.log("taker amount", OrderDetails[requestId].taker_amounts[
                 //     OrderDetails[requestId].taker_amounts.length - 1
                 // ]);
@@ -286,12 +305,7 @@ contract Oracle is Ownable{
                 uint256 decimals = DepositVault.fetchDecimals(pair[1]);
                 Datahub.toggleAssetPrice(
                     pair[1],
-                    ((OrderDetails[requestId].taker_amounts[
-                        OrderDetails[requestId].taker_amounts.length - 1
-                    ] * (10 ** decimals)) /
-                        OrderDetails[requestId].maker_amounts[
-                            OrderDetails[requestId].maker_amounts.length - 1
-                        ])
+                    ((OrderDetails[requestId].taker_amounts[OrderDetails[requestId].taker_amounts.length - 1] * (10 ** decimals)) / OrderDetails[requestId].maker_amounts[OrderDetails[requestId].maker_amounts.length - 1])
                 );
             } else {
                 // console.log("maker amount", OrderDetails[requestId].maker_amounts[
@@ -321,7 +335,7 @@ contract Oracle is Ownable{
         }
     }
 
-    function revertTrade(
+     function revertTrade(
         address[2] memory pair,
         address[] memory takers,
         address[] memory makers,
@@ -331,28 +345,53 @@ contract Oracle is Ownable{
         uint256 balanceToAdd;
         uint256 MakerbalanceToAdd;
         for (uint256 i = 0; i < takers.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
-            balanceToAdd = taker_amounts[i] > assets
-                ? assets
-                : taker_amounts[i];
+            // (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
+            (, , uint256 pending, , ) = Datahub.ReadUserData(takers[i], pair[0]);
+            // 100 usdt 
+            // if its a margin trade , its makes perfect sense 
+            balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
 
             Datahub.addAssets(takers[i], pair[0], balanceToAdd);
+
             Datahub.removePendingBalances(takers[i], pair[0], balanceToAdd);
         }
 
         for (uint256 i = 0; i < makers.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
-            MakerbalanceToAdd = maker_amounts[i] > assets
-                ? assets
-                : maker_amounts[i];
+           // (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
+           (, , uint256 pending, , ) = Datahub.ReadUserData(makers[i], pair[0]);
+
+            MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
 
             Datahub.addAssets(makers[i], pair[1], MakerbalanceToAdd);
-            Datahub.removePendingBalances(
-                makers[i],
-                pair[0],
-                MakerbalanceToAdd
-            );
+
+            Datahub.removePendingBalances(makers[i], pair[0], MakerbalanceToAdd );
         }
+    }
+
+    function withdrawETH(address payable owner) external onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+    }
+
+    function withdrawERC20(
+        address tokenAddress,
+        address to
+    ) external onlyOwner {
+        // Ensure the tokenAddress is valid
+        require(tokenAddress != address(0), "Invalid token address");
+        // Ensure the recipient address is valid
+        require(to != address(0), "Invalid recipient address");
+
+        // Get the balance of the token held by the contract
+        IERC20.IERC20 token = IERC20.IERC20(tokenAddress);
+        uint256 contractBalance = token.balanceOf(address(this));
+
+        // Ensure the contract has enough tokens to transfer
+        require(contractBalance > 0, "Insufficient token balance");
+
+        // Transfer the tokens
+        require(token.transfer(to, contractBalance), "Token transfer failed");
     }
 
     receive() external payable {}

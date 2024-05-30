@@ -29,7 +29,7 @@ interface IInterestData {
         uint256 startIndex,
         uint256 endIndex,
         address token
-    ) external view returns (uint256);
+    ) external view returns (uint256, uint256);
 
     function fetchRateInfo(
         address token,
@@ -42,7 +42,7 @@ interface IInterestData {
 
     function chargeMassinterest(address token) external;
 
-        function returnInterestCharge(
+    function returnInterestCharge(
         address user,
         address token,
         uint256 liabilitiesAccrued

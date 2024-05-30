@@ -3,36 +3,29 @@ pragma solidity =0.8.20;
 
 interface IDataHub {
     struct UserData {
-        mapping(address => uint256) asset_info; // tracks their portfolio (margined, and depositted)
+        mapping(address => uint256) asset_info; // user's asset amount
+        mapping(address => uint256) lending_pool_info; // user's lending pool amount
         mapping(address => uint256) liability_info; // tracks what they owe per token * price
         mapping(address => mapping(address => uint256)) maintenance_margin_requirement; // tracks the MMR per token the user has in liabilities
-        mapping(address => mapping(address => uint256)) initial_margin_requirement;
-        mapping(address => uint256) pending_balances;
-        mapping(address => uint256) interestRateIndex;
-        mapping(address => uint256) earningRateIndex;
+        mapping(address => mapping(address => uint256)) initial_margin_requirement; // tracks the IMR per token the user has in liabilities
+        mapping(address => uint256) pending_balances; // user's pending balance while trading
+        mapping(address => uint256) interestRateIndex; // interest rate index for charging
+        mapping(address => uint256) earningRateIndex; // earning rate index for charging
+        uint256 negative_value; // display negative value if totoalCollateral < totalBorrowedAmount
         bool margined; // if user has open margin positions this is true
         address[] tokens; // these are the tokens that comprise their portfolio ( assets, and liabilites, margined funds)
     }
 
     struct AssetData {
-        bool initialized;
+        bool initialized; // flag if the token is initialized
         uint256[2] tradeFees; // first in the array is taker fee, next is maker fee
-        uint256 collateralMultiplier;
-        uint256 assetPrice;
-        uint256[3] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee, 2 -> tokenTransferFee
-        // uint256 initialMarginFee; // assigned in function Ex
-        // uint256 liquidationFee;
-        // uint256 tokenTransferFee;  // add zero for normal token, add transfer fee amount if there is fee on transfer 
+        uint256 collateralMultiplier; // collateral multiplier for check margin trading
+        uint256 assetPrice; // token price
+        uint256[3] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount, 2 -> lendingPoolSupply
+        uint256[2] feeInfo; // 0 -> initialMarginFee, 1 -> liquidationFee
         uint256[2] marginRequirement; // 0 -> initialMarginRequirement, 1 -> MaintenanceMarginRequirement
-        // uint256 initialMarginRequirement; // not for potantial removal - unnessecary
-        // uint256 MaintenanceMarginRequirement;
-        uint256[2] assetInfo; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        // uint256 totalAssetSupply;
-        // uint256 totalBorrowedAmount;
         uint256[2] borrowPosition; // 0 -> optimalBorrowProportion, 1 -> maximumBorrowProportion
-        // uint256 optimalBorrowProportion; // need to brainsotrm on how to set this information
-        // uint256 maximumBorrowProportion; // we need an on the fly function for the current maximum borrowable AMOUNT  -- cant borrow the max available supply
-        uint256 totalDepositors;
+        uint256 totalDepositors; // reserved
     }
 
     function addAssets(address user, address token, uint256 amount) external;
@@ -150,6 +143,10 @@ interface IDataHub {
         address user,
         address token,
         uint256 amount
+    ) external;
+
+    function alterUserNegativeValue(
+        address user
     ) external;
 
     function SetMarginStatus(address user, bool onOrOff) external;

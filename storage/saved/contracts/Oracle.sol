@@ -18,7 +18,7 @@ contract Oracle is Ownable {
 
     error Error_FufillUnSuccessful(bytes32 requestid, uint256 timeStamp);
 
-    address public USDT = address(0xdfc6a3f2d7daff1626Ba6c32B79bEE1e1d6259F0);
+    // address public USDT = address(0xdfc6a3f2d7daff1626Ba6c32B79bEE1e1d6259F0);
 
     /** Constructor  */
     constructor(

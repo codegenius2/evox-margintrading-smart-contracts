@@ -7,19 +7,25 @@ import "@openzeppelin/contracts/token/ERC20/ERC20.sol" as ERC20;
 import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./libraries/EVO_LIBRARY.sol";
 import "./interfaces/IExecutor.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
+import "./interfaces/IUtilityContract.sol";
 import "hardhat/console.sol";
 
 contract DepositVault is Ownable {
+
+    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
+    
     constructor(
         address initialOwner,
         address dataHub,
         address executor,
-        address interest
+        address interest,
+        address _utility
     ) Ownable(initialOwner) {
         Datahub = IDataHub(dataHub);
         Executor = IExecutor(executor);
         interestContract = IInterestData(interest);
+        utility = IUtilityContract(_utility);
     }
 
     modifier checkRoleAuthority() {
@@ -31,19 +37,31 @@ contract DepositVault is Ownable {
     function alterAdminRoles(
         address dataHub,
         address executor,
-        address interest
+        address interest,
+        address _utility
     ) public onlyOwner {
+
+        admins[address(Datahub)]= false; 
         admins[dataHub] = true;
         Datahub = IDataHub(dataHub);
+
+        admins[address(Executor)] = false;
         admins[executor] = true;
         Executor = IExecutor(executor);
+
+        admins[address(interestContract)] = false;
         admins[interest] = true;
         interestContract = IInterestData(interest);
+
+        admins[address(utility)] = false;
+        admins[_utility] = true;
+        utility = IUtilityContract(_utility);
     }
 
     IDataHub public Datahub;
     IExecutor public Executor;
     IInterestData public interestContract;
+    IUtilityContract public utility;
 
     using EVO_LIBRARY for uint256;
 
@@ -63,6 +81,16 @@ contract DepositVault is Ownable {
 
     uint256 public lastUpdateTime;
 
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
+
     function toggleCircuitBreaker(bool onOff) public onlyOwner {
         circuitBreakerStatus = onOff;
     }
@@ -71,7 +99,7 @@ contract DepositVault is Ownable {
         return circuitBreakerStatus;
     }
 
-    address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
+    // address public USDT = address(0xaBAD60e4e01547E2975a96426399a5a0578223Cb);
 
     function _USDT() external view returns (address) {
         return USDT;
@@ -176,31 +204,41 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
-        // console.log("amount before fee", amount);
-        // amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        // console.log("amount to be paid if fee is applicable", amount);
-        // console.log("amount after fee", amount);
-        // we need to add the function that transfertokenwithfee  : https://docs.uniswap.org/contracts/v2/reference/smart-contracts/router-02#swapexacttokensfortokenssupportingfeeontransfertokens
+        //chechking balance for contract before the token transfer 
+        uint256 contractBalanceBefore = IERC20.IERC20(token).balanceOf(address(this));
+        // transfering the tokens to contract
         require(IERC20.IERC20(token).transferFrom(msg.sender, address(this), amount));
+        //checking the balance for the contract after the token transfer 
+        uint256 contractBalanceAfter = IERC20.IERC20(token).balanceOf(address(this));
+        // exactAmountTransfered is the exact value being transfer in contract
+        uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
+        // console.log("exactAmountTransfered", exactAmountTransfered);
+    
+
         require(!circuitBreakerStatus);
+        Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalSupply
 
-        // console.log("total supply before", Datahub.returnAssetLogs(token).totalAssetSupply);
-        Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalSupply
-        // console.log("total supply after", Datahub.returnAssetLogs(token).totalAssetSupply);
+        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(msg.sender, token);
+
+        if(liabilities > 0) {
+            uint256 interestCharge = interestContract.returnInterestCharge(
+                msg.sender,
+                token,
+                0
+            );
+            // console.log("interest charge in deposit function", interestCharge);
+    
+            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            liabilities = liabilities + interestCharge;
+        }
         
-        // console.log("amount after total asset supply", amount);
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
-            msg.sender,
-            token
-        );
+        // console.log("assets, liabilities , amount", assets, liabilities, amount);
 
-        // console.log("assets, liabilities", assets, liabilities);
-
-        if (assets == 0 && amount > liabilities) {
+        if (assets == 0 && exactAmountTransfered > liabilities) {
             Datahub.alterUsersEarningRateIndex(msg.sender, token);
         } else {
-            debitAssetInterest(msg.sender, token);
+            utility.debitAssetInterest(msg.sender, token);
         }
 
         ///
@@ -208,40 +246,44 @@ contract DepositVault is Ownable {
         if (liabilities > 0) {
             // checks to see if the user has liabilities of that asset
 
-            if (amount <= liabilities) {
-                // if the amount is less or equal to their current liabilities -> lower their liabilities using the multiplier
+            if (exactAmountTransfered <= liabilities) {
+                // if the exactAmountTransfered is less or equal to their current liabilities -> lower their liabilities using the multiplier
 
-                modifyMMROnDeposit(msg.sender, token, amount);
+                modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
 
-                modifyIMROnDeposit(msg.sender, token, amount);
+                modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
 
-                // Datahub.alterLiabilities(msg.sender, token, ((10 ** 18) -  EVO_LIBRARY.calculatedepositLiabilityRatio(liabilities, amount))
+                // Datahub.alterLiabilities(msg.sender, token, ((10 ** 18) -  EVO_LIBRARY.calculatedepositLiabilityRatio(liabilities, exactAmountTransfered))
                 // );
 
-                // Datahub.setTotalBorrowedAmount(token, amount, false);
+                // Datahub.setTotalBorrowedexactAmountTransfered(token, exactAmountTransfered, false);
 
                 // interestContract.chargeMassinterest(token);
-                liabilities -= amount;
+                // liabilities -= exactAmountTransfered;
+                // updating liability mapping for user 
 
-                Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
+                Datahub.removeLiabilities(msg.sender, token , exactAmountTransfered);
+
+                Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedexactAmountTransfered
 
                 interestContract.chargeMassinterest(token);
 
                 return true;
             } else {
-                modifyMMROnDeposit(msg.sender, token, amount);
+                modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
 
-                modifyIMROnDeposit(msg.sender, token, amount);
-                // if amount depositted is bigger that liability info 0 it out
-                // uint256 amountAddedtoAssets = amount - liabilities; // amount - outstanding liabilities
+                modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
+                // if exactAmountTransfered depositted is bigger that liability info 0 it out
+                // uint256 exactAmountTransferedAddedtoAssets = exactAmountTransfered - liabilities; // exactAmountTransfered - outstanding liabilities
 
-                // Datahub.addAssets(msg.sender, token, amountAddedtoAssets); // add to assets
+                // Datahub.addAssets(msg.sender, token, exactAmountTransferedAddedtoAssets); // add to assets
+                // console.log("transfer amount", exactAmountTransfered - liabilities);
 
-                Datahub.addAssets(msg.sender, token, amount - liabilities); // add to assets
+                Datahub.addAssets(msg.sender, token, exactAmountTransfered - liabilities); // add to assets
 
                 Datahub.removeLiabilities(msg.sender, token, liabilities); // remove all liabilities
 
-                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
+                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedexactAmountTransfered
 
                 Datahub.changeMarginStatus(msg.sender);
                 interestContract.chargeMassinterest(token);
@@ -253,7 +295,7 @@ contract DepositVault is Ownable {
             users[0] = msg.sender;
 
             Datahub.checkIfAssetIsPresent(users, token);
-            Datahub.addAssets(msg.sender, token, amount);
+            Datahub.addAssets(msg.sender, token, exactAmountTransfered);
 
             return true;
         }
@@ -274,7 +316,7 @@ contract DepositVault is Ownable {
             "this asset is not available to be deposited or traded"
         );
 
-        debitAssetInterest(msg.sender, token);
+        utility.debitAssetInterest(msg.sender, token);
 
         (uint256 assets, , uint256 pending, , ) = Datahub.ReadUserData(
             msg.sender,
@@ -293,11 +335,7 @@ contract DepositVault is Ownable {
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        require(
-            amount + assetLogs.assetInfo[1] <
-            assetLogs.assetInfo[0],
-            "You cannot withdraw this amount as it would exceed the maximum borrow proportion"
-        );
+        require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
         /*
         This piece of code is having problems its supposed to be basically a piece of code to protect against dangerous withdraws 
 
@@ -329,8 +367,7 @@ contract DepositVault is Ownable {
         //     token
         // );
 
-        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) /
-            10 ** 18; // this is 10*18 dnominated price of asset amount
+        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
 
@@ -357,46 +394,9 @@ contract DepositVault is Ownable {
         // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 1 -> totalBorrowedAmount
-        if (assetLogs.assetInfo[1] > 0) {
+        if (assetLogs.assetInfo[1] != 0) {
             interestContract.chargeMassinterest(token);
         }
-    }
-
-    function debitAssetInterest(address user, address token) private {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
-
-        uint256 currentReateIndex = interestContract.fetchCurrentRateIndex(token);
-        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-        address orderBookProvider = Executor.fetchOrderBookProvider();
-        address daoWallet = Executor.fetchDaoWallet();
-
-        uint256 averageCumulativeDepositInterest = interestContract.calculateAverageCumulativeDepositInterest(
-            usersEarningRateIndex,
-            currentReateIndex,
-            token
-        );
-
-        (
-            uint256 interestCharge,
-            uint256 OrderBookProviderCharge,
-            uint256 DaoInterestCharge
-        ) = EVO_LIBRARY.calculateCompoundedAssets(
-                currentReateIndex,
-                averageCumulativeDepositInterest,
-                assets,
-                usersEarningRateIndex
-            );
-        
-        Datahub.alterUsersEarningRateIndex(user, token);
-
-        Datahub.addAssets(user, token, interestCharge);
-        Datahub.addAssets(daoWallet, token, DaoInterestCharge);
-
-        Datahub.addAssets(
-            orderBookProvider,
-            token,
-            OrderBookProviderCharge
-        );
     }
 
     /* DEPOSIT FOR FUNCTION */
@@ -411,35 +411,39 @@ contract DepositVault is Ownable {
         );
     
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
-        // extending support for token with fee on transfer 
-        // if(Datahub.tokenTransferFees(token) > 0){
-        //     amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        //     console.log("amount to be paid if fee is applicable", amount);
-        // }
-        amount = amount-(amount*Datahub.tokenTransferFees(token))/10000;
-        // console.log("amount to be paid if fee is applicable", amount);
-        require(
-            ERC20Token.transferFrom(msg.sender, address(this), amount),
-            "Transfer failed"
-        );
-
+        //chechking balance for contract before the token transfer 
+        uint256 contractBalanceBefore = ERC20Token.balanceOf(address(this));
+        // transfering the tokens to contract
+        require(ERC20Token.transferFrom(msg.sender, address(this), amount), "Transfer failed");
         Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalAssetSupply
+        //checking the balance for the contract after the token transfer 
+        uint256 contractBalanceAfter = ERC20Token.balanceOf(address(this));
+        // exactAmountTransfered is the exact value being transfer in contract
+        uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(
-            beneficiary,
-            token
-        );
+        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(beneficiary, token);
 
-        if (assets == 0) {
+        if(liabilities > 0) {
+            uint256 interestCharge = interestContract.returnInterestCharge(
+                msg.sender,
+                token,
+                0
+            );
+    
+            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            liabilities = liabilities + interestCharge;
+        }
+
+        if (assets == 0 && exactAmountTransfered > liabilities) {
             Datahub.alterUsersEarningRateIndex(beneficiary, token);
         } else {
-            debitAssetInterest(beneficiary, token);
+            utility.debitAssetInterest(beneficiary, token);
         }
 
         if (liabilities > 0) {
-            if (amount <= liabilities) {
+            if (exactAmountTransfered <= liabilities) {
                 uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(liabilities, amount);
+                    .calculatedepositLiabilityRatio(liabilities, exactAmountTransfered);
 
                 Datahub.alterLiabilities(
                     beneficiary,
@@ -447,15 +451,15 @@ contract DepositVault is Ownable {
                     ((10 ** 18) - liabilityMultiplier)
                 );
 
-                Datahub.setAssetInfo(1, token, amount, false); // 1 -> totalBorrowedAmount
+                Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedAmount
 
                 interestContract.chargeMassinterest(token);
 
                 return true;
             } else {
-                modifyMMROnDeposit(beneficiary, token, amount);
-                modifyIMROnDeposit(beneficiary, token, amount);
-                uint256 amountAddedtoAssets = amount - liabilities;
+                modifyMMROnDeposit(beneficiary, token, exactAmountTransfered);
+                modifyIMROnDeposit(beneficiary, token, exactAmountTransfered);
+                uint256 amountAddedtoAssets = exactAmountTransfered - liabilities;
 
                 Datahub.addAssets(beneficiary, token, amountAddedtoAssets);
                 Datahub.removeLiabilities(beneficiary, token, liabilities);
@@ -471,11 +475,16 @@ contract DepositVault is Ownable {
             users[0] = beneficiary;
 
             Datahub.checkIfAssetIsPresent(users, token);
-            Datahub.addAssets(beneficiary, token, amount);
+            Datahub.addAssets(beneficiary, token, exactAmountTransfered);
 
             return true;
         }
     }
 
+    function withdrawETH(address payable owner) external onlyOwner {
+        uint contractBalance = address(this).balance;
+        require(contractBalance > 0, "No balance to withdraw");
+        payable(owner).transfer(contractBalance);
+    }
     receive() external payable {}
 }

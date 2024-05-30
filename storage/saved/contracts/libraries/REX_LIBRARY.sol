@@ -2,7 +2,7 @@
 pragma solidity =0.8.20;
 
 import "../interfaces/IDataHub.sol";
-import "../interfaces/IinterestData.sol";
+import "../interfaces/IInterestData.sol";
 import "hardhat/console.sol";
 
 library REX_LIBRARY {

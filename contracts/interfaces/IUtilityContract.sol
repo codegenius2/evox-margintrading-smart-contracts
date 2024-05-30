@@ -36,7 +36,7 @@ interface IUtilityContract {
         address user,
         address token,
         uint256 amount
-    ) external view returns (uint256);
+    ) external returns (uint256);
 
     function returnAssets(
         address user,
@@ -89,6 +89,10 @@ interface IUtilityContract {
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
 
+    function validateTradeAmounts(
+        uint256[][2] memory trade_amounts
+    ) external view returns (bool);
+
     function Modifymmr(
         address user,
         address in_token,
@@ -102,4 +106,6 @@ interface IUtilityContract {
         address out_token,
         uint256 amount
     ) external;
+
+    function debitAssetInterest(address user, address token) external;
 }

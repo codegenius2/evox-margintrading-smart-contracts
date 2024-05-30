@@ -3,12 +3,13 @@ pragma solidity =0.8.20;
 
 import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
+import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IDataHub.sol";
 import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./libraries/EVO_LIBRARY.sol";
 import "./interfaces/IExecutor.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 import "hardhat/console.sol";
 
 contract Utility is Ownable {
@@ -20,38 +21,27 @@ contract Utility is Ownable {
         address _liquidator,
         address _ex
     ) public onlyOwner {
+        admins[address(Datahub)] = false;
         admins[_DataHub] = true;
         Datahub = IDataHub(_DataHub);
+
+        admins[address(DepositVault)] = false;
         admins[_deposit_vault] = true;
         DepositVault = IDepositVault(_deposit_vault);
+
+        admins[address(Oracle)] = false;
         admins[_oracle] = true;
         Oracle = IOracle(_oracle);
+        
+        admins[address(interestContract)] = false;
         admins[_interest] = true;
         interestContract = IInterestData(_interest);
+
         admins[_liquidator] = true;
+
+        admins[address(Executor)] = false;
         admins[_ex] = true;
-    }
-
-    /// @notice Alters the Admin roles for the contract
-    /// @param _datahub  the new address for the datahub
-    /// @param _depositVault the new address for the deposit vault
-    /// @param _oracle the new address for oracle
-    /// @param  _int the new address for the interest contract
-    function alterContractStrucutre(
-        address _datahub,
-        address _depositVault,
-        address _oracle,
-        address _int
-    ) public onlyOwner {
-        Datahub = IDataHub(_datahub);
-        DepositVault = IDepositVault(_depositVault);
-        Oracle = IOracle(_oracle);
-        interestContract = IInterestData(_int);
-    }
-
-    modifier checkRoleAuthority() {
-        require(admins[msg.sender] == true, "Unauthorized");
-        _;
+        Executor = IExecutor(_ex);
     }
 
     /// @notice Keeps track of contract admins
@@ -66,6 +56,22 @@ contract Utility is Ownable {
     IExecutor public Executor;
 
     IInterestData public interestContract;
+
+    /// @notice Sets a new Admin role
+    function setAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = true;
+    }
+
+    /// @notice Revokes the Admin role of the contract
+    function revokeAdminRole(address _admin) external onlyOwner {
+        admins[_admin] = false;
+    }
+
+    /// @notice checks the role authority of the caller to see if they can change the state
+    modifier checkRoleAuthority() {
+        require(admins[msg.sender] == true, "Unauthorized");
+        _;
+    }
 
     /** Constructor  */
     constructor(
@@ -163,8 +169,13 @@ contract Utility is Ownable {
         address user,
         address token,
         uint256 amount
-    ) public view returns (uint256) {
+    ) public returns (uint256) {
         (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        if(assets > 0) {
+            debitAssetInterest(user, token);
+            (assets, , , , ) = Datahub.ReadUserData(user, token);
+        }
+        
         return amount > assets ? amount - assets : 0;
     }
     /// @notice Cycles through two lists of users and checks how many liabilities are going to be issued to each user
@@ -172,7 +183,7 @@ contract Utility is Ownable {
         address[2] memory pair,
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
-    ) public view returns (uint256[] memory, uint256[] memory) {
+    ) public returns (uint256[] memory, uint256[] memory) {
         // console.log("================calculateTradeLiabilityAddtions Function=====================");
         uint256[] memory TakerliabilityAmounts = new uint256[](
             participants[0].length
@@ -262,6 +273,17 @@ contract Utility is Ownable {
         return ((maintenace * (amount)) / 10 ** 18); //
     }
 
+    function validateTradeAmounts(
+        uint256[][2] memory trade_amounts
+    ) external pure returns (bool) {
+        for (uint256 i = 0; i < trade_amounts[0].length; i++) {
+            if(trade_amounts[0][i] == 0 || trade_amounts[1][i] == 0) {
+                return false;
+            }
+        }
+        return true;
+    }
+
     /// @notice Checks that the trade will not push the asset over maxBorrowProportion
     function maxBorrowCheck(
         address[2] memory pair,
@@ -295,11 +317,13 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) external returns (bool) {
+        // console.log("==================taker======================");
         bool takerTradeConfirmation = processChecks(
             participants[0],
             trade_amounts[0],
             pair[0]
         );
+        // console.log("==================maker======================");
         bool makerTradeConfirmation = processChecks(
             participants[1],
             trade_amounts[1],
@@ -333,6 +357,7 @@ contract Utility is Ownable {
                 uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, tradeAmounts[i]);
                 initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
                 uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]);
+
                 uint256 aimrForUser = Datahub.calculateAIMRForUser(participants[i]);
                 if (collateralValue <= aimrForUser + initalMarginFeeAmount) {
                     return false;
@@ -403,15 +428,15 @@ contract Utility is Ownable {
         } else {
             uint256 length = Datahub.returnUsersAssetTokens(user).length;
             address[] memory tokens;
-            uint256 partMMROfUser;
+            uint256 pairMMROfUser;
             for (uint256 i = 0; i < length; i++) {
                 tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
+                pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
                 Datahub.removeMaintenanceMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    pairMMROfUser
                 );
             }
         }
@@ -466,18 +491,60 @@ contract Utility is Ownable {
         } else {
             uint256 length = Datahub.returnUsersAssetTokens(user).length;
             address[] memory tokens;
-            uint256 partMMROfUser;
+            uint256 pairMMROfUser;
             for (uint256 i = 0; i < length; i++) {
                 tokens = Datahub.returnUsersAssetTokens(user);
-                partMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
+                pairMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
                 Datahub.removeInitialMarginRequirement(
                     user,
                     in_token,
                     tokens[i],
-                    partMMROfUser
+                    pairMMROfUser
                 );
             }
         }
+    }
+
+    function debitAssetInterest(address user, address token) public checkRoleAuthority {
+        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+
+        uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+        address orderBookProvider = Executor.fetchOrderBookProvider();
+        address daoWallet = Executor.fetchDaoWallet();
+
+        (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
+            usersEarningRateIndex,
+            currentRateIndex,
+            token
+        );
+
+        // console.log("averageCumulativeDepositInterest - averageBorrowProportion", averageCumulativeDepositInterest, averageBorrowProportion);
+
+        (
+            uint256 interestCharge,
+            uint256 OrderBookProviderCharge,
+            uint256 DaoInterestCharge
+        ) = EVO_LIBRARY.calculateCompoundedAssets(
+                currentRateIndex,
+                averageCumulativeDepositInterest,
+                averageBorrowProportion,
+                assets,
+                usersEarningRateIndex
+            );
+        
+        // console.log("interestCharge - OrderBookProviderCharge - DaoInterestCharge", interestCharge, OrderBookProviderCharge, DaoInterestCharge);
+        
+        Datahub.alterUsersEarningRateIndex(user, token);
+        // console.log("////////////////interest charge//////////////////", interestCharge);
+        Datahub.addAssets(user, token, interestCharge);
+        Datahub.addAssets(daoWallet, token, DaoInterestCharge);
+
+        Datahub.addAssets(
+            orderBookProvider,
+            token,
+            OrderBookProviderCharge
+        );
     }
 /*
     /// @notice Explain to an end user what this does
