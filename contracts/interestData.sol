@@ -465,7 +465,7 @@ contract interestData {
         uint256 liabilitiesAccrued
     ) public view returns (uint256) {
         // console.log("========================return interest charge function========================");
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(user, token);
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(user, token);
 
         uint256 interestRateIndex = Datahub.viewUsersInterestRateIndex(user, token);
         uint256 currentRateIndex = fetchCurrentRateIndex(token);

@@ -195,7 +195,7 @@ contract Oracle is Ownable{
         // console.log("================alterPending Function================");
 
         for (uint256 i = 0; i < participants.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(
+            (uint256 assets, , , , ,) = Datahub.ReadUserData(
                 participants[i],
                 pair
             );
@@ -346,7 +346,7 @@ contract Oracle is Ownable{
         uint256 MakerbalanceToAdd;
         for (uint256 i = 0; i < takers.length; i++) {
             // (uint256 assets, , , , ) = Datahub.ReadUserData(takers[i], pair[0]);
-            (, , uint256 pending, , ) = Datahub.ReadUserData(takers[i], pair[0]);
+            (, , uint256 pending, , ,) = Datahub.ReadUserData(takers[i], pair[0]);
             // 100 usdt 
             // if its a margin trade , its makes perfect sense 
             balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
@@ -358,7 +358,7 @@ contract Oracle is Ownable{
 
         for (uint256 i = 0; i < makers.length; i++) {
            // (uint256 assets, , , , ) = Datahub.ReadUserData(makers[i], pair[1]);
-           (, , uint256 pending, , ) = Datahub.ReadUserData(makers[i], pair[0]);
+           (, , uint256 pending, , ,) = Datahub.ReadUserData(makers[i], pair[0]);
 
             MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
 
