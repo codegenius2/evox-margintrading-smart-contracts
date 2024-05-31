@@ -225,7 +225,7 @@ contract interestData {
         uint256 startIndex,
         uint256 endIndex,
         address token
-    ) public view returns (uint256, uint256) {
+    ) public view returns (uint256) {
         uint256 cumulativeInterestRates = 0;
         uint16[5] memory timeframes = [8736, 672, 168, 24, 1];
 
@@ -237,7 +237,7 @@ contract interestData {
         uint256 adjustedIndex;
 
         if(startIndex == endIndex) {
-            return (0, 0);
+            return (0);
         }
         // if (startIndex != 1) {
         //     startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
@@ -306,14 +306,14 @@ contract interestData {
             }
         }
 
-        if(endIndex == startIndex) {
-            return (cumulativeInterestRates, cumulativeBorrowProportion);
-        }
+        // if(endIndex == startIndex) {
+        //     return (cumulativeInterestRates, cumulativeBorrowProportion);
+        // }
 
         // console.log("endindex-startindex", cumulativeInterestRates, cumulativeBorrowProportion);
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex + 1));
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex));
-        return (cumulativeInterestRates / (endIndex - startIndex + 1), cumulativeBorrowProportion / (endIndex - startIndex));
+        return (cumulativeInterestRates * cumulativeBorrowProportion / (endIndex - startIndex + 1)) / 10 ** 18;
     }
 
     /// @notice updates intereest epochs, fills in the struct of data for a new index
@@ -451,6 +451,7 @@ contract interestData {
             uint256 calculatedBorroedAmount = ((assetLogs.assetInfo[1]) * (currentInterestRateHourly)) / 10 ** 18; // 1 -> totalBorrowedAmount
             // console.log("current interestrate hourly", currentInterestRateHourly);
             // total borroed amount * current interest rate -> up total borrowed amount by this fucking value
+            require(calculatedBorroedAmount > assetLogs.assetInfo[2], "TBA should be smaller than LPS");
             Datahub.setAssetInfo(1, token, calculatedBorroedAmount, true); // 1 -> totalBorrowedAmount
 
             // console.log("borrow add amount", (Datahub.returnAssetLogs(token).totalBorrowedAmount * currentInterestRateHourly) / 10 **  18);
