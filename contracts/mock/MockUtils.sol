@@ -18,10 +18,10 @@ contract MockUtils is Utility {
 
     uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
     uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-    address orderBookProvider = Executor.fetchOrderBookProvider();
-    address daoWallet = Executor.fetchDaoWallet();
+    // address orderBookProvider = Executor.fetchOrderBookProvider();
+    // address daoWallet = Executor.fetchDaoWallet();
 
-    (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
+    (uint256 averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
         usersEarningRateIndex,
         currentRateIndex,
         token
@@ -36,7 +36,6 @@ contract MockUtils is Utility {
     ) = EVO_LIBRARY.calculateCompoundedAssets(
             currentRateIndex,
             averageCumulativeDepositInterest,
-            averageBorrowProportion,
             assets,
             usersEarningRateIndex
         );
