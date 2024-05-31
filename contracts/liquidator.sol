@@ -230,7 +230,7 @@ contract Liquidator is Ownable {
         address pair
     ) internal returns (bool) {
         for (uint256 i = 0; i < participants.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(
+            (uint256 assets, , , , ,) = Datahub.ReadUserData(
                 participants[i],
                 pair
             );
@@ -273,7 +273,7 @@ contract Liquidator is Ownable {
         address user,
         address token
     ) private view returns (uint256) {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
         return assets;
     }
 
@@ -281,7 +281,7 @@ contract Liquidator is Ownable {
         address user,
         address token
     ) private view returns (uint256) {
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(user, token);
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(user, token);
         return liabilities;
     }
 }

@@ -14,7 +14,7 @@ contract MockUtils is Utility {
 
   function returnEarningRateProfit(address user, address token) public view returns(uint256) {
     // console.log("=============== returnEarningReateProfit ==================");
-    (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+    (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
 
     uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
     uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);

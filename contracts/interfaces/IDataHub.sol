@@ -161,7 +161,7 @@ interface IDataHub {
     function ReadUserData(
         address user,
         address token
-    ) external view returns (uint256, uint256, uint256, bool, address[] memory);
+    ) external view returns (uint256, uint256, uint256, bool, address[] memory, uint256);
 
     function removeAssetToken(address user, address token) external;
 

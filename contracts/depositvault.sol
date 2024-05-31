@@ -157,7 +157,7 @@ contract DepositVault is Ownable {
     ) private {
         address[] memory tokens = Datahub.returnUsersAssetTokens(user);
         uint256 liabilityMultiplier;
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(
             msg.sender,
             in_token
         );
@@ -179,7 +179,7 @@ contract DepositVault is Ownable {
     ) private {
         address[] memory tokens = Datahub.returnUsersAssetTokens(user);
         uint256 liabilityMultiplier;
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(
             msg.sender,
             in_token
         );
@@ -218,7 +218,7 @@ contract DepositVault is Ownable {
         require(!circuitBreakerStatus);
         Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalSupply
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(msg.sender, token);
+        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
 
         if(liabilities > 0) {
             uint256 interestCharge = interestContract.returnInterestCharge(
@@ -318,7 +318,7 @@ contract DepositVault is Ownable {
 
         utility.debitAssetInterest(msg.sender, token);
 
-        (uint256 assets, , uint256 pending, , ) = Datahub.ReadUserData(
+        (uint256 assets, , uint256 pending, , ,) = Datahub.ReadUserData(
             msg.sender,
             token
         );
@@ -421,7 +421,7 @@ contract DepositVault is Ownable {
         // exactAmountTransfered is the exact value being transfer in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
 
-        (uint256 assets, uint256 liabilities, , , ) = Datahub.ReadUserData(beneficiary, token);
+        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(beneficiary, token);
 
         if(liabilities > 0) {
             uint256 interestCharge = interestContract.returnInterestCharge(
