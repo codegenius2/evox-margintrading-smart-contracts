@@ -105,6 +105,7 @@ contract DataHub is Ownable {
     /// @param token the token being targetted
     /// @return returns the assets data
     function returnAssetLogs(address token) public view returns (AssetData memory) {
+        // console.log("lending supply", assetdata[token].assetInfo[2], token);
         return assetdata[token];
     }
 
@@ -354,6 +355,7 @@ contract DataHub is Ownable {
             userdata[_sender].asset_info[token] = userdata[_sender].asset_info[token] - amount;
             userdata[_sender].lending_pool_info[token] = userdata[_sender].lending_pool_info[token] + amount;
             assetdata[token].assetInfo[2] = assetdata[token].assetInfo[2] + amount; // 2 -> lending pool supply
+            // console.log("lending pool supply", assetdata[token].assetInfo[2], token);
             // assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] - amount;
             emit LendingPoolDeposit(_sender, token, amount);
             

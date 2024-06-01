@@ -622,6 +622,11 @@ describe("Interest Test", function () {
             await approvalTx.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
 
+            deposit_amount = 5_000_000000000000000000n;
+            approvalTx = await REXE_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined
+            await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
+
             const Data1 = {
                 "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
                 "maker_out_token": await REXE_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
@@ -635,7 +640,21 @@ describe("Interest Test", function () {
             const participants = [[Data1.takers], [Data1.makers]];
             const trade_amounts = [[Data1.taker_out_token_amount], [Data1.maker_out_token_amount]];
 
-            DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 500_000000000000000000n, true);
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 510_000000000000000000n, true);
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log(asset_data);
+            // console.log(user_data);
+
+            // asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+            // user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log(asset_data);
+            // console.log(user_data);
+
+            expect(user_data[5]).equals(510_000000000000000000n); // lending pool amount
+            expect(user_data[0]).equals(490_000000000000000000n); // usdt amount
+            expect(asset_data[4][2]).equals(510_000000000000000000n); // lending pool supply
 
             // const EX = new hre.ethers.Contract(await Deploy_Exchange.getAddress(), ExecutorAbi.abi, signers[0]);
 
@@ -650,7 +669,7 @@ describe("Interest Test", function () {
             let allData = [];
             let scaledTimestamp;
             // for (let i = 0; i <= 174; i++) {
-            for (let i = 0; i < 8; i++) {
+            for (let i = 0; i < 20; i++) {
 
                 // console.log("////////////////////////////////////////////////////////// LOOP " + i + " /////////////////////////////////////////////////////////////");
                 scaledTimestamp = originTimestamp + i * 3600;
@@ -672,24 +691,33 @@ describe("Interest Test", function () {
                     // await DataHub.removeLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 2502657312925200000n);
                     // await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 2502657312925200000n, false);
                 }
-                allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN));
+                // allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN));
             }
 
             // File path for the JSON file
-            const filePath = './data_earningrate_liability.json';
+            // const filePath = './data_earningrate_lending_pool.json';
 
             // Write all collected data to the JSON file
-            fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
+            // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
 
-            // for (let index = 1; index < 6; index++) {
-            //     console.log("rate interest index", (await _Interest.fetchTimeScaledRateIndex(0, await USDT_TOKEN.getAddress(), index))[3]);
+            // for (let index = 1; index < 30; index++) {
+            //     console.log("-=-==-=-=-= index -=-=-=-=-=-=-=", index);
+            //     console.log("interest rate", (await _Interest.fetchTimeScaledRateIndex(0, await USDT_TOKEN.getAddress(), index))[5]);
+            //     console.log("borrow proportion", (await _Interest.fetchTimeScaledRateIndex(0, await USDT_TOKEN.getAddress(), index))[3]);
+            // }
+            // console.log("bound");
+            // for (let index = 1; index < 4; index++) {
+            //     console.log("interest rate", (await _Interest.fetchTimeScaledRateIndex(1, await USDT_TOKEN.getAddress(), index))[5]);
+            //     console.log("borrow proportion", (await _Interest.fetchTimeScaledRateIndex(1, await USDT_TOKEN.getAddress(), index))[3]);
             // }
 
             // console.log('All data recorded successfully.');
-            // const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
-            // console.log("test", Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities));
+            const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+            // console.log("test", test_val);
             // expect(Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities)).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
+            expect(test_val["USDT-1"].earningreate_charge).equals(0.0805095434519325);
+            expect(test_val["USDT-0"].liability_charge).equals(0.08131669090607291);
         })
     })
 })

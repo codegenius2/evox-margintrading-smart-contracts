@@ -257,7 +257,6 @@ contract interestData {
                 break;
             }
         }
-
         for (uint256 i = 0; i < timeframes.length; i++) {
             while ((runningUpIndex + timeframes[i] - 1) <= endIndex) {
                 adjustedIndex = timeframes.length - 1 - i;
@@ -293,15 +292,15 @@ contract interestData {
                         runningDownIndex / timeframes[i]
                     ).interestRate *
                     timeframes[i];
-                // console.log("cumulativeInterestRates", cumulativeInterestRates);
+                // console.log("cumulativeInterestRates", cumulativeInterestRates, timeframes[i]);
                 cumulativeBorrowProportion +=
                     fetchTimeScaledRateIndex(
                         adjustedIndex,
                         token,
-                        runningUpIndex / timeframes[i] // 168 / 168 = 1
+                        runningDownIndex / timeframes[i] // 168 / 168 = 1
                     ).borrowProportionAtIndex *
                     timeframes[i];
-                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion);
+                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion, timeframes[i]);
                 runningDownIndex -= timeframes[i];
             }
         }
@@ -309,11 +308,13 @@ contract interestData {
         // if(endIndex == startIndex) {
         //     return (cumulativeInterestRates, cumulativeBorrowProportion);
         // }
-
-        // console.log("endindex-startindex", cumulativeInterestRates, cumulativeBorrowProportion);
+        // if(token == DepositVault._USDT()) {
+            // console.log("cumulativeInterestRates-cumulativeBorrowProportion", cumulativeInterestRates / (endIndex - startIndex + 1), cumulativeBorrowProportion / (endIndex - startIndex + 1));
+            // console.log("endIndex-startIndex", endIndex, startIndex);
+        // }
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex + 1));
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex));
-        return (cumulativeInterestRates * cumulativeBorrowProportion / (endIndex - startIndex + 1)) / 10 ** 18;
+        return (cumulativeInterestRates / (endIndex - startIndex + 1)) * (cumulativeBorrowProportion / (endIndex - startIndex + 1)) / 10 ** 18;
     }
 
     /// @notice updates intereest epochs, fills in the struct of data for a new index
@@ -451,7 +452,7 @@ contract interestData {
             uint256 calculatedBorroedAmount = ((assetLogs.assetInfo[1]) * (currentInterestRateHourly)) / 10 ** 18; // 1 -> totalBorrowedAmount
             // console.log("current interestrate hourly", currentInterestRateHourly);
             // total borroed amount * current interest rate -> up total borrowed amount by this fucking value
-            require(calculatedBorroedAmount > assetLogs.assetInfo[2], "TBA should be smaller than LPS");
+            require(calculatedBorroedAmount + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeMassinInterest");
             Datahub.setAssetInfo(1, token, calculatedBorroedAmount, true); // 1 -> totalBorrowedAmount
 
             // console.log("borrow add amount", (Datahub.returnAssetLogs(token).totalBorrowedAmount * currentInterestRateHourly) / 10 **  18);

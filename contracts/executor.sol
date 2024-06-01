@@ -536,9 +536,9 @@ contract EVO_EXCHANGE is Ownable {
                 liabilitiesAccrued
             );
 
-            // console.log("interest charge after returnInterestCharge", interestCharge);
-            require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS");
-
+            // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("lending pool supply", assetLogs.assetInfo[2]);
+            require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
             Datahub.addLiabilities(
                 user,
                 token,
@@ -604,7 +604,9 @@ contract EVO_EXCHANGE is Ownable {
             // console.log("margined after remove liabilities", margined);
             // console.log("tokens after remove liabilities", tokens);
 
-            require(liabilitiesAccrued - interestCharge + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS");
+            // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("lending pool supply", assetLogs.assetInfo[2]);
+            require(assetLogs.assetInfo[1] - liabilitiesAccrued + interestCharge <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Plus");
 
             Datahub.setAssetInfo(1, token, (liabilitiesAccrued - interestCharge), false); // 1 -> totalBorrowedAmount
 
