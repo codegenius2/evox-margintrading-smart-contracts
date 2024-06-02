@@ -2,7 +2,7 @@
 pragma solidity =0.8.20;
 
 import "../interfaces/IDataHub.sol";
-import "../interfaces/IinterestData.sol";
+import "../interfaces/IInterestData.sol";
 import "hardhat/console.sol";
 library EVO_LIBRARY {
     function createArray(address user) public pure returns (address[] memory) {
@@ -174,26 +174,30 @@ library EVO_LIBRARY {
     function calculateBorrowProportion(
         IDataHub.AssetData memory assetdata
     ) public pure returns (uint256) {
+        if(assetdata.assetInfo[2] == 0) {
+            return 0;
+        }
         return
-            (assetdata.assetInfo[1] * 10 ** 18) / assetdata.assetInfo[0]; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
+            (assetdata.assetInfo[1] * 10 ** 18) / assetdata.assetInfo[2]; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount, 2 -> lendingPoolSupply
     }
 
     function calculateBorrowProportionAfterTrades(
         IDataHub.AssetData memory assetdata,
         uint256 new_liabilities
     ) public pure returns (bool) {
+        if(assetdata.assetInfo[2] == 0) {
+            return false;
+        }
         // console.log("====================calculateBorrowProportionAfterTrades========================");
         uint256 scaleFactor = 1e18; // Scaling factor, e.g., 10^18 for wei
 
         // here we add the current borrowed amount and the new liabilities to be issued, and scale it
-        uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] +
-            new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
+        uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] + new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
 
         // console.log("scaledTotalBorrowed", scaledTotalBorrowed);
 
         // Calculate the new borrow proportion
-        uint256 newBorrowProportion = (scaledTotalBorrowed /
-            assetdata.assetInfo[0]); // totalAssetSupply
+        uint256 newBorrowProportion = (scaledTotalBorrowed / assetdata.assetInfo[2]); // totalLendingPoolSupply
 
         // console.log("newBorrowProportion", newBorrowProportion);
 
@@ -214,8 +218,7 @@ library EVO_LIBRARY {
     function calculateCompoundedAssets(
         uint256 currentIndex,
         uint256 AverageCumulativeDepositInterest,
-        uint256 AverageBorrowPosition,
-        uint256 usersAssets,
+        uint256 userLedingPoolAmount,
         uint256 usersOriginIndex
     ) public pure returns (uint256, uint256, uint256) {
         uint256 earningHours = currentIndex - usersOriginIndex;
@@ -252,7 +255,7 @@ library EVO_LIBRARY {
             earningHours /= 2;
         }
 
-        uint256 compoundedAssets = usersAssets * AverageBorrowPosition* hourlyChargesBase / 10 ** 18;
+        uint256 compoundedAssets = userLedingPoolAmount * hourlyChargesBase;
         // console.log("compoundedAssets", compoundedAssets, AverageBorrowPosition, hourlyChargesBase);
 
         unchecked {
@@ -267,11 +270,11 @@ library EVO_LIBRARY {
             }
 
             // console.log("compoundedAssets", compoundedAssets);
-            interestCharge = compoundedAssets - usersAssets * AverageBorrowPosition / 10 ** 18;
-            // uint256 temp = usersAssets * AverageBorrowPosition / 10 ** 18;
+            interestCharge = compoundedAssets - userLedingPoolAmount;
+            // uint256 temp = userLedingPoolAmount * AverageBorrowPosition / 10 ** 18;
             // console.log("asset",  temp);
             // console.log("borrow",  AverageBorrowPosition);
-            // console.log("user asset", usersAssets);
+            // console.log("user asset", userLedingPoolAmount);
             if (interestCharge > 0) {
                 if (interestCharge > 100 wei) {
                     interestCharge = interestCharge / 100;

@@ -9,7 +9,7 @@ import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./interfaces/IUtilityContract.sol";
 import "./libraries/EVO_LIBRARY.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 
 /// @title This is the EVO Exchange contract
 /// @author EVO X Labs.
@@ -443,16 +443,15 @@ contract EVO_EXCHANGE is Ownable {
 
     function processFee(uint256 amountToAddToLiabilities, address out_token) private returns (uint256){
         address daoWallet = fetchDaoWallet();
+        address orderBookProvider = fetchOrderBookProvider();
         uint256 trade0 = Datahub.tradeFee(out_token, 0);
         uint256 trade1 = Datahub.tradeFee(out_token, 1);
         uint256 addToLiabilities = (amountToAddToLiabilities * (trade0 - trade1)) / 10 ** 18;
         // console.log("amount to add liabilities", amountToAddToLiabilities);
         // This is where we take trade fees it is not called if the msg.sender is the liquidator
-        Datahub.addAssets(
-            daoWallet,
-            out_token,
-            addToLiabilities
-        );
+        Datahub.addAssets(daoWallet, out_token, addToLiabilities * 90 / 100);
+
+        Datahub.addAssets(orderBookProvider, out_token, addToLiabilities * 10 / 100);
         return (amountToAddToLiabilities * trade1) / 10 ** 18;
     }
 
@@ -516,7 +515,7 @@ contract EVO_EXCHANGE is Ownable {
         // console.log("=====================chargeinterest function=====================");
         //Step 1) charge mass interest on outstanding liabilities
         interestContract.chargeMassinterest(token);
-
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
         // (uint256 assets, uint256 liabilities, uint256 pending, bool margined, ) = Datahub.ReadUserData(
         //     user,
         //     token
@@ -537,8 +536,9 @@ contract EVO_EXCHANGE is Ownable {
                 liabilitiesAccrued
             );
 
-            // console.log("interest charge after returnInterestCharge", interestCharge);
-
+            // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("lending pool supply", assetLogs.assetInfo[2]);
+            require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
             Datahub.addLiabilities(
                 user,
                 token,
@@ -603,6 +603,10 @@ contract EVO_EXCHANGE is Ownable {
             // console.log("pending after remove liabilities", pending);
             // console.log("margined after remove liabilities", margined);
             // console.log("tokens after remove liabilities", tokens);
+
+            // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("lending pool supply", assetLogs.assetInfo[2]);
+            require(assetLogs.assetInfo[1] - liabilitiesAccrued + interestCharge <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Plus");
 
             Datahub.setAssetInfo(1, token, (liabilitiesAccrued - interestCharge), false); // 1 -> totalBorrowedAmount
 

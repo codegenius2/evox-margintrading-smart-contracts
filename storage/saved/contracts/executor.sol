@@ -8,7 +8,7 @@ import "./interfaces/IDepositVault.sol";
 import "./interfaces/IOracle.sol";
 import "./interfaces/IUtilityContract.sol";
 import "./libraries/REX_LIBRARY.sol";
-import "./interfaces/IinterestData.sol";
+import "./interfaces/IInterestData.sol";
 import "hardhat/console.sol";
 
 contract REX_EXCHANGE is Ownable {
