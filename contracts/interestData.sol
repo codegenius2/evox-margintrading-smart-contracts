@@ -225,7 +225,7 @@ contract interestData {
         uint256 startIndex,
         uint256 endIndex,
         address token
-    ) public view returns (uint256, uint256) {
+    ) public view returns (uint256) {
         uint256 cumulativeInterestRates = 0;
         uint16[5] memory timeframes = [8736, 672, 168, 24, 1];
 
@@ -237,7 +237,7 @@ contract interestData {
         uint256 adjustedIndex;
 
         if(startIndex == endIndex) {
-            return (0, 0);
+            return (0);
         }
         // if (startIndex != 1) {
         //     startIndex = startIndex + 1; // For calculating untouched and cause of gas fee
@@ -257,7 +257,6 @@ contract interestData {
                 break;
             }
         }
-
         for (uint256 i = 0; i < timeframes.length; i++) {
             while ((runningUpIndex + timeframes[i] - 1) <= endIndex) {
                 adjustedIndex = timeframes.length - 1 - i;
@@ -293,27 +292,29 @@ contract interestData {
                         runningDownIndex / timeframes[i]
                     ).interestRate *
                     timeframes[i];
-                // console.log("cumulativeInterestRates", cumulativeInterestRates);
+                // console.log("cumulativeInterestRates", cumulativeInterestRates, timeframes[i]);
                 cumulativeBorrowProportion +=
                     fetchTimeScaledRateIndex(
                         adjustedIndex,
                         token,
-                        runningUpIndex / timeframes[i] // 168 / 168 = 1
+                        runningDownIndex / timeframes[i] // 168 / 168 = 1
                     ).borrowProportionAtIndex *
                     timeframes[i];
-                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion);
+                // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion, timeframes[i]);
                 runningDownIndex -= timeframes[i];
             }
         }
 
-        if(endIndex == startIndex) {
-            return (cumulativeInterestRates, cumulativeBorrowProportion);
-        }
-
-        // console.log("endindex-startindex", cumulativeInterestRates, cumulativeBorrowProportion);
+        // if(endIndex == startIndex) {
+        //     return (cumulativeInterestRates, cumulativeBorrowProportion);
+        // }
+        // if(token == DepositVault._USDT()) {
+            // console.log("cumulativeInterestRates-cumulativeBorrowProportion", cumulativeInterestRates / (endIndex - startIndex + 1), cumulativeBorrowProportion / (endIndex - startIndex + 1));
+            // console.log("endIndex-startIndex", endIndex, startIndex);
+        // }
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex + 1));
         // console.log("cumulativeBorrowProportion", cumulativeBorrowProportion / (endIndex - startIndex));
-        return (cumulativeInterestRates / (endIndex - startIndex + 1), cumulativeBorrowProportion / (endIndex - startIndex));
+        return (cumulativeInterestRates / (endIndex - startIndex + 1)) * (cumulativeBorrowProportion / (endIndex - startIndex + 1)) / 10 ** 18;
     }
 
     /// @notice updates intereest epochs, fills in the struct of data for a new index
@@ -451,6 +452,7 @@ contract interestData {
             uint256 calculatedBorroedAmount = ((assetLogs.assetInfo[1]) * (currentInterestRateHourly)) / 10 ** 18; // 1 -> totalBorrowedAmount
             // console.log("current interestrate hourly", currentInterestRateHourly);
             // total borroed amount * current interest rate -> up total borrowed amount by this fucking value
+            require(calculatedBorroedAmount + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeMassinInterest");
             Datahub.setAssetInfo(1, token, calculatedBorroedAmount, true); // 1 -> totalBorrowedAmount
 
             // console.log("borrow add amount", (Datahub.returnAssetLogs(token).totalBorrowedAmount * currentInterestRateHourly) / 10 **  18);
@@ -465,7 +467,7 @@ contract interestData {
         uint256 liabilitiesAccrued
     ) public view returns (uint256) {
         // console.log("========================return interest charge function========================");
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(user, token);
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(user, token);
 
         uint256 interestRateIndex = Datahub.viewUsersInterestRateIndex(user, token);
         uint256 currentRateIndex = fetchCurrentRateIndex(token);

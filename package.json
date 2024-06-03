@@ -9,6 +9,7 @@
     "deployzk": "npx hardhat run scripts/zkevm_deploy.js --network zkevm",
     "test_deposit_function": "node ./unit_tests/deposit.js",
     "test_interest": "npx hardhat test ./unit_tests/interest.js",
+    "test_lending_pool": "npx hardhat test ./unit_tests/lending_pool.js",
     "test_deposit": "npx hardhat test ./unit_tests/deposit_test.js",
     "test_margin": "npx hardhat test ./unit_tests/margin_trading_test.js",
     "compile": "npx hardhat compile"
@@ -28,6 +29,7 @@
     "fs": "^0.0.1-security",
     "hardhat-abi-exporter": "^2.10.1",
     "hardhat-gas-reporter": "^1.0.9",
+    "hardhat-gas-trackooor": "^1.0.4",
     "hardhat-gui": "^0.0.14",
     "path": "^0.12.7"
   }

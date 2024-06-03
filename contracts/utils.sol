@@ -97,7 +97,7 @@ contract Utility is Ownable {
         address user,
         address token
     ) public view returns (bool) {
-        (, , , bool margined, ) = Datahub.ReadUserData(user, token);
+        (, , , bool margined, ,) = Datahub.ReadUserData(user, token);
         return margined;
     }
 
@@ -170,10 +170,10 @@ contract Utility is Ownable {
         address token,
         uint256 amount
     ) public returns (uint256) {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
         if(assets > 0) {
             debitAssetInterest(user, token);
-            (assets, , , , ) = Datahub.ReadUserData(user, token);
+            (assets, , , , , ) = Datahub.ReadUserData(user, token);
         }
         
         return amount > assets ? amount - assets : 0;
@@ -223,7 +223,7 @@ contract Utility is Ownable {
     ) public view returns (uint256) {
         uint256 bulkAssets;
         for (uint256 i = 0; i < users.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(users[i], token);
+            (uint256 assets, , , , ,) = Datahub.ReadUserData(users[i], token);
 
             bulkAssets += assets;
         }
@@ -239,7 +239,7 @@ contract Utility is Ownable {
         address user,
         address token
     ) external view returns (uint256) {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
         return assets;
     }
 
@@ -247,7 +247,7 @@ contract Utility is Ownable {
         address user,
         address token
     ) public view returns (uint256) {
-        (, uint256 liabilities, , , ) = Datahub.ReadUserData(user, token);
+        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(user, token);
         return liabilities;
     }
 
@@ -260,7 +260,7 @@ contract Utility is Ownable {
         address user,
         address token
     ) external view returns (uint256) {
-        (, , uint256 pending, , ) = Datahub.ReadUserData(user, token);
+        (, , uint256 pending, , ,) = Datahub.ReadUserData(user, token);
         return pending;
     }
 
@@ -348,7 +348,7 @@ contract Utility is Ownable {
     ) internal returns (bool) {
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair);
         for (uint256 i = 0; i < participants.length; i++) {
-            (uint256 assets, , , , ) = Datahub.ReadUserData(
+            (uint256 assets, , , , ,) = Datahub.ReadUserData(
                 participants[i],
                 pair
             );
@@ -506,14 +506,14 @@ contract Utility is Ownable {
     }
 
     function debitAssetInterest(address user, address token) public checkRoleAuthority {
-        (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+        (, , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
 
         uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
         uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
         address orderBookProvider = Executor.fetchOrderBookProvider();
         address daoWallet = Executor.fetchDaoWallet();
 
-        (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
+        (uint256 averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
             usersEarningRateIndex,
             currentRateIndex,
             token
@@ -527,9 +527,8 @@ contract Utility is Ownable {
             uint256 DaoInterestCharge
         ) = EVO_LIBRARY.calculateCompoundedAssets(
                 currentRateIndex,
-                averageCumulativeDepositInterest,
-                averageBorrowProportion,
-                assets,
+                averageCumulativeDepositInterest * 990000000000000000 / 10 ** 18, // 0.99,
+                lending_pool_amount,
                 usersEarningRateIndex
             );
         

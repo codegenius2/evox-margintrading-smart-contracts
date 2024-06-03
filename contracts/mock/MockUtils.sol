@@ -14,30 +14,40 @@ contract MockUtils is Utility {
 
   function returnEarningRateProfit(address user, address token) public view returns(uint256) {
     // console.log("=============== returnEarningReateProfit ==================");
-    (uint256 assets, , , , ) = Datahub.ReadUserData(user, token);
+    ( , , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
 
     uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
     uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
-    address orderBookProvider = Executor.fetchOrderBookProvider();
-    address daoWallet = Executor.fetchDaoWallet();
-
-    (uint256 averageCumulativeDepositInterest, uint256 averageBorrowProportion) = interestContract.calculateAverageCumulativeDepositInterest(
-        usersEarningRateIndex,
-        currentRateIndex,
-        token
-    );
-    // console.log("endindex-startindex", usersEarningRateIndex, currentRateIndex);
-    // console.log("averageCumulativeDepositInterest - averageBorrowProportion", averageCumulativeDepositInterest, averageBorrowProportion);
-    // console.log("asset", assets);
+    uint256 averageCumulativeDepositInterest;
+    // address orderBookProvider = Executor.fetchOrderBookProvider();
+    // address daoWallet = Executor.fetchDaoWallet();
+    if(token == DepositVault._USDT()) {
+      // console.log("========================================= USDT ================================================");
+      (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+          usersEarningRateIndex,
+          currentRateIndex,
+          token
+      );
+      // console.log("endindex-startindex", currentRateIndex, usersEarningRateIndex);
+      // console.log("averageCumulativeDepositInterest", averageCumulativeDepositInterest);
+      // console.log("lending_pool_amount", lending_pool_amount);
+      // console.log("===============================================================================================");
+    } else {
+      (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+          usersEarningRateIndex,
+          currentRateIndex,
+          token
+      );
+    }
+    
     (
         uint256 interestCharge,
         uint256 OrderBookProviderCharge,
         uint256 DaoInterestCharge
     ) = EVO_LIBRARY.calculateCompoundedAssets(
             currentRateIndex,
-            averageCumulativeDepositInterest,
-            averageBorrowProportion,
-            assets,
+            averageCumulativeDepositInterest * 990000000000000000 / 10 ** 18, // 0.99
+            lending_pool_amount,
             usersEarningRateIndex
         );
     // console.log("interest rate", interestCharge + OrderBookProviderCharge + DaoInterestCharge);
