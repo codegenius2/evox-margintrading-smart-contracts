@@ -617,7 +617,7 @@ describe("Interest Test", function () {
             }
 
             // // File path for the JSON file
-            // const filePath = './data.json';
+            // const filePath = './output/data.json';
 
             // // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
@@ -1661,7 +1661,7 @@ describe("Interest Test", function () {
             }
 
             // File path for the JSON file
-            // const filePath = './data_liability.json';
+            // const filePath = './output/data_liability.json';
 
             // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
@@ -1795,7 +1795,7 @@ describe("Interest Test", function () {
             }
 
             // // File path for the JSON file
-            // const filePath = './data_liability.json';
+            // const filePath = './output/data_liability.json';
 
             // // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
@@ -1942,7 +1942,7 @@ describe("Interest Test", function () {
             }
 
             // File path for the JSON file
-            // const filePath = './data_liability.json';
+            // const filePath = './output/data_liability.json';
 
             // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
@@ -2023,7 +2023,7 @@ describe("Interest Test", function () {
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            // const filePath = './data_regular_trade.json';
+            // const filePath = './output/data_regular_trade.json';
 
             // // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(test_val, null, 2));
@@ -2170,14 +2170,14 @@ describe("Interest Test", function () {
             }
 
             // File path for the JSON file
-            const filePath = './data_50_trade.json';
+            const filePath = './output/data_50_trade.json';
 
             // Write all collected data to the JSON file
             fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
 
             const test_val = await createNewData(0, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            // const filePath = './data_regular_trade.json';
+            // const filePath = './output/data_regular_trade.json';
 
             // // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(test_val, null, 2));

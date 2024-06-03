@@ -695,7 +695,7 @@ describe("Interest Test", function () {
             }
 
             // File path for the JSON file
-            // const filePath = './data_earningrate_lending_pool.json';
+            // const filePath = './output/data_earningrate_lending_pool.json';
 
             // Write all collected data to the JSON file
             // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
