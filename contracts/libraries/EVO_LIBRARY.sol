@@ -85,7 +85,7 @@ library EVO_LIBRARY {
     ) public pure returns (uint256) {
         // console.log("======================calculate interest rate function===========================");
         // uint256 borrowProportion = ((assetlogs.totalBorrowedAmount + amount) * 10 ** 18) / assetlogs.totalAssetSupply; /// check for div by 0
-        uint256 borrowProportion = ((assetlogs.assetInfo[1] + amount) * 10 ** 18) / assetlogs.assetInfo[0]; /// 0 -> totalAssetSupply 1 -> totalBorrowedAmount
+        uint256 borrowProportion = ((assetlogs.assetInfo[1] + amount) * 10 ** 18) / assetlogs.assetInfo[2]; /// 0 -> totalAssetSupply 1 -> totalBorrowedAmount
         // console.log("borrow proportion", borrowProportion);
         // also those will need to be updated on every borrow (trade) and every deposit -> need to write in
 
