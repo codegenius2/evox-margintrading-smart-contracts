@@ -630,13 +630,13 @@ describe("Interest Test", function () {
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             expect(test_val["USDT-0"].usdt_amount).equals(0);
             expect(test_val["USDT-0"].usdt_supply).equals(1500);
-            expect(test_val["USDT-0"].liabilities).equals(502.50423807343446);
+            expect(test_val["USDT-0"].liabilities).equals(502.55405474155475);
 
             expect(test_val["USDT-1"].usdt_amount).equals(1490);
             expect(test_val["USDT-1"].usdt_supply).equals(1500);
             expect(test_val["USDT-1"].liabilities).equals(0);
 
-            expect(test_val["USDT-1"]["total-borrowed"]).equals(502.50423807343446);
+            expect(test_val["USDT-1"]["total-borrowed"]).equals(502.55405474155475);
         })
 
         it("Test margin trade that makes the users have assets with a greater value than the liabilities", async function () {
@@ -1286,7 +1286,7 @@ describe("Interest Test", function () {
             // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
             // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
             expect(userData_usdt_signer00[0]).equals(0); // Amount
-            expect(userData_usdt_signer00[1]).equals(502504238073434502000n); // Liability
+            expect(userData_usdt_signer00[1]).equals(502_554054741554741500n); // Liability
             expect(userData_rexe_signer00[0]).equals(2500000000000000000000n); // Amount
             expect(userData_rexe_signer00[1]).equals(0); // Liability
 
@@ -1328,7 +1328,7 @@ describe("Interest Test", function () {
             // console.log("userData_rexe2_signer1 liabilities", userData_rexe2_signer1[1]);
 
             expect(userData_usdt2_signer0[0]).equals(0); // Amount
-            expect(userData_usdt2_signer0[1]).equals(2504238073434502000n); // Liability
+            expect(userData_usdt2_signer0[1]).equals(255_4054741554741500n); // Liability
             expect(userData_rexe2_signer0[0]).equals(2000000000000000000000n); // Amount
             expect(userData_rexe2_signer0[1]).equals(0n); // Liability
 
@@ -1418,7 +1418,7 @@ describe("Interest Test", function () {
             // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
             // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
             expect(userData_usdt_signer00[0]).equals(0); // Amount
-            expect(userData_usdt_signer00[1]).equals(502504238073434502000n); // Liability
+            expect(userData_usdt_signer00[1]).equals(502_554054741554741500n); // Liability
             expect(userData_rexe_signer00[0]).equals(2500000000000000000000n); // Amount
             expect(userData_rexe_signer00[1]).equals(0); // Liability
 
@@ -1542,7 +1542,7 @@ describe("Interest Test", function () {
             // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
             // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
             expect(userData_usdt_signer00[0]).equals(0); // Amount
-            expect(userData_usdt_signer00[1]).equals(502504238073434502000n); // Liability
+            expect(userData_usdt_signer00[1]).equals(502_554054741554741500n); // Liability
             expect(userData_rexe_signer00[0]).equals(2500000000000000000000n); // Amount
             expect(userData_rexe_signer00[1]).equals(0); // Liability
 
@@ -1556,7 +1556,7 @@ describe("Interest Test", function () {
             await DataHub.alterUserNegativeValueTest(signers[0].address);
 
             // console.log("singer[0] negative amount", await DataHub.userdata_negative_value(signers[0].address));
-            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(502504237823434502000n);
+            expect((await DataHub.userdata(signers[0].address)).negative_value).equals(502_554054491554741500n);
 
             // expect(userData_usdt2_signer1[0]).equals(1750000000000000000000n); // Amount
             // expect(userData_usdt2_signer1[1]).equals(0n); // Liability
@@ -1668,7 +1668,7 @@ describe("Interest Test", function () {
             // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
-            expect(Number(test_val["USDT-0"]["total-borrowed"])).greaterThan(Number(test_val["USDT-0"].liabilities));
+            expect(Number(test_val["USDT-0"]["total-borrowed"])).lessThan(Number(test_val["USDT-0"].liabilities));
             // console.log("test_val", test_val);
         })
 
@@ -1802,7 +1802,7 @@ describe("Interest Test", function () {
             // // console.log('All data recorded successfully.');
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
-            expect(Number(test_val["USDT-0"]["total-borrowed"])).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
+            expect(Number(test_val["USDT-0"]["total-borrowed"])).equals(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
         })
 

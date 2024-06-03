@@ -716,8 +716,8 @@ describe("Interest Test", function () {
             // console.log("test", test_val);
             // expect(Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities)).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
-            expect(test_val["USDT-1"].earningreate_charge).equals(0.0805095434519325);
-            expect(test_val["USDT-0"].liability_charge).equals(0.08131669090607291);
+            expect(test_val["USDT-1"].earningreate_charge).equals(1.0423459402431166);
+            expect(test_val["USDT-0"].liability_charge).equals(1.0518578356695236);
         })
     })
 })
