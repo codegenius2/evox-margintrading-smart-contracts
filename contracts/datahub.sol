@@ -161,7 +161,12 @@ contract DataHub is Ownable {
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
     function calculateTotalPortfolioValue(address user) external view returns (uint256) {
-        return calculateTotalAssetValue(user) - calculateLiabilitiesValue(user);
+        uint256 collateral = calculateTotalAssetValue(user);
+        uint256 liabilities = calculateLiabilitiesValue(user);
+        if(collateral <= liabilities) {
+            return 0;
+        }
+        return collateral - liabilities;
     }
 
     function calculateTotalAssetCollateralAmount(address user) internal view returns (uint256) {
@@ -186,6 +191,7 @@ contract DataHub is Ownable {
     /// @return returns their assets - liabilities value in dollars
     function calculatePendingCollateralValue(address user) external view returns (uint256) {
         uint256 sumOfAssets;
+        uint256 liabilities;
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
@@ -196,11 +202,13 @@ contract DataHub is Ownable {
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
 
-        if(sumOfAssets < calculateLiabilitiesValue(user)) {
+        liabilities = calculateLiabilitiesValue(user);
+
+        if(sumOfAssets < liabilities) {
             return 0;
         }
 
-        return sumOfAssets - calculateLiabilitiesValue(user);
+        return sumOfAssets - liabilities;
     }
 
     function tradeFee(address token, uint256 feeType) public view returns (uint256) {
@@ -219,7 +227,7 @@ contract DataHub is Ownable {
             // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
-        return sumOfAssets - calculateLiabilitiesValue(user);
+        return sumOfAssets - userLiabilities;
     }
 
     /// @notice calculates the total dollar value of the users Aggregate initial margin requirement
