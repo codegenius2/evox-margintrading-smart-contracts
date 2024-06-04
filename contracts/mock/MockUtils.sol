@@ -46,7 +46,7 @@ contract MockUtils is Utility {
         uint256 DaoInterestCharge
     ) = EVO_LIBRARY.calculateCompoundedAssets(
             currentRateIndex,
-            averageCumulativeDepositInterest * 99 / 100, // 0.99
+            averageCumulativeDepositInterest * 95 / 100, // 0.99
             lending_pool_amount,
             usersEarningRateIndex
         );

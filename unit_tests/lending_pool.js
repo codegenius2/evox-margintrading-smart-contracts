@@ -640,7 +640,7 @@ describe("Interest Test", function () {
             const participants = [[Data1.takers], [Data1.makers]];
             const trade_amounts = [[Data1.taker_out_token_amount], [Data1.maker_out_token_amount]];
 
-            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 510_000000000000000000n, true);
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 600_000000000000000000n, true);
 
             asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
             user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
@@ -652,9 +652,9 @@ describe("Interest Test", function () {
             // console.log(asset_data);
             // console.log(user_data);
 
-            expect(user_data[5]).equals(510_000000000000000000n); // lending pool amount
-            expect(user_data[0]).equals(490_000000000000000000n); // usdt amount
-            expect(asset_data[4][2]).equals(510_000000000000000000n); // lending pool supply
+            expect(user_data[5]).equals(600_000000000000000000n); // lending pool amount
+            expect(user_data[0]).equals(400_000000000000000000n); // usdt amount
+            expect(asset_data[4][2]).equals(600_000000000000000000n); // lending pool supply
 
             // const EX = new hre.ethers.Contract(await Deploy_Exchange.getAddress(), ExecutorAbi.abi, signers[0]);
 
@@ -669,7 +669,7 @@ describe("Interest Test", function () {
             let allData = [];
             let scaledTimestamp;
             // for (let i = 0; i <= 174; i++) {
-            for (let i = 0; i < 50; i++) {
+            for (let i = 0; i < 2000; i++) {
 
                 // console.log("////////////////////////////////////////////////////////// LOOP " + i + " /////////////////////////////////////////////////////////////");
                 scaledTimestamp = originTimestamp + i * 3600;

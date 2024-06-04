@@ -527,7 +527,7 @@ contract Utility is Ownable {
             uint256 DaoInterestCharge
         ) = EVO_LIBRARY.calculateCompoundedAssets(
                 currentRateIndex,
-                averageCumulativeDepositInterest * 99 / 100, // 0.99,
+                averageCumulativeDepositInterest * 95 / 100, // 0.95,
                 lending_pool_amount,
                 usersEarningRateIndex
             );
