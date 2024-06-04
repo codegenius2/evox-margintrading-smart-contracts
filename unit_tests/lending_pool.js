@@ -669,7 +669,7 @@ describe("Interest Test", function () {
             let allData = [];
             let scaledTimestamp;
             // for (let i = 0; i <= 174; i++) {
-            for (let i = 0; i < 20; i++) {
+            for (let i = 0; i < 50; i++) {
 
                 // console.log("////////////////////////////////////////////////////////// LOOP " + i + " /////////////////////////////////////////////////////////////");
                 scaledTimestamp = originTimestamp + i * 3600;
@@ -691,14 +691,14 @@ describe("Interest Test", function () {
                     // await DataHub.removeLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 2502657312925200000n);
                     // await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 2502657312925200000n, false);
                 }
-                // allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN));
+                allData.push(await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN));
             }
 
             // File path for the JSON file
-            // const filePath = './output/data_earningrate_lending_pool.json';
+            const filePath = './output/data_earningrate_lending_pool.json';
 
             // Write all collected data to the JSON file
-            // fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
+            fs.writeFileSync(filePath, JSON.stringify(allData, null, 2));
 
             // for (let index = 1; index < 30; index++) {
             //     console.log("-=-==-=-=-= index -=-=-=-=-=-=-=", index);
@@ -716,7 +716,7 @@ describe("Interest Test", function () {
             // console.log("test", test_val);
             // expect(Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities)).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
-            expect(test_val["USDT-1"].earningreate_charge).equals(1.0423459402431166);
+            expect(test_val["USDT-1"].earningreate_charge).equals(2.5876690419959725);
             expect(test_val["USDT-0"].liability_charge).equals(1.0518578356695236);
         })
     })
