@@ -83,8 +83,7 @@ contract Liquidator is Ownable {
         uint256 amountToLiquidate = (spendingCap * 10 ** 18) / ((fetchLogs(tokens[1]).assetPrice * fetchAssets(user, tokens[1]))) / 10 ** 18;
 
         FeesCollected[tokens[1]] +=
-            (((amountToLiquidate * returnMultiplier(false, tokens[1])) /
-                10 ** 18) / 100) *
+            (((amountToLiquidate * returnMultiplier(false, tokens[1])) / 10 ** 18) / 100) *
             20;
 
         if (long) {
