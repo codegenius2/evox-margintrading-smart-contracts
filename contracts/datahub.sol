@@ -298,7 +298,8 @@ contract DataHub is Ownable {
         address _executor,
         address _oracle,
         address _interest,
-        address _utils
+        address _utils,
+        address _liquidator
     ) public onlyOwner {
         delete admins[_executor];
         admins[_executor] = true;
@@ -311,6 +312,7 @@ contract DataHub is Ownable {
          delete admins[_utils];
         admins[_utils] = true;
         interestContract = IInterestData(_interest);
+        admins[_liquidator] = true;
     }
 
     /// @notice Sets a new Admin role

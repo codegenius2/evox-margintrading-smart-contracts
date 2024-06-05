@@ -35,8 +35,10 @@ contract Liquidator is Ownable {
 
     /// @notice This alters the admin roles for the contract
     /// @param _executor the address of the new executor contract
-    function alterAdminRoles(address _executor) public onlyOwner {
+    function alterAdminRoles(address _executor, address _datahub, address _utility) public onlyOwner {
         Executor = IExecutor(_executor);
+        Datahub = IDataHub(_datahub);
+        Utilities = IUtilityContract(_utility);
     }
 
     /// @notice This checks if the user is liquidatable
@@ -65,6 +67,7 @@ contract Liquidator is Ownable {
         uint256 spendingCap,
         bool long
     ) public {
+        // uint256 liquidator_token0_assets = fetchAssets(msg.sender, tokens[0]);       
         require(CheckForLiquidation(user), "not liquidatable"); // AMMR liquidatee --> checks AMMR
         require(tokens.length == 2, "have to select a pair");
 
@@ -72,61 +75,55 @@ contract Liquidator is Ownable {
             spendingCap <= fetchliabilities(user, tokens[0]),
             "cannot liquidate that amount of the users assets"
         );
+
+        console.log("spendingCap - token0 liability", spendingCap, fetchliabilities(user, tokens[0]));
+
         require(
             spendingCap <= fetchAssets(msg.sender, tokens[0]),
             "you do not have the assets required for this size of liquidation, please lower your spending cap"
         );
 
+        console.log("spendingCap - token0 asset", spendingCap, fetchAssets(msg.sender, tokens[0]));
+
         uint256[] memory taker_amounts = new uint256[](1);
         uint256[] memory maker_amounts = new uint256[](1);
         
-        uint256 amountToLiquidate = (spendingCap * 10 ** 18) / ((fetchLogs(tokens[1]).assetPrice * fetchAssets(user, tokens[1]))) / 10 ** 18;
+        uint256 amountToLiquidate = (spendingCap * 10 ** 18) / (fetchLogs(tokens[1]).assetPrice * fetchAssets(user, tokens[1]) / 10 ** 18);
 
-        FeesCollected[tokens[1]] +=
-            (((amountToLiquidate * returnMultiplier(false, tokens[1])) / 10 ** 18) / 100) *
-            20;
+        console.log("amountToLiquidate", amountToLiquidate);
+
+        FeesCollected[tokens[1]] = FeesCollected[tokens[1]] + amountToLiquidate * returnMultiplier(false, tokens[1]) * 20 / 10 ** 20;
+        console.log("fee collected", FeesCollected[tokens[1]]);
 
         if (long) {
-            uint256 discountedAmount = (((fetchLogs(tokens[1]).assetPrice *
-                fetchAssets(user, tokens[1])) / 10 ** 18) *
-                (returnMultiplier(false, tokens[1]))) / 10 ** 18;
-
-            taker_amounts[0] = (discountedAmount > spendingCap)
-                ? spendingCap
-                : discountedAmount;
-
-            maker_amounts[0] =
-                (((amountToLiquidate * returnMultiplier(false, tokens[1])) /
-                    10 ** 18) / 100) *
-                80;
-
-            taker_amounts[0] = (discountedAmount > spendingCap)
-                ? spendingCap
-                : discountedAmount;
-            maker_amounts[0] =
-                (((amountToLiquidate * returnMultiplier(false, tokens[1])) /
-                    10 ** 18) / 100) *
-                80;
+            IDataHub.AssetData memory token1_assetlogs = fetchLogs(tokens[1]);
+            uint256 user_token1_assets = fetchAssets(user, tokens[1]);
+            uint256 token1_liquidation_fee = returnMultiplier(false, tokens[1]);
+            uint256 discounted_amout;
+            // uint256 user_token1_assets = fetchAssets(user, tokens[1]);
+            discounted_amout = (token1_assetlogs.assetPrice * user_token1_assets / 10 ** 18) * (token1_liquidation_fee / 10 ** 18);
+            taker_amounts[0] = (discounted_amout > spendingCap) ? spendingCap: discounted_amout;
+            maker_amounts[0] = amountToLiquidate * token1_liquidation_fee * 80 / 10 ** 20;
         } else {
-            uint256 premiumAmount = ((fetchLogs(tokens[0]).assetPrice *
-                spendingCap) * returnMultiplier(true, tokens[1])) / 10 ** 18;
+            IDataHub.AssetData memory token0_assetlogs = fetchLogs(tokens[0]);
+            uint256 user_token0_liabilities = fetchliabilities(user, tokens[0]);
+            uint256 user_token0_assets = fetchAssets(user, tokens[0]);
+            uint256 token1_liquidation_fee = returnMultiplier(false, tokens[1]);
+            uint256 premium_amount;
+
+            premium_amount = token0_assetlogs.assetPrice * spendingCap* token1_liquidation_fee / (10 ** 18 * 10 ** 18);
+
+            console.log("premium_amount", premium_amount);
+
+            FeesCollected[tokens[0]] =  FeesCollected[tokens[0]] + spendingCap * (token1_liquidation_fee * user_token0_liabilities * 10 ** 18) -
+                    spendingCap * user_token0_liabilities * 20 / (user_token0_liabilities * 100);
             ////////////////////////////////////////////////////
-            FeesCollected[tokens[0]] +=
-                (((((spendingCap / fetchliabilities(user, tokens[0])) *
-                    returnMultiplier(true, tokens[1])) / 10 ** 18) -
-                    (spendingCap / fetchliabilities(user, tokens[0]))) / 100) *
-                20;
+            taker_amounts[0] = (premium_amount > (spendingCap * token0_assetlogs.assetPrice)) ? spendingCap: user_token0_liabilities;
             ////////////////////////////////////////////////////
-            taker_amounts[0] = (premiumAmount >
-                (spendingCap * fetchLogs(tokens[0]).assetPrice))
-                ? spendingCap
-                : fetchliabilities(user, tokens[0]);
-            ////////////////////////////////////////////////////
-            maker_amounts[0] = (premiumAmount >
-                (spendingCap * fetchLogs(tokens[0]).assetPrice))
-                ? spendingCap * fetchLogs(tokens[0]).assetPrice
-                : premiumAmount;
+            maker_amounts[0] = (premium_amount > (spendingCap * token0_assetlogs.assetPrice)) ? spendingCap * token0_assetlogs.assetPrice : premium_amount;
         }
+
+        console.log("taker0 - maker0", taker_amounts[0], maker_amounts[0]);
 
         conductLiquidation(
             user,
@@ -155,21 +152,40 @@ contract Liquidator is Ownable {
         uint256[] memory maker_amounts,
         uint256[] memory taker_amounts
     ) private {
-        address[] memory takers = EVO_LIBRARY.createArray(liquidator);
-        address[] memory makers = EVO_LIBRARY.createArray(user); //liquidatee
+        // address[] memory takers = EVO_LIBRARY.createArray(liquidator);
+        // address[] memory makers = EVO_LIBRARY.createArray(user); //liquidatee
+        // uint256[] memory taker_amounts = EVO_LIBRARY.createNumberArray(0);
+        // uint256[] memory maker_amounts = EVO_LIBRARY.createNumberArray(0);
+        address[][2] memory participants;
+        uint256[][2] memory trade_amounts;
+        // participants[0] = EVO_LIBRARY.createArray(liquidator);
+        // participants[1] = EVO_LIBRARY.createArray(user);
+        // trade_amounts[0] = EVO_LIBRARY.createNumberArray(0);
+        // trade_amounts[1] = EVO_LIBRARY.createNumberArray(0);
 
+        participants[0] = new address[](1);
+        participants[1] = new address[](1);
+        trade_amounts[0] = new uint256[](1);
+        trade_amounts[1] = new uint256[](1);
+
+
+        // console.log("conductLiquidation");
+        // console.log("tokens", tokens[0], tokens[1]);
+        // console.log("takers - makers", takers[0], makers[0]);
+        // console.log("taker_amounts - maker_amounts", taker_amounts[0], maker_amounts[0]);
+        bool test = Utilities.maxBorrowCheck(tokens, participants, trade_amounts);
+        console.log("test");
         // max borrow proportion check
         require(
             Utilities.maxBorrowCheck(
                 tokens,
-                [takers, makers],
-                [
-                    EVO_LIBRARY.createNumberArray(0),
-                    EVO_LIBRARY.createNumberArray(0) // this makes a 0 array lol
-                ]
+                participants,
+                trade_amounts
             ),
             "this liquidation would exceed max borrow proportion please lower the spending cap"
         );
+
+        console.log("max borrow check passed");
 
         require(
             Datahub.calculateCollateralValue(user) +
@@ -185,15 +201,15 @@ contract Liquidator is Ownable {
 
         freezeTempBalance(
             tokens,
-            [takers, makers],
-            [taker_amounts, maker_amounts],
+            participants,
+            trade_amounts,
             [fee_side, fee_side_2]
         );
 
         Executor.TransferBalances(
             tokens,
-            takers,
-            makers,
+            participants[0],
+            participants[1],
             taker_amounts,
             maker_amounts,
             EVO_LIBRARY.createNumberArray(0),

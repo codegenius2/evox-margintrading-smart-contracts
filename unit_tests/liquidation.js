@@ -322,7 +322,7 @@ describe("Liquidation Test", function () {
 
         // console.log("Liquidator deployed to", await Deploy_Liquidator.getAddress());
 
-        Deploy_Utilities
+        
         const Exchange = await hre.ethers.getContractFactory("EVO_EXCHANGE", {
             libraries: {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
@@ -436,13 +436,13 @@ describe("Liquidation Test", function () {
 
         //////////////////// Init liquidator //////////////////////
         const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
-        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress());
+        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_Utilities.getAddress());
         await liqSetup.wait();
         // console.log("liquidator init done")
 
         //////////////////// Init Datahub //////////////////////
         const DataHub = new hre.ethers.Contract(await Deploy_dataHub.getAddress(), DataHubAbi.abi, signers[0]);
-        const setup = await DataHub.alterAdminRoles(await Deploy_depositVault.getAddress(), await Deploy_Exchange.getAddress(), await DeployOracle.getAddress(), await Deploy_interest.getAddress(), await Deploy_Utilities.getAddress());
+        const setup = await DataHub.alterAdminRoles(await Deploy_depositVault.getAddress(), await Deploy_Exchange.getAddress(), await DeployOracle.getAddress(), await Deploy_interest.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_Liquidator.getAddress());
         await setup.wait();
         // console.log("datahub init done")
 
@@ -614,18 +614,30 @@ describe("Liquidation Test", function () {
 
             console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
+            const test_val1 = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+
+            console.log("signer0 usdt", test_val1["USDT-0"].usdt_amount);
+            console.log("signer1 usdt", test_val1["USDT-1"].usdt_amount);
+            console.log("signer0 rexe", test_val1["REXE-0"].rexe_amount);
+            console.log("signer1 rexe", test_val1["REXE-1"].rexe_amount);
+
+            console.log("signer0 usdt liability", test_val1["USDT-0"].liabilities);
+            console.log("signer1 usdt liability", test_val1["USDT-1"].liabilities);
+            console.log("signer0 rexe liability", test_val1["REXE-0"].liabilities);
+            console.log("signer0 rexe liability", test_val1["REXE-1"].liabilities);
+
             let liquidation_flag = await CurrentLiquidator.CheckForLiquidation(signers[0].address);
             console.log("liquidation flag", liquidation_flag);
 
             const liquidation_data = {
                 "user": signers[0].address,
-                "token0": await REXE_TOKEN.getAddress(),
-                "token1": await USDT_TOKEN.getAddress(),
-                "spendingCap": 1000000000000000000n,
-                "long": true,
+                "token0": await USDT_TOKEN.getAddress(),
+                "token1": await REXE_TOKEN.getAddress(),
+                "spendingCap": 200_000000000000000000n,
+                "long": false,
             }
 
-            await CurrentLiquidator.Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap, liquidation_data.long);
+            await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap, liquidation_data.long);
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 

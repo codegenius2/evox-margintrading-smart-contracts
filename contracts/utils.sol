@@ -290,12 +290,16 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) public view returns (bool) {
+        // console.log("max borrow check function");
         uint256 newLiabilitiesIssued;
-
+        // console.log("max borrow check function");
         for (uint256 i = 0; i < pair.length; i++) {
             uint256 collateral = EVO_LIBRARY.calculateTotal(trade_amounts[i]);
+            // console.log("collateral", collateral);
             uint256 bulkAssets = returnBulkAssets(participants[i], pair[i]);
+            // console.log("bulk assets", bulkAssets);
             newLiabilitiesIssued = collateral > bulkAssets ? collateral - bulkAssets: 0;
+            // console.log("newLiabilitiesIssued", newLiabilitiesIssued);
             if (newLiabilitiesIssued > 0) {
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair[i]);
                 bool flag = EVO_LIBRARY.calculateBorrowProportionAfterTrades(

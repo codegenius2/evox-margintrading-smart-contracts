@@ -179,14 +179,7 @@ contract EVO_EXCHANGE is Ownable {
 
         //  require(success);
 
-        (
-            uint256[] memory takerLiabilities,
-            uint256[] memory makerLiabilities
-        ) = Utilities.calculateTradeLiabilityAddtions(
-                pair,
-                participants,
-                trade_amounts
-            );
+        (uint256[] memory takerLiabilities, uint256[] memory makerLiabilities) = Utilities.calculateTradeLiabilityAddtions(pair, participants, trade_amounts);
 
         // console.log("taker liabilities", takerLiabilities[0]);
         // console.log("maker liabilities", makerLiabilities[0]);
