@@ -311,7 +311,7 @@ contract EVO_EXCHANGE is Ownable {
             // console.log("margined after process fee", margined);
             // console.log("tokens after process fee", tokens);
 
-            // console.log("amountToAddToLiabilities after process fee", amountToAddToLiabilities);
+            console.log("amountToAddToLiabilities after process fee", amountToAddToLiabilities);
 
             if (amountToAddToLiabilities != 0) {
                 // in this function we charge interest to the user and add to their liabilities
@@ -530,6 +530,8 @@ contract EVO_EXCHANGE is Ownable {
             );
 
             // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("interestCharge - liabilitiesAccrued - assetLogs.assetInfo[1]", interestCharge, liabilitiesAccrued, assetLogs.assetInfo[1]);
+            // console.log("user", user);
             // console.log("lending pool supply", assetLogs.assetInfo[2]);
             require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
             Datahub.addLiabilities(
