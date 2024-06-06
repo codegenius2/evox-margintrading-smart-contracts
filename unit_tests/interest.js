@@ -6,7 +6,7 @@ const {
 const tokenabi = require("../scripts/token_abi.json");
 const depositABI = require("../artifacts/contracts/depositvault.sol/DepositVault.json")
 const OracleABI = require("../artifacts/contracts/mock/MockOracle.sol/MockOracle.json")
-const ExecutorAbi = require("../artifacts/contracts/executor.sol/EVO_EXCHANGE.json")
+const ExecutorAbi = require("../artifacts/contracts/mock/MockExecutor.sol/MockExecutor.json")
 const utilABI = require("../artifacts/contracts/mock/MockUtils.sol/MockUtils.json")
 const DataHubAbi = require("../artifacts/contracts/mock/MockDatahub.sol/MockDatahub.json");
 const InterestAbi = require("../artifacts/contracts/mock/MockInterestData.sol/MockInterestData.json")
@@ -321,7 +321,7 @@ describe("Interest Test", function () {
         // console.log("Liquidator deployed to", await Deploy_Liquidator.getAddress());
 
         Deploy_Utilities
-        const Exchange = await hre.ethers.getContractFactory("EVO_EXCHANGE", {
+        const Exchange = await hre.ethers.getContractFactory("MockExecutor", {
             libraries: {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
             },
@@ -434,7 +434,7 @@ describe("Interest Test", function () {
 
         //////////////////// Init liquidator //////////////////////
         const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
-        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_Utilities.getAddress());
+        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress());
         await liqSetup.wait();
         // console.log("liquidator init done")
 

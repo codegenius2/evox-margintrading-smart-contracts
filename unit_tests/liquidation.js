@@ -7,7 +7,7 @@ const {
 const tokenabi = require("../scripts/token_abi.json");
 const depositABI = require("../artifacts/contracts/depositvault.sol/DepositVault.json")
 const OracleABI = require("../artifacts/contracts/mock/MockOracle.sol/MockOracle.json")
-const ExecutorAbi = require("../artifacts/contracts/executor.sol/EVO_EXCHANGE.json")
+const ExecutorAbi = require("../artifacts/contracts/mock/MockExecutor.sol/MockExecutor.json")
 const utilABI = require("../artifacts/contracts/mock/MockUtils.sol/MockUtils.json")
 const DataHubAbi = require("../artifacts/contracts/mock/MockDatahub.sol/MockDatahub.json");
 const InterestAbi = require("../artifacts/contracts/mock/MockInterestData.sol/MockInterestData.json")
@@ -247,6 +247,8 @@ describe("Liquidation Test", function () {
 
         const initialOwner = signers[0].address // insert wallet address 
         const tempAdmin = signers[1].address;
+        const orderbook = signers[3].address;
+        const daowallet = signers[4].address;
         // insert airnode address , address _executor, address _deposit_vault
         const executor = tempAdmin;
         const depositvault = tempAdmin;
@@ -323,7 +325,7 @@ describe("Liquidation Test", function () {
         // console.log("Liquidator deployed to", await Deploy_Liquidator.getAddress());
 
         
-        const Exchange = await hre.ethers.getContractFactory("EVO_EXCHANGE", {
+        const Exchange = await hre.ethers.getContractFactory("MockExecutor", {
             libraries: {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
             },
@@ -436,7 +438,7 @@ describe("Liquidation Test", function () {
 
         //////////////////// Init liquidator //////////////////////
         const CurrentLiquidator = new hre.ethers.Contract(await Deploy_Liquidator.getAddress(), LiquidatorAbi.abi, signers[0]);
-        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_Utilities.getAddress());
+        const liqSetup = await CurrentLiquidator.alterAdminRoles(await Deploy_Exchange.getAddress(), await Deploy_dataHub.getAddress(), await Deploy_Utilities.getAddress(), await Deploy_interest.getAddress());
         await liqSetup.wait();
         // console.log("liquidator init done")
 
@@ -532,7 +534,7 @@ describe("Liquidation Test", function () {
             let deposit_amount = 500_000000000000000000n
             let approvalTx = await USDT_TOKEN.approve(await deposit_vault.getAddress(), deposit_amount);
             await approvalTx.wait();  // Wait for the transaction to be mined       
-            await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+            await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount);
 
             deposit_amount = 1000_000000000000000000n;
             let transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
@@ -579,7 +581,15 @@ describe("Liquidation Test", function () {
             const originTimestamp = await getTimeStamp(hre.ethers.provider);
 
             let allData = [];
-            let scaledTimestamp = originTimestamp + 3600;
+
+            await CurrentExchange.SubmitOrder(pair, participants, trade_amounts, trade_sides);
+            // await DataHub.removeLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 2502657312925200000n);
+            // await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 2502657312925200000n, false);
+
+            await CurrentExchange.setOrderBookProviderTest(signers[3].address);
+            await CurrentExchange.setDaoWalletTest(signers[4].address);
+
+            let scaledTimestamp = originTimestamp + 3600 * 1;
             setTimeStamp(hre.ethers.provider, network, scaledTimestamp);
 
             const masscharges_usdt = await _Interest.chargeMassinterest(await USDT_TOKEN.getAddress()); // increase borrow amount
@@ -588,31 +598,27 @@ describe("Liquidation Test", function () {
             const masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
             await masscharges_rexe.wait(); // Wait for the transaction to be mined
 
-            await CurrentExchange.SubmitOrder(pair, participants, trade_amounts, trade_sides);
-            // await DataHub.removeLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 2502657312925200000n);
-            // await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 2502657312925200000n, false);
-
             let ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
             let ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
-
-            console.log("ammr signer0 - signer1", ammr_signer0, ammr_signer1);
+            // console.log("signer0 - signer1", signers[0].address, signers[1].address);
+            // console.log("ammr signer0 - signer1", ammr_signer0, ammr_signer1);
 
             let portfolio_value_signer0 = await DataHub.calculateTotalPortfolioValue(signers[0].address);
             let portfolio_value_signer1 = await DataHub.calculateTotalPortfolioValue(signers[1].address);
 
-            console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
+            // console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
             await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 3_000000000000000000n);
 
             ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
             ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
 
-            console.log("signer0 - signer1", ammr_signer0, ammr_signer1);
+            // console.log("signer0 - signer1", ammr_signer0, ammr_signer1);
 
             portfolio_value_signer0 = await DataHub.calculateTotalPortfolioValue(signers[0].address);
             portfolio_value_signer1 = await DataHub.calculateTotalPortfolioValue(signers[1].address);
 
-            console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
+            // console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
             let test_val1 = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
@@ -650,6 +656,32 @@ describe("Liquidation Test", function () {
             console.log("signer1 usdt liability after liquidate", test_val["USDT-1"].liabilities);
             console.log("signer0 rexe liability after liquidate", test_val["REXE-0"].liabilities);
             console.log("signer0 rexe liability after liquidate", test_val["REXE-1"].liabilities);
+
+            let order_data = await DataHub.ReadUserData(signers[3].address, await USDT_TOKEN.getAddress());
+            let dao_data = await DataHub.ReadUserData(signers[4].address, await USDT_TOKEN.getAddress());
+            console.log("order usdt", Number(order_data[0].toString()) / 10 ** 18);
+            console.log("dao usdt", Number(dao_data[0].toString()) / 10 ** 18);
+
+            order_data = await DataHub.ReadUserData(signers[3].address, await REXE_TOKEN.getAddress());
+            dao_data = await DataHub.ReadUserData(signers[4].address, await REXE_TOKEN.getAddress());
+            console.log("order rexe", Number(order_data[0].toString()) / 10 ** 18);
+            console.log("dao rexe", Number(dao_data[0].toString()) / 10 ** 18);
+
+            expect(test_val["USDT-0"].usdt_amount).equals(0);
+            expect(test_val["USDT-1"].usdt_amount).equals(1290.041911809564);
+            expect(test_val["REXE-0"].rexe_amount).equals(126.66666666666667);
+            expect(test_val["REXE-1"].rexe_amount).equals(72);
+
+            expect(test_val["USDT-0"].liabilities).equals(302.609201859402);
+            expect(test_val["USDT-1"].liabilities).equals(0);
+            expect(test_val["REXE-0"].liabilities).equals(0);
+            expect(test_val["REXE-1"].liabilities).equals(0);
+
+            // expect(order_data).equals(0.001047795239097996);
+            // expect(dao_data[0]).equals(0.009430157151881963);
+
+            // expect(order_data).equals(0.13333333333333333);
+            // expect(dao_data[0]).equals(1.2);
         })
     })
 })

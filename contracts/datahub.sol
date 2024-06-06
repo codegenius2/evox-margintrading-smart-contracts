@@ -149,10 +149,7 @@ contract DataHub is Ownable {
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            sumOfliabilities +=
-                (assetdata[token].assetPrice *
-                    userdata[user].liability_info[token]) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
+            sumOfliabilities += (assetdata[token].assetPrice * userdata[user].liability_info[token]) / 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
         return sumOfliabilities;
     }
