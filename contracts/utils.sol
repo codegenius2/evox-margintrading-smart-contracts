@@ -169,13 +169,12 @@ contract Utility is Ownable {
         address user,
         address token,
         uint256 amount
-    ) public returns (uint256) {
+    ) public view returns (uint256) {
         (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
-        if(assets > 0) {
-            debitAssetInterest(user, token);
-            (assets, , , , , ) = Datahub.ReadUserData(user, token);
-        }
-        
+        // if(assets > 0) {
+        //     debitAssetInterest(user, token);
+        //     (assets, , , , , ) = Datahub.ReadUserData(user, token);
+        // }        
         return amount > assets ? amount - assets : 0;
     }
     /// @notice Cycles through two lists of users and checks how many liabilities are going to be issued to each user
@@ -492,6 +491,36 @@ contract Utility is Ownable {
                 );
             }
         }
+    }
+
+    function returnEarningProfit(address user, address token) external view returns(uint256) {
+        // console.log("=============== returnEarningReateProfit ==================");
+        ( , , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
+        uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+        uint256 averageCumulativeDepositInterest;
+        if(token == DepositVault._USDT()) {
+            (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+                usersEarningRateIndex,
+                currentRateIndex,
+                token
+            );
+        } else {
+            (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+                usersEarningRateIndex,
+                currentRateIndex,
+                token
+            );
+        }
+        
+        (
+            uint256 interestCharge, ,) = EVO_LIBRARY.calculateCompoundedAssets(
+                currentRateIndex,
+                averageCumulativeDepositInterest * 95 / 100, // 0.99
+                lending_pool_amount,
+                usersEarningRateIndex
+            );
+        return interestCharge;
     }
 
     function debitAssetInterest(address user, address token) public checkRoleAuthority {

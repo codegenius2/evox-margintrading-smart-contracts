@@ -267,9 +267,14 @@ contract DataHub is Ownable {
         address token;
         uint256 liabilities;
         address token_2;
+        // console.log("=========ammr calculate=========");
+        // console.log("user", user);
+
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
             liabilities = userdata[user].liability_info[token];
+            // console.log("liabilities", liabilities);
+            // console.log("token", token);
             if (liabilities > 0) {
                 for (uint256 j = 0; j < userdata[user].tokens.length; j++) {
                     token_2 = userdata[user].tokens[j];
@@ -610,13 +615,15 @@ contract DataHub is Ownable {
             user = users[i];
 
             for (uint256 j = 0; j < userdata[user].tokens.length; j++) {
+                // console.log(userdata[user].tokens[j]);
                 if (userdata[user].tokens[j] == token) {
                     // Token found in the array
                     tokenFound = true;
                     break; // Exit the inner loop as soon as the token is found
                 }
             }
-
+            // console.log("tokenFound", tokenFound);
+            // console.log("user", user, token);
             if (!tokenFound) {
                 // Token not found for the current user, add it to the array
                 userdata[user].tokens.push(token);

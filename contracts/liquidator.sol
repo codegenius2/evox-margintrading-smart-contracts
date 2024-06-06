@@ -109,7 +109,7 @@ contract Liquidator is Ownable {
         Datahub.addAssets(Executor.fetchOrderBookProvider(), tokens[1], liquidationFee * 2 / 100);
 
         uint256 totalLiquidationTokenAmountToSubtractFromLiquidatee = rawLiquidationTokenAmount + liquidationFee;
-        // uint256 totalLiquidationTokenAmountToAddToLiquidator = rawLiquidationTokenAmount + liquidationFee * 80 / 100;
+        uint256 totalLiquidationTokenAmountToAddToLiquidator = rawLiquidationTokenAmount + liquidationFee * 80 / 100;
 
         // console.log("totalLiquidationTokenAmountToSubtractFromLiquidatee", totalLiquidationTokenAmountToSubtractFromLiquidatee);
         // console.log("totalLiquidationTokenAmountToAddToLiquidator", totalLiquidationTokenAmountToAddToLiquidator);

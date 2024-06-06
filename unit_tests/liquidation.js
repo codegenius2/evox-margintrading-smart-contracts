@@ -378,7 +378,7 @@ describe("Liquidation Test", function () {
         const USDT_interestRateInfo = [5000000000000000n, 150000000000000000n, 1_000000000000000000n] //( 5**16) was 5, 150**16 was 150, 1000 **16 was 1000
 
         /////////////////////// REX /////////////////////////
-        const REXEprice = 2_000000000000000000n
+        const REXEprice = 10_000000000000000000n
         const EVOXCollValue = 1_000000000000000000n
         const REXEFeeInfo = [
             10000000000000000n, // USDTinitialMarginRequirement
@@ -602,20 +602,15 @@ describe("Liquidation Test", function () {
 
             let ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
             let ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
-            console.log("signer0 - signer1", signers[0].address, signers[1].address);
-            console.log("ammr signer0 - signer1", ammr_signer0, ammr_signer1);
+            // console.log("signer0 - signer1", signers[0].address, signers[1].address);
+            // console.log("ammr signer0 - signer1", ammr_signer0, ammr_signer1);
 
             let portfolio_value_signer0 = await DataHub.calculateTotalPortfolioValue(signers[0].address);
             let portfolio_value_signer1 = await DataHub.calculateTotalPortfolioValue(signers[1].address);
 
-            console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
+            // console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
-            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 3_000000000000000000n);
-
-            ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
-            ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
-
-            console.log("signer0 - signer1", ammr_signer0, ammr_signer1);
+            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 59_500000000000000000n);
 
             portfolio_value_signer0 = await DataHub.calculateTotalPortfolioValue(signers[0].address);
             portfolio_value_signer1 = await DataHub.calculateTotalPortfolioValue(signers[1].address);
@@ -624,24 +619,29 @@ describe("Liquidation Test", function () {
 
             let test_val1 = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            console.log("signer0 usdt before liquidation", test_val1["USDT-0"].usdt_amount);
-            console.log("signer1 usdt before liquidation", test_val1["USDT-1"].usdt_amount);
-            console.log("signer0 rexe before liquidation", test_val1["REXE-0"].rexe_amount);
-            console.log("signer1 rexe before liquidation", test_val1["REXE-1"].rexe_amount);
+            // console.log("signer0 usdt before liquidation", test_val1["USDT-0"].usdt_amount);
+            // console.log("signer1 usdt before liquidation", test_val1["USDT-1"].usdt_amount);
+            // console.log("signer0 rexe before liquidation", test_val1["REXE-0"].rexe_amount);
+            // console.log("signer1 rexe before liquidation", test_val1["REXE-1"].rexe_amount);
 
-            console.log("signer0 usdt liability before liquidation", test_val1["USDT-0"].liabilities);
-            console.log("signer1 usdt liability before liquidation", test_val1["USDT-1"].liabilities);
-            console.log("signer0 rexe liability before liquidation", test_val1["REXE-0"].liabilities);
-            console.log("signer0 rexe liability before liquidation", test_val1["REXE-1"].liabilities);
+            // console.log("signer0 usdt liability before liquidation", test_val1["USDT-0"].liabilities);
+            // console.log("signer1 usdt liability before liquidation", test_val1["USDT-1"].liabilities);
+            // console.log("signer0 rexe liability before liquidation", test_val1["REXE-0"].liabilities);
+            // console.log("signer0 rexe liability before liquidation", test_val1["REXE-1"].liabilities);
+
+            ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
+            ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
+
+            // console.log("signer0 - signer1", ammr_signer0, ammr_signer1);
 
             let liquidation_flag = await CurrentLiquidator.CheckForLiquidation(signers[0].address);
             // console.log("liquidation flag", liquidation_flag);
 
             const liquidation_data = {
                 "user": signers[0].address,
-                "token0": await USDT_TOKEN.getAddress(),
-                "token1": await REXE_TOKEN.getAddress(),
-                "spendingCap": 200_000000000000000000n,
+                "token0": await REXE_TOKEN.getAddress(),
+                "token1": await USDT_TOKEN.getAddress(),
+                "spendingCap": 9_000000000000000000n,
                 "long": true,
             }
 
@@ -663,27 +663,26 @@ describe("Liquidation Test", function () {
             let dao_data = await DataHub.ReadUserData(signers[4].address, await USDT_TOKEN.getAddress());
             // console.log("order usdt", Number(order_data[0].toString()) / 10 ** 18);
             // console.log("dao usdt", Number(dao_data[0].toString()) / 10 ** 18);
+            expect(order_data[0]).equals(321300000000000000n);
+            expect(dao_data[0]).equals(2891700000000000000n);
 
             order_data = await DataHub.ReadUserData(signers[3].address, await REXE_TOKEN.getAddress());
             dao_data = await DataHub.ReadUserData(signers[4].address, await REXE_TOKEN.getAddress());
             // console.log("order rexe", Number(order_data[0].toString()) / 10 ** 18);
             // console.log("dao rexe", Number(dao_data[0].toString()) / 10 ** 18);
 
-            expect(test_val["USDT-0"].usdt_amount).equals(0);
-            expect(test_val["USDT-1"].usdt_amount).equals(1290.041911809564);
-            expect(test_val["REXE-0"].rexe_amount).equals(126.66666666666667);
-            expect(test_val["REXE-1"].rexe_amount).equals(72);
+            expect(test_val["USDT-0"].usdt_amount).equals(48.435);
+            expect(test_val["USDT-1"].usdt_amount).equals(948.352);
+            expect(test_val["REXE-0"].rexe_amount).equals(0);
+            expect(test_val["REXE-1"].rexe_amount).equals(401);
 
-            expect(test_val["USDT-0"].liabilities).equals(302.609201859402);
+            expect(test_val["USDT-0"].liabilities).equals(0);
             expect(test_val["USDT-1"].liabilities).equals(0);
-            expect(test_val["REXE-0"].liabilities).equals(0);
+            expect(test_val["REXE-0"].liabilities).equals(1.1000594036932838);
             expect(test_val["REXE-1"].liabilities).equals(0);
 
-            // expect(order_data).equals(0.001047795239097996);
-            // expect(dao_data[0]).equals(0.009430157151881963);
-
-            // expect(order_data).equals(0.13333333333333333);
-            // expect(dao_data[0]).equals(1.2);
+            expect(Number(order_data[0])).equals(0);
+            expect(Number(dao_data[0])).equals(0);
         })
     })
 })
