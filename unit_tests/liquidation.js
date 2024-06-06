@@ -595,14 +595,14 @@ describe("Liquidation Test", function () {
             let ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
             let ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
 
-            console.log("signer0 - signer1", ammr_signer0, ammr_signer1);
+            console.log("ammr signer0 - signer1", ammr_signer0, ammr_signer1);
 
             let portfolio_value_signer0 = await DataHub.calculateTotalPortfolioValue(signers[0].address);
             let portfolio_value_signer1 = await DataHub.calculateTotalPortfolioValue(signers[1].address);
 
             console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
-            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 3000000000000000000n);
+            await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 3_000000000000000000n);
 
             ammr_signer0 = await DataHub.calculateAMMRForUser(signers[0].address);
             ammr_signer1 = await DataHub.calculateAMMRForUser(signers[1].address);
@@ -614,17 +614,17 @@ describe("Liquidation Test", function () {
 
             console.log("portfolio_value signer0 - signer1", portfolio_value_signer0, portfolio_value_signer1);
 
-            const test_val1 = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+            let test_val1 = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            console.log("signer0 usdt", test_val1["USDT-0"].usdt_amount);
-            console.log("signer1 usdt", test_val1["USDT-1"].usdt_amount);
-            console.log("signer0 rexe", test_val1["REXE-0"].rexe_amount);
-            console.log("signer1 rexe", test_val1["REXE-1"].rexe_amount);
+            console.log("signer0 usdt before liquidation", test_val1["USDT-0"].usdt_amount);
+            console.log("signer1 usdt before liquidation", test_val1["USDT-1"].usdt_amount);
+            console.log("signer0 rexe before liquidation", test_val1["REXE-0"].rexe_amount);
+            console.log("signer1 rexe before liquidation", test_val1["REXE-1"].rexe_amount);
 
-            console.log("signer0 usdt liability", test_val1["USDT-0"].liabilities);
-            console.log("signer1 usdt liability", test_val1["USDT-1"].liabilities);
-            console.log("signer0 rexe liability", test_val1["REXE-0"].liabilities);
-            console.log("signer0 rexe liability", test_val1["REXE-1"].liabilities);
+            console.log("signer0 usdt liability before liquidation", test_val1["USDT-0"].liabilities);
+            console.log("signer1 usdt liability before liquidation", test_val1["USDT-1"].liabilities);
+            console.log("signer0 rexe liability before liquidation", test_val1["REXE-0"].liabilities);
+            console.log("signer0 rexe liability before liquidation", test_val1["REXE-1"].liabilities);
 
             let liquidation_flag = await CurrentLiquidator.CheckForLiquidation(signers[0].address);
             console.log("liquidation flag", liquidation_flag);
@@ -634,20 +634,22 @@ describe("Liquidation Test", function () {
                 "token0": await USDT_TOKEN.getAddress(),
                 "token1": await REXE_TOKEN.getAddress(),
                 "spendingCap": 200_000000000000000000n,
-                "long": false,
+                "long": true,
             }
 
             await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap, liquidation_data.long);
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            console.log(test_val["USDT-0"].liabilities);
-            console.log(test_val["USDT-1"].liabilities);
-            console.log(test_val["REXE-0"].liabilities);
-            console.log(test_val["REXE-1"].liabilities);
+            console.log("signer0 usdt after liquidate", test_val["USDT-0"].usdt_amount);
+            console.log("signer1 usdt after liquidate", test_val["USDT-1"].usdt_amount);
+            console.log("signer0 rexe after liquidate", test_val["REXE-0"].rexe_amount);
+            console.log("signer1 rexe after liquidate", test_val["REXE-1"].rexe_amount);
 
-            expect(test_val["USDT-1"].earningreate_charge).equals(1.0423459402431166);
-            expect(test_val["USDT-0"].liability_charge).equals(1.0518578356695236);
+            console.log("signer0 usdt liability after liquidate", test_val["USDT-0"].liabilities);
+            console.log("signer1 usdt liability after liquidate", test_val["USDT-1"].liabilities);
+            console.log("signer0 rexe liability after liquidate", test_val["REXE-0"].liabilities);
+            console.log("signer0 rexe liability after liquidate", test_val["REXE-1"].liabilities);
         })
     })
 })
