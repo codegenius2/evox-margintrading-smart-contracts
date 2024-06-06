@@ -169,13 +169,12 @@ contract Utility is Ownable {
         address user,
         address token,
         uint256 amount
-    ) public returns (uint256) {
+    ) public view returns (uint256) {
         (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
-        if(assets > 0) {
-            debitAssetInterest(user, token);
-            (assets, , , , , ) = Datahub.ReadUserData(user, token);
-        }
-        
+        // if(assets > 0) {
+        //     debitAssetInterest(user, token);
+        //     (assets, , , , , ) = Datahub.ReadUserData(user, token);
+        // }        
         return amount > assets ? amount - assets : 0;
     }
     /// @notice Cycles through two lists of users and checks how many liabilities are going to be issued to each user
@@ -184,7 +183,6 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) public returns (uint256[] memory, uint256[] memory) {
-        // console.log("================calculateTradeLiabilityAddtions Function=====================");
         uint256[] memory TakerliabilityAmounts = new uint256[](
             participants[0].length
         );
@@ -198,9 +196,6 @@ contract Utility is Ownable {
                     pair[0],
                     trade_amounts[0][i]
                 );
-            
-            // console.log("TakeramountToAddToLiabilities", TakeramountToAddToLiabilities);
-
             TakerliabilityAmounts[i] = TakeramountToAddToLiabilities;
         }
         uint256 MakeramountToAddToLiabilities;
@@ -210,7 +205,6 @@ contract Utility is Ownable {
                     pair[1],
                     trade_amounts[1][i]
                 );
-            // console.log("MakeramountToAddToLiabilities", MakeramountToAddToLiabilities);
             MakerliabilityAmounts[i] = MakeramountToAddToLiabilities;
         }
 
@@ -290,16 +284,11 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) public view returns (bool) {
-        // console.log("max borrow check function");
         uint256 newLiabilitiesIssued;
-        // console.log("max borrow check function");
         for (uint256 i = 0; i < pair.length; i++) {
             uint256 collateral = EVO_LIBRARY.calculateTotal(trade_amounts[i]);
-            // console.log("collateral", collateral);
             uint256 bulkAssets = returnBulkAssets(participants[i], pair[i]);
-            // console.log("bulk assets", bulkAssets);
             newLiabilitiesIssued = collateral > bulkAssets ? collateral - bulkAssets: 0;
-            // console.log("newLiabilitiesIssued", newLiabilitiesIssued);
             if (newLiabilitiesIssued > 0) {
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair[i]);
                 bool flag = EVO_LIBRARY.calculateBorrowProportionAfterTrades(
@@ -321,19 +310,16 @@ contract Utility is Ownable {
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
     ) external returns (bool) {
-        // console.log("==================taker======================");
         bool takerTradeConfirmation = processChecks(
             participants[0],
             trade_amounts[0],
             pair[0]
         );
-        // console.log("==================maker======================");
         bool makerTradeConfirmation = processChecks(
             participants[1],
             trade_amounts[1],
             pair[1]
         );
-
         if (!makerTradeConfirmation || !takerTradeConfirmation) {
             return false;
         } else {
@@ -471,11 +457,9 @@ contract Utility is Ownable {
                     out_token,
                     pairMMROfUser
                 );
-
                 uint256 liabilityMultiplier = EVO_LIBRARY
                     .calculatedepositLiabilityRatio(userLiabilities, overage);
                 address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-
                 for (uint256 i = 0; i < tokens.length; i++) {
                     Datahub.alterIMR(
                         user,
@@ -509,6 +493,36 @@ contract Utility is Ownable {
         }
     }
 
+    function returnEarningProfit(address user, address token) external view returns(uint256) {
+        // console.log("=============== returnEarningReateProfit ==================");
+        ( , , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
+        uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
+        uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
+        uint256 averageCumulativeDepositInterest;
+        if(token == DepositVault._USDT()) {
+            (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+                usersEarningRateIndex,
+                currentRateIndex,
+                token
+            );
+        } else {
+            (averageCumulativeDepositInterest) = interestContract.calculateAverageCumulativeDepositInterest(
+                usersEarningRateIndex,
+                currentRateIndex,
+                token
+            );
+        }
+        
+        (
+            uint256 interestCharge, ,) = EVO_LIBRARY.calculateCompoundedAssets(
+                currentRateIndex,
+                averageCumulativeDepositInterest * 95 / 100, // 0.99
+                lending_pool_amount,
+                usersEarningRateIndex
+            );
+        return interestCharge;
+    }
+
     function debitAssetInterest(address user, address token) public checkRoleAuthority {
         (, , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
 
@@ -522,9 +536,6 @@ contract Utility is Ownable {
             currentRateIndex,
             token
         );
-
-        // console.log("averageCumulativeDepositInterest - averageBorrowProportion", averageCumulativeDepositInterest, averageBorrowProportion);
-
         (
             uint256 interestCharge,
             uint256 OrderBookProviderCharge,
@@ -535,54 +546,11 @@ contract Utility is Ownable {
                 lending_pool_amount,
                 usersEarningRateIndex
             );
-        
-        // console.log("interestCharge - OrderBookProviderCharge - DaoInterestCharge", interestCharge, OrderBookProviderCharge, DaoInterestCharge);
-        
         Datahub.alterUsersEarningRateIndex(user, token);
-        // console.log("////////////////interest charge//////////////////", interestCharge);
         Datahub.addAssets(user, token, interestCharge);
         Datahub.addAssets(daoWallet, token, DaoInterestCharge);
-
-        Datahub.addAssets(
-            orderBookProvider,
-            token,
-            OrderBookProviderCharge
-        );
+        Datahub.addAssets(orderBookProvider, token, OrderBookProviderCharge);
     }
-/*
-    /// @notice Explain to an end user what this does
-    /// @dev Explain to a developer any extra details
-    /// @param token the token being targetted
-    /// @param index the index of the period
-    /// @return MassCharge
-    function chargeStaticLiabilityInterest(
-        address token,
-        uint256 index
-    ) public view returns (uint256) {
-        uint256 LiabilityToCharge = Datahub.returnAssetLogs(token).totalBorrowedAmount;
-        uint256 LiabilityDelta;
-
-        if (
-            Datahub.returnAssetLogs(token).totalBorrowedAmount >
-            interestContract.fetchLiabilitiesOfIndex(token, index)
-        ) {
-            LiabilityDelta =
-                Datahub.returnAssetLogs(token).totalBorrowedAmount -
-                interestContract.fetchLiabilitiesOfIndex(token, index);
-            LiabilityToCharge += LiabilityDelta;
-        } else {
-            LiabilityDelta =
-                interestContract.fetchLiabilitiesOfIndex(token, index) -
-                Datahub.returnAssetLogs(token).totalBorrowedAmount;
-
-            LiabilityToCharge -= LiabilityDelta;
-        }
-
-        uint256 MassCharge = (LiabilityToCharge *
-            ((interestContract.fetchCurrentRate(token)) / 8736)) / 10 ** 18;
-        return MassCharge;
-    }
-*/
     function fetchBorrowProportionList(
         uint256 dimension,
         uint256 startingIndex,

@@ -228,6 +228,8 @@ contract EVO_EXCHANGE is Ownable {
 
         require(DepositVault.viewcircuitBreakerStatus() == false);
         Datahub.checkIfAssetIsPresent(takers, pair[1]);
+        Datahub.checkIfAssetIsPresent(takers, pair[0]);
+        Datahub.checkIfAssetIsPresent(makers, pair[1]);
         Datahub.checkIfAssetIsPresent(makers, pair[0]);
 
         executeTrade(
@@ -356,9 +358,11 @@ contract EVO_EXCHANGE is Ownable {
                     in_token,
                     maintenanceRequirementForTrade
                 );
+                // uint256 temp = Datahub.returnPairMMROfUser(users[i], out_token, in_token);
 
-                // console.log("maintenance margin requirement", Datahub.returnPairMMROfUser(users[i], out_token, in_token));
-                // console.log("initialRequirementForTrade", Datahub.returnPairIMROfUser(users[i], out_token, in_token));
+                // console.log("maintenance margin requirement - ", temp);
+                // temp = Datahub.returnPairIMROfUser(users[i], out_token, in_token);
+                // console.log("initialRequirementForTrade - ", temp);
 
             }
             // if the amount coming into their wallet is larger than their current liabilities
@@ -424,7 +428,7 @@ contract EVO_EXCHANGE is Ownable {
                 // remove their pending balances
                 Datahub.removePendingBalances(users[i], out_token, amounts_out_token[i]);
                 // give users their deposit interest accrued
-                Utilities.debitAssetInterest(users[i], in_token);
+                // Utilities.debitAssetInterest(users[i], in_token);
                 // console.log("===========================after debit interest===========================");
                 // console.log("----------input amount-----------", input_amount);
                 // add remaining amount not subtracted from liabilities to assets
@@ -530,6 +534,8 @@ contract EVO_EXCHANGE is Ownable {
             );
 
             // console.log("interest charge after returnInterestCharge", interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1]);
+            // console.log("interestCharge - liabilitiesAccrued - assetLogs.assetInfo[1]", interestCharge, liabilitiesAccrued, assetLogs.assetInfo[1]);
+            // console.log("user", user);
             // console.log("lending pool supply", assetLogs.assetInfo[2]);
             require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
             Datahub.addLiabilities(
