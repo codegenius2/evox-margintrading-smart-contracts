@@ -20,12 +20,14 @@ contract DepositVault is Ownable {
         address dataHub,
         address executor,
         address interest,
-        address _utility
+        address _utility,
+        address _usdt
     ) Ownable(initialOwner) {
         Datahub = IDataHub(dataHub);
         Executor = IExecutor(executor);
         interestContract = IInterestData(interest);
         utility = IUtilityContract(_utility);
+        USDT = address(_usdt);
     }
 
     modifier checkRoleAuthority() {
@@ -204,6 +206,10 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
+
+        uint256 decimals = fetchDecimals(token);
+        amount = amount * (10 ** decimals) / (10 ** 18);
+
         //chechking balance for contract before the token transfer 
         uint256 contractBalanceBefore = IERC20.IERC20(token).balanceOf(address(this));
         // transfering the tokens to contract
@@ -215,7 +221,7 @@ contract DepositVault is Ownable {
         // console.log("exactAmountTransfered", exactAmountTransfered);
     
 
-        require(!circuitBreakerStatus);
+        require(!circuitBreakerStatus, "circuit breaker active");
         Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalSupply
 
         (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
@@ -245,7 +251,7 @@ contract DepositVault is Ownable {
         // checks to see if user is in the sytem and inits their struct if not
         if (liabilities > 0) {
             // checks to see if the user has liabilities of that asset
-
+            
             if (exactAmountTransfered <= liabilities) {
                 // if the exactAmountTransfered is less or equal to their current liabilities -> lower their liabilities using the multiplier
 
@@ -270,9 +276,9 @@ contract DepositVault is Ownable {
 
                 return true;
             } else {
-                modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
+                modifyMMROnDeposit(msg.sender, token, liabilities);
 
-                modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
+                modifyIMROnDeposit(msg.sender, token, liabilities);
                 // if exactAmountTransfered depositted is bigger that liability info 0 it out
                 // uint256 exactAmountTransferedAddedtoAssets = exactAmountTransfered - liabilities; // exactAmountTransfered - outstanding liabilities
 
@@ -387,6 +393,8 @@ contract DepositVault is Ownable {
         }
 
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
+        uint256 decimals = fetchDecimals(token);
+        uint256 exactAmountToWithdraw = amount * (10 ** decimals) / (10 ** 18);
         ERC20Token.transfer(msg.sender, amount);
 
         Datahub.setAssetInfo(0, token, amount, false); // 0 -> totalSupply
@@ -414,12 +422,17 @@ contract DepositVault is Ownable {
         //chechking balance for contract before the token transfer 
         uint256 contractBalanceBefore = ERC20Token.balanceOf(address(this));
         // transfering the tokens to contract
+        uint256 decimals = fetchDecimals(token);
+        amount = amount * (10 ** decimals) / (10 ** 18);
         require(ERC20Token.transferFrom(msg.sender, address(this), amount), "Transfer failed");
-        Datahub.setAssetInfo(0, token, amount, true); // 0 -> totalAssetSupply
+        
         //checking the balance for the contract after the token transfer 
         uint256 contractBalanceAfter = ERC20Token.balanceOf(address(this));
-        // exactAmountTransfered is the exact value being transfer in contract
+        // exactAmountTransfered is the exact amount being transferred in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
+        exactAmountTransfered = exactAmountTransfered * (10 ** 18) / (10 ** decimals);
+
+        Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalAssetSupply
 
         (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(beneficiary, token);
 

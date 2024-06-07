@@ -250,6 +250,24 @@ describe("Interest Test", function () {
         const depositvault = tempAdmin;
         const oracle = tempAdmin;
 
+         // console.log("Deploy_Utilities deployed to", await Deploy_Utilities.getAddress());
+
+        /////////////////////////////////Deploy REXE with singer[1]/////////////////////////////////////////
+        const REXE = await hre.ethers.deployContract("REXE", [signers[1].address]);
+        await REXE.waitForDeployment();
+
+        const DAI = await hre.ethers.deployContract("DAI", [signers[0].address]);
+        await DAI.waitForDeployment();
+
+        // console.log("REXE deployed to", await connectedREXE.getAddress());
+        // console.log("REXE Balance = ", await REXE.balanceOf(signers[1].address))
+
+        /////////////////////////////////Deploy USDT with singer[1]/////////////////////////////////////////
+        const USDT = await hre.ethers.deployContract("USDT", [signers[0].address]);
+        await USDT.waitForDeployment();
+        // console.log("USDT deployed to", await USDT.getAddress());
+        // console.log("USDB balance = ", await USDT.balanceOf(signers[0].address))
+
         // console.log("==========================Deploy contracts===========================");
         /////////////////////////////////Deploy EVO_LIB//////////////////////////////////////
         const EVO_LIB = await hre.ethers.deployContract("EVO_LIBRARY");
@@ -286,7 +304,7 @@ describe("Interest Test", function () {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
             },
         });
-        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin);
+        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin, await USDT.getAddress());
 
         await Deploy_depositVault.waitForDeployment();
 
@@ -328,24 +346,6 @@ describe("Interest Test", function () {
         });
 
         const Deploy_Exchange = await Exchange.deploy(initialOwner, Deploy_dataHub.getAddress(), Deploy_depositVault.getAddress(), DeployOracle.getAddress(), Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), Deploy_Liquidator.getAddress());
-
-        // console.log("Deploy_Utilities deployed to", await Deploy_Utilities.getAddress());
-
-        /////////////////////////////////Deploy REXE with singer[1]/////////////////////////////////////////
-        const REXE = await hre.ethers.deployContract("REXE", [signers[1].address]);
-        await REXE.waitForDeployment();
-
-        const DAI = await hre.ethers.deployContract("DAI", [signers[0].address]);
-        await DAI.waitForDeployment();
-
-        // console.log("REXE deployed to", await connectedREXE.getAddress());
-        // console.log("REXE Balance = ", await REXE.balanceOf(signers[1].address))
-
-        /////////////////////////////////Deploy USDT with singer[1]/////////////////////////////////////////
-        const USDT = await hre.ethers.deployContract("USDT", [signers[0].address]);
-        await USDT.waitForDeployment();
-        // console.log("USDT deployed to", await USDT.getAddress());
-        // console.log("USDB balance = ", await USDT.balanceOf(signers[0].address))
 
         // console.log("==========================Deploy Contracts Finished===========================");
         ///////////////////////////////////////////////////////////////////////////////////////////////////////
@@ -1345,7 +1345,7 @@ describe("Interest Test", function () {
             const transfer = await USDT_TOKEN.transfer(signers[1].address, 20_000_000000000000000000n);
             await transfer.wait();
 
-            const transfer_dai = await DAI_TOKEN.connect(signers[0]).transfer(signers[1].address, 20_000_000000000000000000n);
+            const transfer_dai = await DAI_TOKEN.connect(signers[0]).transfer(signers[1].address, 20_000_000000000);
             await transfer_dai.wait();
 
             let deposit_amount = 500_000000000000000000n;
@@ -1469,7 +1469,7 @@ describe("Interest Test", function () {
             const transfer = await USDT_TOKEN.transfer(signers[1].address, 20_000_000000000000000000n);
             await transfer.wait();
 
-            const transfer_dai = await DAI_TOKEN.connect(signers[0]).transfer(signers[1].address, 20_000_000000000000000000n);
+            const transfer_dai = await DAI_TOKEN.connect(signers[0]).transfer(signers[1].address, 20_000000000000000000n);
             await transfer_dai.wait();
 
             let deposit_amount = 500_000000000000000000n;
