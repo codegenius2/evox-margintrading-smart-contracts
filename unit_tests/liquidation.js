@@ -254,6 +254,20 @@ describe("Liquidation Test", function () {
         const depositvault = tempAdmin;
         const oracle = tempAdmin;
 
+         /////////////////////////////////Deploy REXE with singer[1]/////////////////////////////////////////
+        const REXE = await hre.ethers.deployContract("REXE", [signers[1].address]);
+        await REXE.waitForDeployment();
+
+        const DAI = await hre.ethers.deployContract("DAI", [signers[0].address]);
+        await DAI.waitForDeployment();
+
+        // console.log("REXE deployed to", await connectedREXE.getAddress());
+        // console.log("REXE Balance = ", await REXE.balanceOf(signers[1].address))
+
+        /////////////////////////////////Deploy USDT with singer[1]/////////////////////////////////////////
+        const USDT = await hre.ethers.deployContract("USDT", [signers[0].address]);
+        await USDT.waitForDeployment();
+
         // console.log("==========================Deploy contracts===========================");
         /////////////////////////////////Deploy EVO_LIB//////////////////////////////////////
         const EVO_LIB = await hre.ethers.deployContract("EVO_LIBRARY");
@@ -290,7 +304,7 @@ describe("Liquidation Test", function () {
                 EVO_LIBRARY: await EVO_LIB.getAddress(),
             },
         });
-        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin);
+        const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin, await USDT.getAddress());
 
         await Deploy_depositVault.waitForDeployment();
 
@@ -335,19 +349,6 @@ describe("Liquidation Test", function () {
 
         // console.log("Deploy_Utilities deployed to", await Deploy_Utilities.getAddress());
 
-        /////////////////////////////////Deploy REXE with singer[1]/////////////////////////////////////////
-        const REXE = await hre.ethers.deployContract("REXE", [signers[1].address]);
-        await REXE.waitForDeployment();
-
-        const DAI = await hre.ethers.deployContract("DAI", [signers[0].address]);
-        await DAI.waitForDeployment();
-
-        // console.log("REXE deployed to", await connectedREXE.getAddress());
-        // console.log("REXE Balance = ", await REXE.balanceOf(signers[1].address))
-
-        /////////////////////////////////Deploy USDT with singer[1]/////////////////////////////////////////
-        const USDT = await hre.ethers.deployContract("USDT", [signers[0].address]);
-        await USDT.waitForDeployment();
         // console.log("USDT deployed to", await USDT.getAddress());
         // console.log("USDB balance = ", await USDT.balanceOf(signers[0].address))
 
@@ -645,7 +646,7 @@ describe("Liquidation Test", function () {
                 "long": true,
             }
 
-            await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap, liquidation_data.long);
+            await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap);
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
