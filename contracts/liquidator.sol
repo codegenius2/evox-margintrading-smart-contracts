@@ -15,8 +15,6 @@ import "./interfaces/IExecutor.sol";
 import "hardhat/console.sol";
 
 contract Liquidator is Ownable {
-    /* LIQUIDATION + INTEREST FUNCTIONS */
-
     IUtilityContract public Utilities;
     IDataHub public Datahub;
     IInterestData public interestContract;
@@ -59,12 +57,10 @@ contract Liquidator is Ownable {
     /// @param user the address of the user being liquidated
     /// @param tokens the liability token (the token the liquidatee has outstanding liabilities on), liquidation token ( the tokens that are liquidated from the liquidatees account)
     /// @param spendingCap the max amount the liquidator is willing to pay to settled the liquidatee's debt
-    /// @param long a boolean to mark if they are liquidating a long or a short.
     function Liquidate(
         address user,
         address[2] memory tokens, // liability tokens first, tokens to liquidate after
-        uint256 spendingCap,
-        bool long
+        uint256 spendingCap
     ) public {
         require(CheckForLiquidation(user), "not liquidatable"); // AMMR liquidatee --> checks AMMR
         require(tokens.length == 2, "have to select a pair");
@@ -96,23 +92,14 @@ contract Liquidator is Ownable {
         uint256[] memory taker_amounts = new uint256[](1);
         uint256[] memory maker_amounts = new uint256[](1);
         
-        // uint256 usdtValueOfSpendingCap = spendingCap * token0_assetlogs.assetPrice; // this is the USDT value of the amount of liability tokens the liquidator wants to supply
         uint256 rawLiquidationTokenAmount = spendingCap * token0_assetlogs.assetPrice / token1_assetlogs.assetPrice;
 
-        // console.log("rawLiquidationTokenAmount", rawLiquidationTokenAmount);
-
         uint256 liquidationFee = rawLiquidationTokenAmount * token1_assetlogs.feeInfo[1] / 10**18; // watch out with zero here (although no asset should ever be initialized with a 0 liquidation fee)
-
-        // console.log("liquidationFee", liquidationFee);
 
         Datahub.addAssets(Executor.fetchDaoWallet(), tokens[1], liquidationFee * 18 / 100);
         Datahub.addAssets(Executor.fetchOrderBookProvider(), tokens[1], liquidationFee * 2 / 100);
 
         uint256 totalLiquidationTokenAmountToSubtractFromLiquidatee = rawLiquidationTokenAmount + liquidationFee;
-        uint256 totalLiquidationTokenAmountToAddToLiquidator = rawLiquidationTokenAmount + liquidationFee * 80 / 100;
-
-        // console.log("totalLiquidationTokenAmountToSubtractFromLiquidatee", totalLiquidationTokenAmountToSubtractFromLiquidatee);
-        // console.log("totalLiquidationTokenAmountToAddToLiquidator", totalLiquidationTokenAmountToAddToLiquidator);
 
         require(totalLiquidationTokenAmountToSubtractFromLiquidatee <= fetchAssets(user, tokens[1]), "Liquidatee does not have enough of those tokens in their assets to liquidate at your requested spend amount");
 
@@ -156,7 +143,6 @@ contract Liquidator is Ownable {
         trade_amounts[1] = maker_amounts;
 
         (uint256[] memory takerLiabilities, uint256[] memory makerLiabilities) = Utilities.calculateTradeLiabilityAddtions(tokens, participants, trade_amounts);
-// 
         require(Utilities.validateTradeAmounts(trade_amounts), "Never 0 trades");
         require(
             Utilities.maxBorrowCheck(tokens, participants, trade_amounts),
@@ -225,14 +211,12 @@ contract Liquidator is Ownable {
                 participants[i],
                 pair
             );
-            if (tradeside[i] == true) {} else {
-                tradeAmounts[i] =
-                    (tradeAmounts[i] * Datahub.tradeFee(pair, 1)) /
-                    10 ** 18;
+             if (tradeside[i]) {} else {
+                uint256 tradeFeeForTaker = Datahub.tradeFee(pair, 1);
+                tradeAmounts[i] = tradeAmounts[i] - (tradeFeeForTaker * tradeAmounts[i]) / 10 ** 18;
+                assets = assets - (tradeFeeForTaker * assets) / 10 ** 18;
             }
-            uint256 balanceToAdd = tradeAmounts[i] > assets
-                ? assets
-                : tradeAmounts[i];
+            uint256 balanceToAdd = tradeAmounts[i] > assets ? assets : tradeAmounts[i];
             AlterPendingBalances(participants[i], pair, balanceToAdd);
         }
         return true;
@@ -248,7 +232,6 @@ contract Liquidator is Ownable {
         uint256 trade_amount
     ) private {
         // pay fee take less from the maker if they are a maker
-       // Datahub.removeAssets(participant, asset, trade_amount);
         Datahub.addPendingBalances(participant, asset, trade_amount);
     }
 

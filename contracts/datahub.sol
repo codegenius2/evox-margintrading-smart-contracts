@@ -209,7 +209,7 @@ contract DataHub is Ownable {
     }
 
     function tradeFee(address token, uint256 feeType) public view returns (uint256) {
-        return 1e18 - (assetdata[token].tradeFees[feeType]);
+        return assetdata[token].tradeFees[feeType];
     }
 
     /// @notice calculates the total dollar value of the users Collateral

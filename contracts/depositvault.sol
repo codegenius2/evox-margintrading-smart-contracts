@@ -218,6 +218,7 @@ contract DepositVault is Ownable {
         uint256 contractBalanceAfter = IERC20.IERC20(token).balanceOf(address(this));
         // exactAmountTransfered is the exact value being transfer in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
+        exactAmountTransfered = exactAmountTransfered * (10 ** 18) / (10 ** decimals);
         // console.log("exactAmountTransfered", exactAmountTransfered);
     
 

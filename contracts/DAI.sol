@@ -12,7 +12,7 @@ contract DAI is ERC20, Ownable {
         _mint(initialOwner, 1000000000000 * 10 ** decimals());
     }
 
-    // function decimals() public pure override returns (uint8) {
-    //     return 18;
-    // }
+    function decimals() public pure override returns (uint8) {
+        return 15;
+    }
 }

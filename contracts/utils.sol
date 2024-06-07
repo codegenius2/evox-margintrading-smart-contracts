@@ -171,10 +171,6 @@ contract Utility is Ownable {
         uint256 amount
     ) public view returns (uint256) {
         (uint256 assets, , , , ,) = Datahub.ReadUserData(user, token);
-        // if(assets > 0) {
-        //     debitAssetInterest(user, token);
-        //     (assets, , , , , ) = Datahub.ReadUserData(user, token);
-        // }        
         return amount > assets ? amount - assets : 0;
     }
     /// @notice Cycles through two lists of users and checks how many liabilities are going to be issued to each user
@@ -182,7 +178,7 @@ contract Utility is Ownable {
         address[2] memory pair,
         address[][2] memory participants,
         uint256[][2] memory trade_amounts
-    ) public returns (uint256[] memory, uint256[] memory) {
+    ) public view returns (uint256[] memory, uint256[] memory) {
         uint256[] memory TakerliabilityAmounts = new uint256[](
             participants[0].length
         );
@@ -494,7 +490,6 @@ contract Utility is Ownable {
     }
 
     function returnEarningProfit(address user, address token) external view returns(uint256) {
-        // console.log("=============== returnEarningReateProfit ==================");
         ( , , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
         uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);
         uint256 usersEarningRateIndex = Datahub.viewUsersEarningRateIndex(user, token);
@@ -574,23 +569,14 @@ contract Utility is Ownable {
         uint256 endingIndex,
         address token
     ) external view returns (uint256[] memory) {
-        // console.log("====================================rate list==============================");
-        // console.log("dimension", dimension);
-        // console.log("start", startingIndex);
-        // console.log("endingIndex", endingIndex);
-
         uint256[] memory interestRatesForThePeriod = new uint256[](
             (endingIndex) - startingIndex + 1
         );
         uint counter = 0;
         for (uint256 i = startingIndex; i <= endingIndex; i++) {
-            // console.log("i", i);
             interestRatesForThePeriod[counter] = interestContract.fetchTimeScaledRateIndex(dimension, token, i).interestRate;
-            // console.log("interest reate", interestRatesForThePeriod[counter]);
             counter += 1;
         }
-        // console.log("counter", counter);
-        // console.log("=========================end==============================");
         return interestRatesForThePeriod;
     }
 

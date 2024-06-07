@@ -646,7 +646,7 @@ describe("Liquidation Test", function () {
                 "long": true,
             }
 
-            await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap, liquidation_data.long);
+            await CurrentLiquidator.connect(signers[1]).Liquidate(liquidation_data.user, [liquidation_data.token0, liquidation_data.token1], liquidation_data.spendingCap);
 
             const test_val = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
