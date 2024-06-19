@@ -278,7 +278,9 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
-
+        
+        interestContract.chargeMassinterest(token);
+        
         (uint256 assets, , uint256 pending, , ,) = Datahub.ReadUserData(
             msg.sender,
             token
@@ -296,45 +298,15 @@ contract DepositVault is Ownable {
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
-        /*
-        This piece of code is having problems its supposed to be basically a piece of code to protect against dangerous withdraws 
-
-        if (getTotalAssetSupplyValue(token) > WithdrawThresholdValue) {
-            if (
-                amount + token_withdraws_hour[token] >
-                (
-                    interestContract
-                        .fetchRateInfo(
-                            token,
-                            interestContract.fetchCurrentRateIndex(token)
-                        )
-                        .totalAssetSuplyAtIndex
-                ) *
-                    3e17
-            ) {
-                revert DangerousWithdraw();
-            }
-        }
-
-        token_withdraws_hour[token] += amount;
-
-        if (lastWithdrawUpdateTime + 3600 >= block.timestamp) {
-            lastWithdrawUpdateTime = block.timestamp;
-            token_withdraws_hour[token] = 0;
-        }
-        */
-        // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(
-        //     token
-        // );
+        // require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
 
         uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
 
-        uint256 usersTPV = Datahub.calculateTotalPortfolioValue(msg.sender);
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
 
-        bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTPV;
+        bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTCV;
         // if the users AMMR + price of the withdraw is bigger than their TPV dont let them withdraw this
 
         require(!UnableToWithdraw);
@@ -353,13 +325,6 @@ contract DepositVault is Ownable {
         ERC20Token.transfer(msg.sender, amount);
 
         Datahub.setAssetInfo(0, token, amount, false); // 0 -> totalSupply
-
-        // IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
-
-        // 1 -> totalBorrowedAmount
-        if (assetLogs.assetInfo[1] != 0) {
-            interestContract.chargeMassinterest(token);
-        }
     }
 
     /* DEPOSIT FOR FUNCTION */
