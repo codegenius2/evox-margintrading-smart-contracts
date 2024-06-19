@@ -72,6 +72,7 @@ contract interestData {
     ) {
         owner = initialOwner;
         admins[initialOwner] = true;
+        admins[address(this)] = true;
         admins[_executor] = true;
         Executor = IExecutor(_executor);
         admins[_dh] = true;
