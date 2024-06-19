@@ -758,10 +758,10 @@ describe("Interest Test", function () {
             let collateral_value_singer0 = await DataHub.calculateCollateralValue(signers[0].address);
             let collateral_value_singer1 = await DataHub.calculateCollateralValue(signers[1].address);
 
-            // console.log("collateral_value_singer0", collateral_value_singer0);
-            // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).greaterThan(0);
-            expect(Number(collateral_value_singer1)).greaterThan(0);
+            // console.log("collateral_value_singer0", collateral_value_singer0.toString());
+            // console.log("collateral_value_singer1", collateral_value_singer1.toString());
+            expect(Number(collateral_value_singer0)).equals(0);
+            expect(collateral_value_singer1).greaterThan(1490_000000000000000000n);
 
             // let rexe_supply = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0];
 
@@ -814,8 +814,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).greaterThan(0);
-            expect(Number(collateral_value_singer1)).greaterThan(0);
+            expect(Number(collateral_value_singer0)).equals(0);
+            expect(collateral_value_singer1).greaterThan(400_000000000000000000n);
 
         })
 
@@ -934,8 +934,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).greaterThan(0);
-            expect(Number(collateral_value_singer1)).greaterThan(0);
+            expect(collateral_value_singer0).equals(0n);
+            expect(collateral_value_singer1).equals(1490000000001000000000n);
 
             await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 1);
 
@@ -990,10 +990,10 @@ describe("Interest Test", function () {
             collateral_value_singer0 = await DataHub.calculateCollateralValue(signers[0].address);
             collateral_value_singer1 = await DataHub.calculateCollateralValue(signers[1].address);
 
-            // console.log("collateral_value_singer0", collateral_value_singer0);
-            // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).greaterThan(0);
-            expect(Number(collateral_value_singer1)).greaterThan(0);
+            console.log("collateral_value_singer0", collateral_value_singer0);
+            console.log("collateral_value_singer1", collateral_value_singer1);
+            expect(collateral_value_singer0).equals(0n);
+            expect(collateral_value_singer1).equals(400000000001750000000n);
 
         })
 

@@ -202,10 +202,7 @@ contract DepositVault is Ownable {
         address token,
         uint256 amount
     ) external returns (bool) {
-        require(
-            Datahub.returnAssetLogs(token).initialized == true,
-            "this asset is not available to be deposited or traded"
-        );
+        require(Datahub.returnAssetLogs(token).initialized == true, "this asset is not available to be deposited or traded");
 
         uint256 decimals = fetchDecimals(token);
         amount = amount * (10 ** decimals) / (10 ** 18);
@@ -219,62 +216,33 @@ contract DepositVault is Ownable {
         // exactAmountTransfered is the exact value being transfer in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
         exactAmountTransfered = exactAmountTransfered * (10 ** 18) / (10 ** decimals);
-        // console.log("exactAmountTransfered", exactAmountTransfered);
-    
 
         require(!circuitBreakerStatus, "circuit breaker active");
         Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalSupply
 
-        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
+        interestContract.chargeMassinterest(token);
 
-        if(liabilities > 0) {
-            uint256 interestCharge = interestContract.returnInterestCharge(
-                msg.sender,
-                token,
-                0
-            );
-            // console.log("interest charge in deposit function", interestCharge);
-    
-            Datahub.addLiabilities(msg.sender, token, interestCharge);
-            liabilities = liabilities + interestCharge;
-        }
-        
+        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
         // checks to see if user is in the sytem and inits their struct if not
         if (liabilities > 0) {
-            // checks to see if the user has liabilities of that asset
+            uint256 interestCharge = interestContract.returnInterestCharge(msg.sender, token, 0);
+            
+            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            liabilities = liabilities + interestCharge;
             
             if (exactAmountTransfered <= liabilities) {
-                // if the exactAmountTransfered is less or equal to their current liabilities -> lower their liabilities using the multiplier
-
                 modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
 
                 modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
 
-                // Datahub.alterLiabilities(msg.sender, token, ((10 ** 18) -  EVO_LIBRARY.calculatedepositLiabilityRatio(liabilities, exactAmountTransfered))
-                // );
-
-                // Datahub.setTotalBorrowedexactAmountTransfered(token, exactAmountTransfered, false);
-
-                // interestContract.chargeMassinterest(token);
-                // liabilities -= exactAmountTransfered;
-                // updating liability mapping for user 
-
                 Datahub.removeLiabilities(msg.sender, token , exactAmountTransfered);
 
                 Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedexactAmountTransfered
-
-                interestContract.chargeMassinterest(token);
-
                 return true;
             } else {
                 modifyMMROnDeposit(msg.sender, token, liabilities);
 
                 modifyIMROnDeposit(msg.sender, token, liabilities);
-                // if exactAmountTransfered depositted is bigger that liability info 0 it out
-                // uint256 exactAmountTransferedAddedtoAssets = exactAmountTransfered - liabilities; // exactAmountTransfered - outstanding liabilities
-
-                // Datahub.addAssets(msg.sender, token, exactAmountTransferedAddedtoAssets); // add to assets
-                // console.log("transfer amount", exactAmountTransfered - liabilities);
 
                 Datahub.addAssets(msg.sender, token, exactAmountTransfered - liabilities); // add to assets
 
@@ -283,8 +251,6 @@ contract DepositVault is Ownable {
                 Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedexactAmountTransfered
 
                 Datahub.changeMarginStatus(msg.sender);
-                interestContract.chargeMassinterest(token);
-
                 return true;
             }
         } else {
@@ -420,12 +386,15 @@ contract DepositVault is Ownable {
         // exactAmountTransfered is the exact amount being transferred in contract
         uint256 exactAmountTransfered = contractBalanceAfter - contractBalanceBefore;
         exactAmountTransfered = exactAmountTransfered * (10 ** 18) / (10 ** decimals);
-
+        
         Datahub.setAssetInfo(0, token, exactAmountTransfered, true); // 0 -> totalAssetSupply
+        
+        interestContract.chargeMassinterest(token);
 
         (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(beneficiary, token);
-
-        if(liabilities > 0) {
+        
+        if (liabilities > 0) {
+            
             uint256 interestCharge = interestContract.returnInterestCharge(
                 msg.sender,
                 token,
@@ -434,9 +403,7 @@ contract DepositVault is Ownable {
     
             Datahub.addLiabilities(msg.sender, token, interestCharge);
             liabilities = liabilities + interestCharge;
-        }
 
-        if (liabilities > 0) {
             if (exactAmountTransfered <= liabilities) {
                 uint256 liabilityMultiplier = EVO_LIBRARY
                     .calculatedepositLiabilityRatio(liabilities, exactAmountTransfered);
@@ -449,8 +416,6 @@ contract DepositVault is Ownable {
 
                 Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedAmount
 
-                interestContract.chargeMassinterest(token);
-
                 return true;
             } else {
                 modifyMMROnDeposit(beneficiary, token, exactAmountTransfered);
@@ -462,7 +427,6 @@ contract DepositVault is Ownable {
                 Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
 
                 Datahub.changeMarginStatus(beneficiary);
-                interestContract.chargeMassinterest(token);
 
                 return true;
             }
