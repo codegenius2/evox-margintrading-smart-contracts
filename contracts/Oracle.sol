@@ -29,6 +29,7 @@ contract Oracle is Ownable{
         address _deposit_vault,
         address _executor
     ) Ownable(initialOwner) {
+        admins[address(this)] = true;
         Datahub = IDataHub(_DataHub);
         DepositVault = IDepositVault(_deposit_vault);
         Executor = IExecutor(_executor);
@@ -175,11 +176,6 @@ contract Oracle is Ownable{
         alterPending(participants[0], trade_amounts[0], trade_side[0], pair[0]);
         alterPending(participants[1], trade_amounts[1], trade_side[1], pair[1]);
     }
-
-    /// @notice Processes a trade details
-    /// @param  participants the participants on the trade
-    /// @param  tradeAmounts the trade amounts in the trade
-    /// @param  pair the token involved in the trade
     function alterPending(
         address[] memory participants,
         uint256[] memory tradeAmounts,
@@ -278,7 +274,7 @@ contract Oracle is Ownable{
         }
     }
 
-     function revertTrade(
+    function revertTrade(
         address[2] memory pair,
         address[] memory takers,
         address[] memory makers,

@@ -176,7 +176,6 @@ contract EVO_EXCHANGE is Ownable {
         // (bool success, ) = payable(airnode_details[2]).call{value: msg.value}(
         //     ""
         //  );
-
         //  require(success);
 
         (uint256[] memory takerLiabilities, uint256[] memory makerLiabilities) = Utilities.calculateTradeLiabilityAddtions(pair, participants, trade_amounts);
@@ -337,7 +336,7 @@ contract EVO_EXCHANGE is Ownable {
                     // below we charge trade fees it is not called if the msg.sender is the liquidator
                     uint256 tradeFeeForTaker = Datahub.tradeFee(in_token, 0);
                     uint256 tradeFeeForMaker = Datahub.tradeFee(in_token, 1);
-                    if (trade_side[i] == false) {} else {
+                    if (!trade_side[i]) {} else {
                         divideFee(in_token, input_amount * (tradeFeeForTaker - tradeFeeForMaker) / 10 ** 18);
                         input_amount = input_amount - input_amount * tradeFeeForTaker / 10 ** 18;
                     }
