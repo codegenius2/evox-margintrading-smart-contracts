@@ -29,6 +29,7 @@ contract Oracle is Ownable{
         address _deposit_vault,
         address _executor
     ) Ownable(initialOwner) {
+        admins[address(this)] = true;
         Datahub = IDataHub(_DataHub);
         DepositVault = IDepositVault(_deposit_vault);
         Executor = IExecutor(_executor);
@@ -285,26 +286,55 @@ contract Oracle is Ownable{
         uint256[] memory taker_amounts,
         uint256[] memory maker_amounts
     ) private {
-        uint256 balanceToAdd;
-        uint256 MakerbalanceToAdd;
-        for (uint256 i = 0; i < takers.length; i++) {
-            (, , uint256 pending, , ,) = Datahub.ReadUserData(takers[i], pair[0]);
-            // if its a margin trade , its makes perfect sense 
-            balanceToAdd = taker_amounts[i] > pending ? pending : taker_amounts[i];
+        if (
+            requestIdtoIdStruct[requestId].incomingFulfillments &&
+                requestIdtoIdStruct[requestId].lastExecuted + 1 hours > block.timestamp
+        ) {
+            delete requestIdtoIdStruct[requestId].incomingFulfillments;
 
-            Datahub.addAssets(takers[i], pair[0], balanceToAdd);
+            address[2] memory pair;
+            pair[0] = OrderDetails[requestId].taker_token;
+            pair[1] = OrderDetails[requestId].maker_token;
+            address[] memory takers = OrderDetails[requestId].takers;
+            address[] memory makers = OrderDetails[requestId].makers;
+            uint256[] memory taker_amounts = OrderDetails[requestId].taker_amounts;
+            uint256[] memory maker_amounts = OrderDetails[requestId].maker_amounts;
 
-            Datahub.removePendingBalances(takers[i], pair[0], balanceToAdd);
-        }
+            if (msg.sender == takers[0]) {
+                for (uint256 i = 0; i < takers.length; i++) {
+                    (, , uint256 pending, , ,) = Datahub.ReadUserData(takers[i], pair[0]);
+                    uint256 balanceToAdd = taker_amounts[i] > pending
+                        ? pending
+                        : taker_amounts[i];
 
-        for (uint256 i = 0; i < makers.length; i++) {
-           (, , uint256 pending, , ,) = Datahub.ReadUserData(makers[i], pair[0]);
+                    Datahub.addAssets(takers[i], pair[0], balanceToAdd);
+                    Datahub.removePendingBalances(takers[i], pair[0], balanceToAdd);
+                }
+            } else if (msg.sender == makers[0]) {
+                for (uint256 i = 0; i < makers.length; i++) {
+                    (, , uint256 pending, , ,) = Datahub.ReadUserData(makers[i], pair[1]);
+                    uint256 MakerbalanceToAdd = maker_amounts[i] > pending
+                        ? pending
+                        : maker_amounts[i];
 
-            MakerbalanceToAdd = maker_amounts[i] > pending ? pending : maker_amounts[i];
+                    Datahub.addAssets(makers[i], pair[1], MakerbalanceToAdd);
+                    Datahub.removePendingBalances(
+                        makers[i],
+                        pair[1],
+                        MakerbalanceToAdd
+                    );
+                }
+            }
 
-            Datahub.addAssets(makers[i], pair[1], MakerbalanceToAdd);
-
-            Datahub.removePendingBalances(makers[i], pair[0], MakerbalanceToAdd );
+            emit TradeReverted(
+                requestId,
+                pair[0],
+                pair[1],
+                OrderDetails[requestId].takers,
+                OrderDetails[requestId].makers,
+                OrderDetails[requestId].taker_amounts,
+                OrderDetails[requestId].maker_amounts
+            );
         }
     }
 

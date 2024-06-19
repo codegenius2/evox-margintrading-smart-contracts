@@ -239,16 +239,6 @@ contract DepositVault is Ownable {
             liabilities = liabilities + interestCharge;
         }
         
-
-        // console.log("assets, liabilities , amount", assets, liabilities, amount);
-
-        if (assets == 0 && exactAmountTransfered > liabilities) {
-            Datahub.alterUsersEarningRateIndex(msg.sender, token);
-        } else {
-            utility.debitAssetInterest(msg.sender, token);
-        }
-
-        ///
         // checks to see if user is in the sytem and inits their struct if not
         if (liabilities > 0) {
             // checks to see if the user has liabilities of that asset
@@ -322,8 +312,6 @@ contract DepositVault is Ownable {
             Datahub.returnAssetLogs(token).initialized == true,
             "this asset is not available to be deposited or traded"
         );
-
-        utility.debitAssetInterest(msg.sender, token);
 
         (uint256 assets, , uint256 pending, , ,) = Datahub.ReadUserData(
             msg.sender,
@@ -446,12 +434,6 @@ contract DepositVault is Ownable {
     
             Datahub.addLiabilities(msg.sender, token, interestCharge);
             liabilities = liabilities + interestCharge;
-        }
-
-        if (assets == 0 && exactAmountTransfered > liabilities) {
-            Datahub.alterUsersEarningRateIndex(beneficiary, token);
-        } else {
-            utility.debitAssetInterest(beneficiary, token);
         }
 
         if (liabilities > 0) {

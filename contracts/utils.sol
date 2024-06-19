@@ -82,6 +82,7 @@ contract Utility is Ownable {
         address _executor,
         address _interest
     ) Ownable(initialOwner) {
+        admins[address(this)] = true;
         Datahub = IDataHub(_DataHub);
         DepositVault = IDepositVault(_deposit_vault);
         Oracle = IOracle(oracle);
