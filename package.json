@@ -13,6 +13,7 @@
     "test_liquidation": "npx hardhat test ./unit_tests/liquidation.js",
     "test_deposit": "npx hardhat test ./unit_tests/deposit_test.js",
     "test_margin": "npx hardhat test ./unit_tests/margin_trading_test.js",
+    "test_unit": "npx hardhat test ./unit_tests/unit_test.js",
     "compile": "npx hardhat compile"
   },
   "author": "",

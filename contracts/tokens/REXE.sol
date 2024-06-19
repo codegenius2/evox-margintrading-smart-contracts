@@ -8,8 +8,11 @@ contract REXE is ERC20 {
     constructor(address initialOwner)
         ERC20("REXE", "REXE")
     {
-        _mint(initialOwner, 1000000000000 * 10 ** decimals());
+        _mint(initialOwner, 100000000000000000000000000000 * 10 ** decimals());
     }
 
+    function decimals() public view override(ERC20) returns (uint8) {
+        return 6;
+    }
 
 }

@@ -176,9 +176,6 @@ contract EVO_EXCHANGE is Ownable {
         // (bool success, ) = payable(airnode_details[2]).call{value: msg.value}(
         //     ""
         //  );
-
-        require(msg.value > 0, "Zero ether not allowed");
-
         //  require(success);
 
         (uint256[] memory takerLiabilities, uint256[] memory makerLiabilities) = Utilities.calculateTradeLiabilityAddtions(pair, participants, trade_amounts);
