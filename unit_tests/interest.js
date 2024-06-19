@@ -990,8 +990,8 @@ describe("Interest Test", function () {
             collateral_value_singer0 = await DataHub.calculateCollateralValue(signers[0].address);
             collateral_value_singer1 = await DataHub.calculateCollateralValue(signers[1].address);
 
-            console.log("collateral_value_singer0", collateral_value_singer0);
-            console.log("collateral_value_singer1", collateral_value_singer1);
+            // console.log("collateral_value_singer0", collateral_value_singer0);
+            // console.log("collateral_value_singer1", collateral_value_singer1);
             expect(collateral_value_singer0).equals(0n);
             expect(collateral_value_singer1).equals(400000000001750000000n);
 
