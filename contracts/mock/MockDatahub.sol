@@ -87,4 +87,8 @@ contract MockDatahub is DataHub {
       userdata[user].negative_value = 0;
     }
   }
+
+  function setTradeFee(address token, uint256 feeType, uint256 amount) public {
+    assetdata[token].tradeFees[feeType] = amount;
+  }
 }

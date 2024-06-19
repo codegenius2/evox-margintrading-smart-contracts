@@ -66,16 +66,13 @@ library EVO_LIBRARY {
     function normalize(
         uint256 x
     ) public pure returns (uint256 base, int256 exp) {
-        // console.log("=============normalize function=================");
         exp = 0;
         base = x;
 
         while (base > 1e18) {
             base = base / 10;
-            // console.log("base", base);
             exp = exp + 1;
         }
-        // console.log("===============end==============");
     }
 
     function calculateInterestRate(
@@ -83,36 +80,21 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetlogs,
         IInterestData.interestDetails memory interestRateInfo
     ) public pure returns (uint256) {
-        // console.log("======================calculate interest rate function===========================");
-        // uint256 borrowProportion = ((assetlogs.totalBorrowedAmount + amount) * 10 ** 18) / assetlogs.totalAssetSupply; /// check for div by 0
         uint256 borrowProportion;
         if(assetlogs.assetInfo[2] != 0) {
             borrowProportion = ((assetlogs.assetInfo[1] + amount) * 10 ** 18) / assetlogs.assetInfo[2]; /// 0 -> totalAssetSupply 1 -> totalBorrowedAmount
         } else {
             borrowProportion = 0;
         }
-        // console.log("borrow proportion", borrowProportion);
-        // also those will need to be updated on every borrow (trade) and every deposit -> need to write in
 
         uint256 optimalBorrowProportion = assetlogs.borrowPosition[0]; // 0 -> optimalBorrowProportion
-        // console.log("optimal Borrow Proportion", optimalBorrowProportion);
 
         uint256 minimumInterestRate = interestRateInfo.rateInfo[0];
         uint256 optimalInterestRate = interestRateInfo.rateInfo[1];
         uint256 maximumInterestRate = interestRateInfo.rateInfo[2];
-        // console.log("minimumInterestRate", minimumInterestRate);
-        // console.log("optimalInterestRate", optimalInterestRate);
-        // console.log("maximumInterestRate", maximumInterestRate);
 
         if (borrowProportion <= optimalBorrowProportion) {
             uint256 rate = optimalInterestRate - minimumInterestRate; // 0.145
-            // console.log("rate", rate);
-            // console.log("result", min(
-            //     optimalInterestRate,
-            //     minimumInterestRate +
-            //         (rate * borrowProportion) /
-            //         optimalBorrowProportion
-            // ));
             return
                 min(
                     optimalInterestRate,
@@ -122,13 +104,6 @@ library EVO_LIBRARY {
                 );
         } else {
             uint256 rate = maximumInterestRate - optimalInterestRate;
-            // console.log("rate", rate);
-            // console.log("result", min(
-            //     maximumInterestRate,
-            //     optimalInterestRate +
-            //         (rate * (borrowProportion - optimalBorrowProportion)) /
-            //         (1e18 - optimalBorrowProportion)
-            // ));
             return
                 min(
                     maximumInterestRate,
@@ -162,7 +137,6 @@ library EVO_LIBRARY {
         uint256 amount
     ) public pure returns (uint256) {
         uint256 initial = assetdata.marginRequirement[0]; // 0 -> InitialMarginRequirement
-        // console.log("maintenance", maintenance);
         return (initial * (amount)) / 10 ** 18;
     }
 
@@ -170,9 +144,7 @@ library EVO_LIBRARY {
         IDataHub.AssetData memory assetdata,
         uint256 amount
     ) public pure returns (uint256) {
-        // console.log("margin requirement", assetdata.marginRequirement[1]);
         uint256 maintenance = assetdata.marginRequirement[1]; // 1 -> MaintenanceMarginRequirement
-        // console.log("maintenance", maintenance);
         return (maintenance * (amount)) / 10 ** 18;
     } // 13 deimcals to big
 
@@ -193,20 +165,13 @@ library EVO_LIBRARY {
         if(assetdata.assetInfo[2] == 0) {
             return false;
         }
-        // console.log("====================calculateBorrowProportionAfterTrades========================");
         uint256 scaleFactor = 1e18; // Scaling factor, e.g., 10^18 for wei
 
         // here we add the current borrowed amount and the new liabilities to be issued, and scale it
         uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] + new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
 
-        // console.log("scaledTotalBorrowed", scaledTotalBorrowed);
-
         // Calculate the new borrow proportion
         uint256 newBorrowProportion = (scaledTotalBorrowed / assetdata.assetInfo[2]); // totalLendingPoolSupply
-
-        // console.log("newBorrowProportion", newBorrowProportion);
-
-        // console.log("maximum borrow propotion", assetdata.borrowPosition[1]);
 
         // Compare with maximumBorrowProportion
         return newBorrowProportion <= assetdata.borrowPosition[1]; // 1 -> maximumBorrowProportion
@@ -227,10 +192,7 @@ library EVO_LIBRARY {
         uint256 usersOriginIndex
     ) public pure returns (uint256, uint256, uint256) {
         uint256 earningHours = currentIndex - usersOriginIndex;
-        // console.log("Billed Hours", earningHours);
 
-        // uint256 DaoInterestCharge;
-        // uint256 OrderBookProviderCharge;
         uint256 interestCharge;
 
         uint256 averageHourly = 1e18 + AverageCumulativeDepositInterest / 8736;
@@ -261,7 +223,6 @@ library EVO_LIBRARY {
         }
 
         uint256 compoundedAssets = userLedingPoolAmount * hourlyChargesBase;
-        // console.log("compoundedAssets", compoundedAssets, AverageBorrowPosition, hourlyChargesBase);
 
         unchecked {
             if (hourlyChargesExp >= 0) {
@@ -274,31 +235,15 @@ library EVO_LIBRARY {
                     (10 ** uint256(-hourlyChargesExp));
             }
 
-            // console.log("compoundedAssets", compoundedAssets);
             interestCharge = compoundedAssets - userLedingPoolAmount;
-            // uint256 temp = userLedingPoolAmount * AverageBorrowPosition / 10 ** 18;
-            // console.log("asset",  temp);
-            // console.log("borrow",  AverageBorrowPosition);
-            // console.log("user asset", userLedingPoolAmount);
             if (interestCharge > 0) {
                 if (interestCharge > 100 wei) {
                     interestCharge = interestCharge / 100;
-                    // we split up the whole balance and divide it by the deposittor, the order book provider, and the DAO
-
-                    // interestCharge *= 80;
-
-                    // OrderBookProviderCharge *= 2;
-
-                    // DaoInterestCharge *= 18;
-                    // console.log("interestCharge", interestCharge);
                     return (interestCharge * 80, interestCharge * 2, interestCharge * 18);
                 }
             }
-            // console.log("interestCharge", interestCharge);
         } // 20 / 80
-        // console.log("interestCharge", interestCharge);
         return (interestCharge, 0, 0);
-        // now for this it will always returtn 80% of their actual interest --> to do this splits we scale up to 100% then take the 20%
     }
 
     function calculateCompoundedLiabilities(
@@ -310,24 +255,14 @@ library EVO_LIBRARY {
         uint256 usersLiabilities,
         uint256 usersOriginIndex
     ) public pure returns (uint256) {
-        // console.log("=====================calculateCompundedLiabilities Function======================");
         uint256 amountOfBilledHours = currentIndex - usersOriginIndex;
-        // if(usersOriginIndex == 1) {
-        //     amountOfBilledHours = amountOfBilledHours + 1; // lower gas fee than amountOfBilledHours++
-        // }
-        // console.log("amount of billed hours", amountOfBilledHours);
-
-        // calculate what the rate would be after their trade and charge that
-
         uint256 adjustedNewLiabilities = (newLiabilities *
-            // (1e18 + (fetchCurrentRate(token) / 8736))) / (10 ** 18);
             (1e18 +
                 (calculateInterestRate(
                     newLiabilities,
                     assetdata,
                     interestRateInfo
                 ) / 8736))) / (10 ** 18);
-        // console.log("newliabilities - adjustedNewLiabilities", newLiabilities, adjustedNewLiabilities);
         uint256 initalMarginFeeAmount;
 
         if (newLiabilities == 0) {
@@ -338,12 +273,7 @@ library EVO_LIBRARY {
                 newLiabilities
             );
         }
-
-        // console.log("initalMarginFeeAmount", initalMarginFeeAmount);
-
         if (newLiabilities != 0) {
-            // console.log("result", (adjustedNewLiabilities + initalMarginFeeAmount) -
-            // newLiabilities);
             return
                 (adjustedNewLiabilities + initalMarginFeeAmount) -
                 newLiabilities;
@@ -351,13 +281,10 @@ library EVO_LIBRARY {
             uint256 interestCharge;
 
             uint256 averageHourly = 1e18 + AverageCumulativeInterest / 8736;
-            // console.log("averageHourly", averageHourly);
 
             (uint256 averageHourlyBase, int256 averageHourlyExp) = normalize(
                 averageHourly
             );
-            // console.log("averageHourlyBase", averageHourlyBase);
-            // console.log("averageHourlyExp", averageHourlyExp);
             averageHourlyExp = averageHourlyExp - 18;
 
             uint256 hourlyChargesBase = 1;
@@ -383,13 +310,7 @@ library EVO_LIBRARY {
 
                 amountOfBilledHours /= 2;
             }
-
-            // console.log("hourlyChargesBase", hourlyChargesBase);
-
             uint256 compoundedLiabilities = usersLiabilities * hourlyChargesBase;
-
-            // console.log("compoundedLiabilities", compoundedLiabilities);
-
             unchecked {
                 if (hourlyChargesExp >= 0) {
                     compoundedLiabilities =
@@ -400,18 +321,11 @@ library EVO_LIBRARY {
                         compoundedLiabilities /
                         (10 ** uint256(-hourlyChargesExp));
                 }
-
-                // console.log("compoundedLiabilities", compoundedLiabilities, adjustedNewLiabilities, initalMarginFeeAmount);
-                // console.log("usersLiabilities", usersLiabilities, newLiabilities);
-                // console.log("user liabilities", usersLiabilities);
-                // console.log("interest rate", compoundedLiabilities - usersLiabilities);
-
                 interestCharge =
                     (compoundedLiabilities +
                         adjustedNewLiabilities +
                         initalMarginFeeAmount) -
                     (usersLiabilities + newLiabilities);
-                // console.log("interestCharge", interestCharge);
             }
             return interestCharge;
         }
