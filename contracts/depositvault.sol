@@ -304,7 +304,7 @@ contract DepositVault is Ownable {
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
 
-        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
 
         bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTCV;
         // if the users AMMR + price of the withdraw is bigger than their TPV dont let them withdraw this

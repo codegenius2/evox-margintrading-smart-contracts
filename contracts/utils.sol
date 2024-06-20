@@ -343,7 +343,7 @@ contract Utility is Ownable {
             if (tradeAmounts[i] > assets) {
                 uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, tradeAmounts[i]);
                 initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
-                uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]);
+                uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]) - Datahub.calculatePendingCollateralValue(participants[i]);
 
                 uint256 aimrForUser = Datahub.calculateAIMRForUser(participants[i]);
                 if (collateralValue <= aimrForUser + initalMarginFeeAmount) {

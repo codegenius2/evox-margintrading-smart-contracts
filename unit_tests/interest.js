@@ -760,8 +760,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0.toString());
             // console.log("collateral_value_singer1", collateral_value_singer1.toString());
-            expect(Number(collateral_value_singer0)).equals(0);
-            expect(collateral_value_singer1).greaterThan(1490_000000000000000000n);
+            expect(collateral_value_singer0).equals(497445945258445258500n);
+            expect(collateral_value_singer1).equals(249_0000000000000000000n);
 
             // let rexe_supply = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0];
 
@@ -814,7 +814,7 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).equals(0);
+            expect(Number(collateral_value_singer0)).equals(1.2474459452584454e+21);
             expect(collateral_value_singer1).greaterThan(400_000000000000000000n);
 
         })
@@ -934,8 +934,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(collateral_value_singer0).equals(0n);
-            expect(collateral_value_singer1).equals(1490000000001000000000n);
+            expect(collateral_value_singer0).equals(497_445945258445258500n);
+            expect(collateral_value_singer1).equals(2490000000000000000000n);
 
             await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 1);
 
@@ -992,8 +992,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(collateral_value_singer0).equals(0n);
-            expect(collateral_value_singer1).equals(400000000001750000000n);
+            expect(collateral_value_singer0).equals(1247445945258445258500n);
+            expect(collateral_value_singer1).equals(2150000000000000000000n);
 
         })
 
@@ -1087,13 +1087,32 @@ describe("Interest Test", function () {
             // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
             // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
 
-            imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            let imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            let mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
 
-            // console.log("imr for signers after trade", imr_singers);
-            // console.log("mmr for signers after trade", mmr_singers);     
             expect(imr_singers).equals(250000000000000000000n);
-            expect(mmr_singers).equals(125000000000000000000n);     
+            expect(mmr_singers).equals(125000000000000000000n);
+            
+            let aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            let ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("user0 imr for signers after trade", imr_singers);
+            // console.log("user0 mmr for signers after trade", mmr_singers);
+
+            // console.log("user0 aimr for signers after trade", aimr_signers);
+            // console.log("user0 ammr for signers after trade", ammr_signers);         
+            
+            imr_singers = await DataHub.returnPairIMROfUser(signers[1].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            mmr_singers = await DataHub.returnPairMMROfUser(signers[1].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[1].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[1].address);
+
+            // console.log("user1 imr for signers before trade", imr_singers);
+            // console.log("user1 mmr for signers before trade", mmr_singers);
+
+            // console.log("user1 aimr for signers after trade", aimr_signers);
+            // console.log("user1 ammr for signers after trade", ammr_signers);          
 
             const Data_Second = {
                 "taker_out_token": await DAI_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
@@ -1138,10 +1157,30 @@ describe("Interest Test", function () {
 
             imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
             mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            // console.log("imr for signers before trade", imr_singers);
-            // console.log("mmr for signers before trade", mmr_singers);
+
             expect(imr_singers).equals(250000000000000000000n);
             expect(mmr_singers).equals(125000000000000000000n);
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("imr for signers before trade", imr_singers);
+            // console.log("mmr for signers before trade", mmr_singers);
+
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers);     
+
+            imr_singers = await DataHub.returnPairIMROfUser(signers[1].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            mmr_singers = await DataHub.returnPairMMROfUser(signers[1].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[1].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[1].address);
+
+            // console.log("imr for signers before trade", imr_singers);
+            // console.log("mmr for signers before trade", mmr_singers);
+
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers);   
 
             const Data_third = {
                 "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
@@ -1159,15 +1198,15 @@ describe("Interest Test", function () {
 
             // await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 490_000000000000000000n, true);
 
-            // asset_data = await DataHub.returnAssetLogs(await DAI_TOKEN.getAddress());
-            // user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            asset_data = await DataHub.returnAssetLogs(await DAI_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
             // console.log("user0 data", user_data);
-            // user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
             // console.log("user0 data", user_data);
 
-            // user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
             // console.log("user1 data", user_data);
-            // user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
             // console.log("user1 data", user_data);
 
             // expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
@@ -1196,6 +1235,13 @@ describe("Interest Test", function () {
             mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
             expect(imr_singers).equals(0);
             expect(mmr_singers).equals(0);
+
+            // console.log("imr for signers before trade", imr_singers);
+            // console.log("mmr for signers before trade", mmr_singers);
+
+            imr_singers = await DataHub.returnPairIMROfUser(signers[1].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            mmr_singers = await DataHub.returnPairMMROfUser(signers[1].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+
             // console.log("imr for signers before trade", imr_singers);
             // console.log("mmr for signers before trade", mmr_singers);
 
@@ -1203,8 +1249,27 @@ describe("Interest Test", function () {
             mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
             // console.log("imr for signers before trade", imr_singers);
             // console.log("mmr for signers before trade", mmr_singers);
+
             expect(imr_singers).equals(250000000000000000000n);
             expect(mmr_singers).equals(125000000000000000000n);
+
+            imr_singers = await DataHub.returnPairIMROfUser(signers[1].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+            mmr_singers = await DataHub.returnPairMMROfUser(signers[1].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
+
+            // console.log("imr for signers before trade", imr_singers);
+            // console.log("mmr for signers before trade", mmr_singers);
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers);     
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[1].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[1].address);
+
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers);  
         })
 
         it("Test liablity Works while trading", async function () {
