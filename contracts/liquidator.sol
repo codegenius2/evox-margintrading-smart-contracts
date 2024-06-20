@@ -153,7 +153,7 @@ contract Liquidator is Ownable {
             Utilities.processMargin(tokens, participants, trade_amounts),
             "This trade failed the margin checks for one or more users"
         );
-        require(Datahub.calculateCollateralValue(user) + Datahub.calculatePendingCollateralValue(user) < Datahub.calculateAMMRForUser(user));
+        require(Datahub.calculateCollateralValue(user) < Datahub.calculateAMMRForUser(user));
 
         bool[] memory fee_side = new bool[](1);
         bool[] memory fee_side_2 = new bool[](1);
