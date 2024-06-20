@@ -133,10 +133,7 @@ contract DataHub is Ownable {
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
+            sumOfAssets += (assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
         return sumOfAssets;
     }
@@ -169,14 +166,8 @@ contract DataHub is Ownable {
     function calculateTotalAssetCollateralAmount(address user) internal view returns (uint256) {
         uint256 sumOfAssets;
         address token;
-        // console.log("user - token length",user, userdata[user].tokens.length);
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            // console.log("token", token);
-            // console.log("price", assetdata[token].assetPrice);
-            // console.log("amount", userdata[user].asset_info[token]);
-            // console.log("asset amount", ((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18));
-            // console.log("collateral multiplier", assetdata[token].collateralMultiplier);
             sumOfAssets += (((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
@@ -186,26 +177,15 @@ contract DataHub is Ownable {
     /// @notice calculates the total dollar value of the users Collateral
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
-    function calculatePendingCollateralValue(address user) external view returns (uint256) {
+    function calculatePendingCollateralValue(address user) public view returns (uint256) {
         uint256 sumOfAssets;
-        uint256 liabilities;
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
             sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].pending_balances[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
+                (((assetdata[token].assetPrice * userdata[user].pending_balances[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) / 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
-
-        liabilities = calculateLiabilitiesValue(user);
-
-        if(sumOfAssets < liabilities) {
-            return 0;
-        }
-
-        return sumOfAssets - liabilities;
+        return sumOfAssets;
     }
 
     function tradeFee(address token, uint256 feeType) public view returns (uint256) {
@@ -219,9 +199,9 @@ contract DataHub is Ownable {
         uint256 sumOfAssets;
         uint256 userLiabilities;
         sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        sumOfAssets += calculatePendingCollateralValue(user);
         userLiabilities = calculateLiabilitiesValue(user);
         if(sumOfAssets < userLiabilities) {
-            // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
         return sumOfAssets - userLiabilities;
@@ -351,6 +331,19 @@ contract DataHub is Ownable {
         //     interestContract.fetchCurrentRateIndex(token)
         // );
         userdata[user].earningRateIndex[token] = interestContract.fetchCurrentRateIndex(token);
+    }
+
+    /// @notice calculates the total dollar value of the users lending pool assets
+    /// @param user the address of the user we want to query
+    /// @return sumOfAssets the cumulative value of all their assets
+    function CalculateUsersTotalLendingPoolAssetValue(address user) public view returns (uint256) {
+        uint256 sumOfAssets;
+        address token;
+        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
+            token = userdata[user].tokens[i];
+            sumOfAssets += (assetdata[token].assetPrice * userdata[user].lending_pool_info[token]) / 10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        return sumOfAssets;
     }
 
     /// @notice Alters lending pool asset
