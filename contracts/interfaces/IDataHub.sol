@@ -67,20 +67,6 @@ interface IDataHub {
         uint256 amount
     ) external;
 
-    function alterMMR(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
-    function alterIMR(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
     function addLiabilities(
         address user,
         address token,
@@ -120,18 +106,6 @@ interface IDataHub {
         address out_token,
         uint256 amount
     ) external;
-
-    function returnPairMMROfUser(
-        address user,
-        address in_token,
-        address out_token
-    ) external view returns (uint256);
-
-    function returnPairIMROfUser(
-        address user,
-        address in_token,
-        address out_token
-    ) external view returns (uint256);
 
     function addPendingBalances(
         address user,
