@@ -65,7 +65,7 @@ contract DepositVault is Ownable {
     IInterestData public interestContract;
     IUtilityContract public utility;
 
-    using EVO_LIBRARY for uint256;
+    // using EVO_LIBRARY for uint256;
 
     uint256 public WithdrawThresholdValue = 1000000 * 10 ** 18;
 
@@ -148,50 +148,6 @@ contract DepositVault is Ownable {
         return totalValue;
     }
 
-    /// @notice This function modifies the mmr of the user on deposit
-    /// @param user the user being targetted
-    /// @param in_token the token coming into their wallet
-    /// @param amount the amount being transfered into their wallet
-    function modifyMMROnDeposit(
-        address user,
-        address in_token,
-        uint256 amount
-    ) private {
-        address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-        uint256 liabilityMultiplier;
-        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(
-            msg.sender,
-            in_token
-        );
-        for (uint256 i = 0; i < tokens.length; i++) {
-            liabilityMultiplier = EVO_LIBRARY
-                .calculatedepositLiabilityRatio(liabilities, amount);
-            Datahub.alterMMR(user, in_token, tokens[i], liabilityMultiplier);
-        }
-    }
-
-    /// @notice This function modifies the mmr of the user on deposit
-    /// @param user the user being targetted
-    /// @param in_token the token coming into their wallet
-    /// @param amount the amount being transfered into their wallet
-    function modifyIMROnDeposit(
-        address user,
-        address in_token,
-        uint256 amount
-    ) private {
-        address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-        uint256 liabilityMultiplier;
-        (, uint256 liabilities, , , ,) = Datahub.ReadUserData(
-            msg.sender,
-            in_token
-        );
-        for (uint256 i = 0; i < tokens.length; i++) {
-            liabilityMultiplier = EVO_LIBRARY
-                .calculatedepositLiabilityRatio(liabilities, amount);
-            Datahub.alterIMR(user, in_token, tokens[i], liabilityMultiplier);
-        }
-    }
-
     /* DEPOSIT FUNCTION */
     /// @notice This deposits tokens and inits the user struct, and asset struct if new assets.
     /// @dev Explain to a developer any extra details
@@ -231,18 +187,18 @@ contract DepositVault is Ownable {
             liabilities = liabilities + interestCharge;
             
             if (exactAmountTransfered <= liabilities) {
-                modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
+                // modifyMMROnDeposit(msg.sender, token, exactAmountTransfered);
 
-                modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
+                // modifyIMROnDeposit(msg.sender, token, exactAmountTransfered);
 
                 Datahub.removeLiabilities(msg.sender, token , exactAmountTransfered);
 
                 Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedexactAmountTransfered
                 return true;
             } else {
-                modifyMMROnDeposit(msg.sender, token, liabilities);
+                // modifyMMROnDeposit(msg.sender, token, liabilities);
 
-                modifyIMROnDeposit(msg.sender, token, liabilities);
+                // modifyIMROnDeposit(msg.sender, token, liabilities);
 
                 Datahub.addAssets(msg.sender, token, exactAmountTransfered - liabilities); // add to assets
 
@@ -361,38 +317,36 @@ contract DepositVault is Ownable {
         if (liabilities > 0) {
             
             uint256 interestCharge = interestContract.returnInterestCharge(
-                msg.sender,
+                beneficiary,
                 token,
                 0
             );
     
-            Datahub.addLiabilities(msg.sender, token, interestCharge);
+            Datahub.addLiabilities(beneficiary, token, interestCharge);
             liabilities = liabilities + interestCharge;
 
             if (exactAmountTransfered <= liabilities) {
-                uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(liabilities, exactAmountTransfered);
+                // modifyMMROnDeposit(beneficiary, token, exactAmountTransfered);
 
-                Datahub.alterLiabilities(
-                    beneficiary,
-                    token,
-                    ((10 ** 18) - liabilityMultiplier)
-                );
+                // modifyIMROnDeposit(beneficiary, token, exactAmountTransfered);
 
-                Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedAmount
+                Datahub.removeLiabilities(beneficiary, token , exactAmountTransfered);
+
+                Datahub.setAssetInfo(1, token, exactAmountTransfered, false); // 1 -> totalBorrowedexactAmountTransferedfalse); // 1 -> totalBorrowedAmount
 
                 return true;
             } else {
-                modifyMMROnDeposit(beneficiary, token, exactAmountTransfered);
-                modifyIMROnDeposit(beneficiary, token, exactAmountTransfered);
-                uint256 amountAddedtoAssets = exactAmountTransfered - liabilities;
+                // modifyMMROnDeposit(beneficiary, token, liabilities);
 
-                Datahub.addAssets(beneficiary, token, amountAddedtoAssets);
-                Datahub.removeLiabilities(beneficiary, token, liabilities);
-                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
+                // modifyIMROnDeposit(beneficiary, token, liabilities);
+
+                Datahub.addAssets(beneficiary, token, exactAmountTransfered - liabilities); // add to assets
+
+                Datahub.removeLiabilities(beneficiary, token, liabilities); // remove all liabilities
+
+                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedexactAmountTransfered
 
                 Datahub.changeMarginStatus(beneficiary);
-
                 return true;
             }
         } else {

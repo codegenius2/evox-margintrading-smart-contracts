@@ -336,7 +336,7 @@ async function main() {
             console.log(await DataHub.ReadUserData(signers[1].address, REXE), "signer1 REXE") // maker has 20 rexe 
 
             console.log(await DataHub.calculateAMMRForUser(signers[0].address), "ammr");
-            console.log(await DataHub.returnPairMMROfUser(signers[0].address, USDT, REXE), "mmr");
+            // console.log(await DataHub.returnPairMMROfUser(signers[0].address, USDT, REXE), "mmr");
 
         }
 
