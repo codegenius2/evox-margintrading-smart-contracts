@@ -360,8 +360,34 @@ contract DepositVault is Ownable {
         }
     }
 
+    function borrow(address token, uint256 amount) external {
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);        
+        require(assetLogs.initialized == true, "this asset is not available to be borrowed");
+       
+        interestContract.chargeMassinterest(token);
+
+        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
+
+        if (liabilities > 0) {            
+            Executor.chargeinterest(msg.sender, token, amount, false);
+        } else {
+            uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, amount);
+            initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
+            Datahub.addLiabilities(msg.sender, token, amount + initalMarginFeeAmount);
+            Datahub.setAssetInfo(1, token, amount + initalMarginFeeAmount, true); // 1 -> TotalBorrowedAmount
+            Datahub.alterUsersInterestRateIndex(msg.sender, token);
+        }
+        
+        Datahub.addAssets(msg.sender, token, amount);
+
+        uint256 usersAIMR = Datahub.calculateAIMRForUser(msg.sender);
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
+        require(usersAIMR < usersTCV, "Cannot Borrow because it reached out the limit");
+    }
+
     function withdrawETH(address payable owner) external onlyOwner {
         uint contractBalance = address(this).balance;
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
         require(contractBalance > 0, "No balance to withdraw");
         payable(owner).transfer(contractBalance);
     }

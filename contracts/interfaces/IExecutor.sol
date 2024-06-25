@@ -17,4 +17,6 @@ interface IExecutor {
     function fetchOrderBookProvider() external view returns (address);
 
     function fetchDaoWallet() external view returns (address);
+
+    function chargeinterest(address user, address token, uint256 liabilitiesAccrued, bool minus) external;
 }
