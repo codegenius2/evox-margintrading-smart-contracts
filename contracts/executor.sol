@@ -280,7 +280,7 @@ contract EVO_EXCHANGE is Ownable {
 
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(in_token);
             }
-            // if the amount coming into their wallet is larger than their current liabilities
+            
             usersLiabilities = Utilities.returnliabilities(users[i], in_token);
             if(usersLiabilities > 0) {
                 uint256 interestCharge = interestContract.returnInterestCharge(
@@ -327,7 +327,7 @@ contract EVO_EXCHANGE is Ownable {
             }
         }
     }
-    function divideFee(address token, uint256 amount) internal {
+    function divideFee(address token, uint256 amount) public {
         address daoWallet = fetchDaoWallet();
         address orderBookProvider = fetchOrderBookProvider();
 
@@ -345,7 +345,7 @@ contract EVO_EXCHANGE is Ownable {
         address token,
         uint256 liabilitiesAccrued,
         bool minus
-    ) private {
+    ) public {
         //Step 1) charge mass interest on outstanding liabilities
         interestContract.chargeMassinterest(token);
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);

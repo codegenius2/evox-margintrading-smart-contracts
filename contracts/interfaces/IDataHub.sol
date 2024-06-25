@@ -93,19 +93,7 @@ interface IDataHub {
         uint256 amount
     ) external;
 
-    function addInitialMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
-    function removeInitialMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
+    function divideFee(address token, uint256 amount) external;
 
     function addPendingBalances(
         address user,
