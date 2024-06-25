@@ -300,9 +300,9 @@ describe("Interest Test", function () {
 
         /////////////////////////////////Deploy depositVault////////////////////////////////////
         const depositVault = await hre.ethers.getContractFactory("DepositVault", {
-            // libraries: {
-            //     EVO_LIBRARY: await EVO_LIB.getAddress(),
-            // },
+            libraries: {
+                EVO_LIBRARY: await EVO_LIB.getAddress(),
+            },
         });
         const Deploy_depositVault = await depositVault.deploy(initialOwner, await Deploy_dataHub.getAddress(), tempAdmin, await Deploy_interest.getAddress(), tempAdmin, await USDT.getAddress());
 

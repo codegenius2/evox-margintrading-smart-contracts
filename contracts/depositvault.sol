@@ -385,6 +385,25 @@ contract DepositVault is Ownable {
         require(usersAIMR < usersTCV, "Cannot Borrow because it reached out the limit");
     }
 
+    function repay(address token, uint256 amount) external {
+        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);        
+        require(assetLogs.initialized == true, "this asset is not available to be repayed");
+       
+        interestContract.chargeMassinterest(token);
+
+        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
+
+        require(liabilities > 0, "Already repaid");
+        
+        uint256 repay_amount = amount > liabilities ? liabilities : amount;
+
+        require(repay_amount < assets, "Insufficient funds in user");
+
+        Executor.chargeinterest(msg.sender, token, amount, true);
+        
+        Datahub.removeAssets(msg.sender, token, amount);
+    }
+
     function withdrawETH(address payable owner) external onlyOwner {
         uint contractBalance = address(this).balance;
         uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
