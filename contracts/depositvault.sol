@@ -399,9 +399,8 @@ contract DepositVault is Ownable {
 
         require(repay_amount < assets, "Insufficient funds in user");
 
-        Executor.chargeinterest(msg.sender, token, amount, true);
-        
-        Datahub.removeAssets(msg.sender, token, amount);
+        Executor.chargeinterest(msg.sender, token, repay_amount, true);       
+        Datahub.removeAssets(msg.sender, token, repay_amount);
     }
 
     function withdrawETH(address payable owner) external onlyOwner {
