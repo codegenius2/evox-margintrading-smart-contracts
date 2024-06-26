@@ -204,7 +204,7 @@ contract DepositVault is Ownable {
 
                 Datahub.removeLiabilities(msg.sender, token, liabilities); // remove all liabilities
 
-                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedexactAmountTransfered
+                Datahub.setAssetInfo(1, token, liabilities, false); // 1 -> totalBorrowedAmount
 
                 Datahub.changeMarginStatus(msg.sender);
                 return true;
@@ -230,50 +230,40 @@ contract DepositVault is Ownable {
     // IMPORTANT MAKE SURE USERS CAN'T WITHDRAW PAST THE LIMIT SET FOR AMOUNT OF FUNDS BORROWED
     function withdraw_token(address token, uint256 amount) external {
         require(!circuitBreakerStatus);
-        require(
-            Datahub.returnAssetLogs(token).initialized == true,
-            "this asset is not available to be deposited or traded"
-        );
+        require(Datahub.returnAssetLogs(token).initialized == true, "this asset is not available to be deposited or traded");
         
         interestContract.chargeMassinterest(token);
         
-        (uint256 assets, , uint256 pending, , ,) = Datahub.ReadUserData(
-            msg.sender,
-            token
-        );
+        (uint256 assets, , uint256 pending, , ,) = Datahub.ReadUserData(msg.sender, token);
 
-        require(
-            pending == 0,
-            "You must have a 0 pending trade balance to withdraw, please wait for your trade to settle before attempting to withdraw"
-        );
-        require(
-            amount <= assets,
-            "You cannot withdraw more than your asset balance"
-        );
+        require(pending == 0, "You must have a 0 pending trade balance to withdraw, please wait for your trade to settle before attempting to withdraw");
+        require(amount <= assets, "You cannot withdraw more than your asset balance");
 
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
         // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
         // require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
 
-        uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
+        // uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
+
+        Datahub.removeAssets(msg.sender, token, amount);
+
+        // if (amount == assets) {
+        //     // remove assets and asset token from their portfolio
+        //     Datahub.removeAssets(msg.sender, token, amount);
+        //     // Datahub.removeAssetToken(msg.sender, token);
+        // } else {
+        //     Datahub.removeAssets(msg.sender, token, amount);
+        // }
 
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
 
         uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
 
-        bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTCV;
+        // bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTCV;
         // if the users AMMR + price of the withdraw is bigger than their TPV dont let them withdraw this
 
-        require(!UnableToWithdraw);
-
-        if (amount == assets) {
-            // remove assets and asset token from their portfolio
-            Datahub.removeAssets(msg.sender, token, amount);
-            Datahub.removeAssetToken(msg.sender, token);
-        } else {
-            Datahub.removeAssets(msg.sender, token, amount);
-        }
+        require(usersAMMR < usersTCV, "Cannot withdraw");
 
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
         uint256 decimals = fetchDecimals(token);
@@ -367,16 +357,17 @@ contract DepositVault is Ownable {
         interestContract.chargeMassinterest(token);
 
         (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
+        uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, amount);
 
-        if (liabilities > 0) {            
+        if (liabilities > 0) {    
             Executor.chargeinterest(msg.sender, token, amount, false);
         } else {
-            uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, amount);
-            initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
             Datahub.addLiabilities(msg.sender, token, amount + initalMarginFeeAmount);
             Datahub.setAssetInfo(1, token, amount + initalMarginFeeAmount, true); // 1 -> TotalBorrowedAmount
             Datahub.alterUsersInterestRateIndex(msg.sender, token);
         }
+
+        Executor.divideFee(token, initalMarginFeeAmount);
         
         Datahub.addAssets(msg.sender, token, amount);
 
