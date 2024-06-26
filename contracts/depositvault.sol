@@ -240,12 +240,12 @@ contract DepositVault is Ownable {
         require(amount <= assets, "You cannot withdraw more than your asset balance");
 
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
-
         Datahub.removeAssets(msg.sender, token, amount);
-        uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
+
+        uint256 usersAIMR = Datahub.calculateAIMRForUser(msg.sender);
         uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
 
-        require(usersAMMR < usersTCV, "Cannot withdraw");
+        require(usersAIMR < usersTCV, "Cannot withdraw");
 
         IERC20.IERC20 ERC20Token = IERC20.IERC20(token);
         uint256 decimals = fetchDecimals(token);
@@ -355,6 +355,8 @@ contract DepositVault is Ownable {
 
         uint256 usersAIMR = Datahub.calculateAIMRForUser(msg.sender);
         uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
+        // console.log("users aimr", usersAIMR);
+        // console.log("users tcv", usersTCV);
         require(usersAIMR < usersTCV, "Cannot Borrow because it reached out the limit");
     }
 

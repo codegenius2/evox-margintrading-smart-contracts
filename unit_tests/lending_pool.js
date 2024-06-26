@@ -825,6 +825,91 @@ describe("Interest Test", function () {
             expect(test_val["USDT-1"].usdt_amount).equals(195.8483352822185);
             expect(test_val["USDT-1"].liabilities).equals(0.2953010574023366);
         })
+
+        it("Test Withdraw", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+
+            /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
+            let deposit_amount = 100_000000000000000000n
+            let approvalTx = await USDT_TOKEN.approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined       
+            await deposit_vault.connect(signers[0]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            deposit_amount = 200_000000000000000000n;
+            let transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 150_000000000000000000n, true);
+            // await DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true);
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+
+            expect(user_data[5]).equals(150_000000000000000000n); // lending pool amount
+            expect(asset_data[4][2]).equals(150_000000000000000000n); // lending pool supply
+
+            const originTimestamp = await getTimeStamp(hre.ethers.provider);
+
+            test_val = await createNewData(originTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+
+            // console.log("singer0 usdt amount", test_val["USDT-0"].usdt_amount);
+            // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
+
+            let borrow_amount = 100_000000000000000000n;
+            await deposit_vault.connect(signers[0]).borrow(await USDT_TOKEN.getAddress(), borrow_amount);
+
+            test_val = await createNewData(originTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+
+            // console.log("singer0 usdt amount", test_val["USDT-0"].usdt_amount);
+            // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
+
+            let aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            let ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("aimr for user0", aimr_signers);
+            // console.log("ammr for user0", ammr_signers);
+
+            expect(aimr_signers).equals(20100000000000000000n); // lending pool amount
+            expect(ammr_signers).equals(10050000000000000000n); // lending pool supply
+
+            let withdraw_amount = 81_000000000000000000n;
+            
+            await expect(deposit_vault.connect(signers[0]).withdraw_token(await USDT_TOKEN.getAddress(), withdraw_amount)).revertedWith("Cannot withdraw");
+
+            test_val = await createNewData(originTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+
+            // console.log("singer0 usdt amount", test_val["USDT-0"].usdt_amount);
+            // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
+
+            expect(test_val["USDT-0"].usdt_amount).equals(200.5);
+            expect(test_val["USDT-0"].liabilities).equals(100.5);
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("aimr for user0", aimr_signers);
+            // console.log("ammr for user0", ammr_signers);
+
+            withdraw_amount = 79_000000000000000000n;
+            expect(await deposit_vault.connect(signers[0]).withdraw_token(await USDT_TOKEN.getAddress(), withdraw_amount)).revertedWith("Cannot withdraw");
+
+            test_val = await createNewData(originTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+
+            // console.log("singer0 usdt amount", test_val["USDT-0"].usdt_amount);
+            // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
+
+            expect(test_val["USDT-0"].usdt_amount).equals(121.5);
+            expect(test_val["USDT-0"].liabilities).equals(100.5);
+
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+
+            // console.log("aimr for user0", aimr_signers);
+            // console.log("ammr for user0", ammr_signers);
+        })
     })
 
     it("Test Fee Trade", async function () {
