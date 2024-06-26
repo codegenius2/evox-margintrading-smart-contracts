@@ -279,31 +279,8 @@ contract EVO_EXCHANGE is Ownable {
                 chargeinterest(users[i], out_token, amountToAddToLiabilities, false);
 
                 IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(in_token);
-                
-                uint256 initialRequirementForTrade = EVO_LIBRARY.calculateInitialRequirementForTrade( // 150
-                    assetLogs,
-                    amountToAddToLiabilities
-                );
-                uint256 maintenanceRequirementForTrade = EVO_LIBRARY.calculateMaintenanceRequirementForTrade( // 150
-                    assetLogs,
-                    amountToAddToLiabilities
-                );
-
-                Datahub.addInitialMarginRequirement(
-                    users[i],
-                    out_token,
-                    in_token,
-                    initialRequirementForTrade
-                );
-
-                Datahub.addMaintenanceMarginRequirement(
-                    users[i],
-                    out_token,
-                    in_token,
-                    maintenanceRequirementForTrade
-                );
             }
-            // if the amount coming into their wallet is larger than their current liabilities
+            
             usersLiabilities = Utilities.returnliabilities(users[i], in_token);
             if(usersLiabilities > 0) {
                 uint256 interestCharge = interestContract.returnInterestCharge(
@@ -320,12 +297,7 @@ contract EVO_EXCHANGE is Ownable {
                 chargeinterest(users[i], in_token, amounts_in_token[i], true);
 
                 // edit inital margin requirement, and maintenance margin requirement of the user
-                modifyMarginValues(
-                    users[i],
-                    in_token,
-                    out_token,
-                    amounts_in_token[i]
-                );
+                // modifyMarginValues(users[i], in_token, out_token, amounts_in_token[i]);
             } else {
                 // This will check to see if they are technically still margined and turn them off of margin status if they are eligable
                 Datahub.changeMarginStatus(msg.sender);
@@ -346,7 +318,7 @@ contract EVO_EXCHANGE is Ownable {
                     input_amount = input_amount - usersLiabilities;
                     chargeinterest(users[i], in_token, usersLiabilities, true);
                     // edit inital margin requirement, and maintenance margin requirement of the user
-                    modifyMarginValues(users[i], in_token, out_token, input_amount);
+                    // modifyMarginValues(users[i], in_token, out_token, input_amount);
                 }
                 // remove their pending balances
                 Datahub.removePendingBalances(users[i], out_token, amounts_out_token[i]);
@@ -355,28 +327,12 @@ contract EVO_EXCHANGE is Ownable {
             }
         }
     }
-    function divideFee(address token, uint256 amount) internal {
+    function divideFee(address token, uint256 amount) public {
         address daoWallet = fetchDaoWallet();
         address orderBookProvider = fetchOrderBookProvider();
 
         Datahub.addAssets(daoWallet, token, amount * 90 / 100);
         Datahub.addAssets(orderBookProvider, token, amount * 10 / 100);
-    }
-
-    /// @notice This sets the users Initial Margin Requirement, and Maintenance Margin Requirements
-    /// @dev This calls the Utilities contract
-    /// @param user the user we are modifying
-    /// @param in_token the token that has come into their account
-    /// @param out_token the token that is leaving hteir account
-    /// @param amount the amount to be adjusted
-    function modifyMarginValues(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) private {
-        Utilities.Modifymmr(user, in_token, out_token, amount);
-        Utilities.Modifyimr(user, in_token, out_token, amount);
     }
 
     /// @notice This will charge interest to a user if they are accuring new liabilities
@@ -389,7 +345,7 @@ contract EVO_EXCHANGE is Ownable {
         address token,
         uint256 liabilitiesAccrued,
         bool minus
-    ) private {
+    ) public {
         //Step 1) charge mass interest on outstanding liabilities
         interestContract.chargeMassinterest(token);
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);

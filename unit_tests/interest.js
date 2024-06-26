@@ -340,9 +340,9 @@ describe("Interest Test", function () {
 
         Deploy_Utilities
         const Exchange = await hre.ethers.getContractFactory("MockExecutor", {
-            libraries: {
-                EVO_LIBRARY: await EVO_LIB.getAddress(),
-            },
+            // libraries: {
+            //     EVO_LIBRARY: await EVO_LIB.getAddress(),
+            // },
         });
 
         const Deploy_Exchange = await Exchange.deploy(initialOwner, Deploy_dataHub.getAddress(), Deploy_depositVault.getAddress(), DeployOracle.getAddress(), Deploy_Utilities.getAddress(), await Deploy_interest.getAddress(), Deploy_Liquidator.getAddress());
@@ -629,11 +629,11 @@ describe("Interest Test", function () {
             // expect(Number(test_val["USDT-1"].earningrates) - Number(test_val["USDT-0"].liabilities)).greaterThan(Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             // console.log("test_val", Number(test_val["USDT-0"].liabilities) + Number(test_val["USDT-2"].liabilities));
             expect(test_val["USDT-0"].usdt_amount).equals(0);
-            expect(test_val["USDT-0"].usdt_supply).equals(1500);
+            expect(test_val["USDT-0"].usdt_supply).equals(990);
             expect(test_val["USDT-0"].liabilities).equals(502.55405474155475);
 
             expect(test_val["USDT-1"].usdt_amount).equals(1490);
-            expect(test_val["USDT-1"].usdt_supply).equals(1500);
+            expect(test_val["USDT-1"].usdt_supply).equals(990);
             expect(test_val["USDT-1"].liabilities).equals(0);
 
             expect(test_val["USDT-1"]["total-borrowed"]).equals(502.55405474155475);
@@ -760,8 +760,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0.toString());
             // console.log("collateral_value_singer1", collateral_value_singer1.toString());
-            expect(Number(collateral_value_singer0)).equals(0);
-            expect(collateral_value_singer1).greaterThan(1490_000000000000000000n);
+            expect(collateral_value_singer0).equals(497445945258445258500n);
+            expect(collateral_value_singer1).equals(249_0000000000000000000n);
 
             // let rexe_supply = (await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress())).assetInfo[0];
 
@@ -814,7 +814,7 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(Number(collateral_value_singer0)).equals(0);
+            expect(Number(collateral_value_singer0)).equals(1.2474459452584454e+21);
             expect(collateral_value_singer1).greaterThan(400_000000000000000000n);
 
         })
@@ -934,8 +934,8 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(collateral_value_singer0).equals(0n);
-            expect(collateral_value_singer1).equals(1490000000001000000000n);
+            expect(collateral_value_singer0).equals(497_445945258445258500n);
+            expect(collateral_value_singer1).equals(2490000000000000000000n);
 
             await DataHub.toggleAssetPriceTest(await REXE_TOKEN.getAddress(), 1);
 
@@ -992,19 +992,16 @@ describe("Interest Test", function () {
 
             // console.log("collateral_value_singer0", collateral_value_singer0);
             // console.log("collateral_value_singer1", collateral_value_singer1);
-            expect(collateral_value_singer0).equals(0n);
-            expect(collateral_value_singer1).equals(400000000001750000000n);
+            expect(collateral_value_singer0).equals(1247445945258445258500n);
+            expect(collateral_value_singer1).equals(2150000000000000000000n);
 
         })
 
         it("Test AIMR, AMMR during the deposit and trade", async function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN, DAI_TOKEN } = await loadFixture(deployandInitContracts);
 
-            const transfer = await USDT_TOKEN.transfer(signers[1].address, 20_000_000000000000000000n);
+            let transfer = await USDT_TOKEN.transfer(signers[1].address, 20_000_000000000000000000n);
             await transfer.wait();
-
-            const transfer_dai = await DAI_TOKEN.connect(signers[0]).transfer(signers[1].address, 20_000_000000000000000000n);
-            await transfer_dai.wait();
 
             let deposit_amount = 500_000000000000000000n;
             let approvalTx = await USDT_TOKEN.approve(await deposit_vault.getAddress(), deposit_amount);
@@ -1018,21 +1015,19 @@ describe("Interest Test", function () {
             await deposit_vault.connect(signers[1]).deposit_token(await REXE_TOKEN.getAddress(), (deposit_amount));
 
             // USDT Deposit
-            deposit_amount = 1_000_000000000000000000n
-            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
-            await approvalTx.wait();  // Wait for the transaction to be mined
+            deposit_amount = 2_000_000000000000000000n
+            usdt = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await usdt.wait();  // Wait for the transaction to be mined
             await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
 
-            // DAI Deposit
-            deposit_amount = 500_000000000000000000n
-            approvalTx = await DAI_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
-            await approvalTx.wait();  // Wait for the transaction to be mined
-            await deposit_vault.connect(signers[0]).deposit_token(await DAI_TOKEN.getAddress(), deposit_amount)
+            deposit_amount = 600_000000000000000000n
+            transfer = await DAI_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
 
-            deposit_amount = 1_000_000000000000000000n
-            approvalTx = await DAI_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
-            await approvalTx.wait();  // Wait for the transaction to be mined
-            await deposit_vault.connect(signers[1]).deposit_token(await DAI_TOKEN.getAddress(), deposit_amount)
+            usdt = await DAI_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await usdt.wait();  // Wait for the transaction to be mined
+
+            await deposit_vault.connect(signers[1]).deposit_token(await DAI_TOKEN.getAddress(), deposit_amount);
 
             const Data_First = {
                 "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
@@ -1060,43 +1055,33 @@ describe("Interest Test", function () {
             let masscharges_rexe = await _Interest.chargeMassinterest(await REXE_TOKEN.getAddress()); // increase borrow amount
             await masscharges_rexe.wait(); // Wait for the transaction to be mined
 
-            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 510_000000000000000000n, true);
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1900_000000000000000000n, true);
 
             asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
-            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            user_data_usdt = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
 
-            expect(user_data[5]).equals(510_000000000000000000n); // lending pool amount
-            expect(asset_data[4][2]).equals(510_000000000000000000n); // lending pool supply
+            expect(user_data_usdt[5]).equals(1900_000000000000000000n); // lending pool amount
+            expect(asset_data[4][2]).equals(1900_000000000000000000n); // lending pool supply
 
             await CurrentExchange.SubmitOrder(pair_first, participants_first, trade_amounts_first, trade_sides_first);
             
-            // Get borrowed amount
-            let userData_usdt_signer00 = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
-            let userData_rexe_signer00 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            let aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            let ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+            user_data_usdt = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            user_data_dai = await DataHub.ReadUserData(signers[0].address, await DAI_TOKEN.getAddress());
 
-            // console.log("userData_usdt_signer0_amount", userData_usdt_signer00[0]);
-            // console.log("userData_rexe_signer0_amount", userData_rexe_signer00[0]);
-            // console.log("userData_usdt_signer0_liabilities", userData_usdt_signer00[1]);
-            // console.log("userData_rexe_signer0_liabilities", userData_rexe_signer00[1]);
+            expect(aimr_signers).equals(100500681218843812800n); // lending pool amount
+            expect(ammr_signers).equals(50250340609421906400n); // lending pool supply
 
-            let userData_usdt_signer11 = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
-            let userData_rexe_signer11 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("======================== First Trade ===========================");
 
-            // console.log("userData_usdt_signer1_amount", userData_usdt_signer11[0]);
-            // console.log("userData_rexe_signer1_amount", userData_rexe_signer11[0]);
-            // console.log("userData_usdt_signer1_liabilities", userData_usdt_signer11[1]);
-            // console.log("userData_rexe_signer1_liabilities", userData_rexe_signer11[1]);
-
-            imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-
-            // console.log("imr for signers after trade", imr_singers);
-            // console.log("mmr for signers after trade", mmr_singers);     
-            expect(imr_singers).equals(250000000000000000000n);
-            expect(mmr_singers).equals(125000000000000000000n);     
-
+            // console.log("user0 usdt liability", user_data_usdt[1]);
+            // console.log("user0 dai liability", user_data_dai[1]);
+            // console.log("user0 aimr for usdt after trade", aimr_signers);
+            // console.log("user0 ammr for usdt after trade", ammr_signers);         
+            
             const Data_Second = {
-                "taker_out_token": await DAI_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
+                "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
                 "maker_out_token": await REXE_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
                 "takers": signers[0].address, //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
                 "makers": signers[1].address, //0x70997970c51812dc3a010c7d01b50e0d17dc79c8
@@ -1109,46 +1094,30 @@ describe("Interest Test", function () {
             const participants_second = [[Data_Second.takers], [Data_Second.makers]];
             const trade_amounts_second = [[Data_Second.taker_out_token_amount], [Data_Second.maker_out_token_amount]];
 
-            await DataHub.connect(signers[1]).alterLendingPool(await DAI_TOKEN.getAddress(), 510_000000000000000000n, true);
-
-            asset_data = await DataHub.returnAssetLogs(await DAI_TOKEN.getAddress());
-            user_data = await DataHub.ReadUserData(signers[1].address, await DAI_TOKEN.getAddress());
-
-            expect(user_data[5]).equals(510_000000000000000000n); // lending pool amount
-            expect(asset_data[4][2]).equals(510_000000000000000000n); // lending pool supply
-
             await CurrentExchange.SubmitOrder(pair_second, participants_second, trade_amounts_second, trade_sides_second);
 
             ////////////////////////////////////////// User Info /////////////////////////////////////////////////
-            let userData_rexe2_signer0 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
-            let userData_dai_signer0 = await DataHub.ReadUserData(signers[0].address, await DAI_TOKEN.getAddress());
 
-            // console.log("userData_rexe2_signer0 amount", userData_rexe2_signer0[0]);
-            // console.log("userData_dai_signer0 amount", userData_dai_signer0[0]);
-            // console.log("userData_rexe2_signer0 liabilities", userData_rexe2_signer0[1]);
-            // console.log("userData_dai_signer0 liabilities", userData_dai_signer0[1]);
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+            user_data_usdt = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            user_data_dai = await DataHub.ReadUserData(signers[0].address, await DAI_TOKEN.getAddress());
 
-            let userData_rexe2_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
-            let userData_dai_signer1 = await DataHub.ReadUserData(signers[1].address, await DAI_TOKEN.getAddress());
-
-            // console.log("userData_rexe2_signer1 amount", userData_rexe2_signer1[0]);
-            // console.log("userData_dai_signer1 amount", userData_dai_signer1[0]);
-            // console.log("userData_rexe2_signer1 liabilities", userData_rexe2_signer1[1]);
-            // console.log("userData_dai_signer1 liabilities", userData_dai_signer1[1]);
-
-            imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            // console.log("imr for signers before trade", imr_singers);
-            // console.log("mmr for signers before trade", mmr_singers);
-            expect(imr_singers).equals(250000000000000000000n);
-            expect(mmr_singers).equals(125000000000000000000n);
+            expect(aimr_signers).equals(301510004522904448600n); // lending pool amount
+            expect(ammr_signers).equals(150755002261452224300n); // lending pool supply
+           
+            // console.log("========================Second Trade===========================");
+            // console.log("user0 usdt liability", user_data_usdt[1]);
+            // console.log("user0 dae liability", user_data_dai[1]);
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers); 
 
             const Data_third = {
-                "taker_out_token": await USDT_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
-                "maker_out_token": await REXE_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
-                "takers": signers[1].address, //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
-                "makers": signers[0].address, //0x70997970c51812dc3a010c7d01b50e0d17dc79c8
-                "taker_out_token_amount": 1000_000000000000000000n, // 12000000000000000000 // 1250
+                "taker_out_token": await DAI_TOKEN.getAddress(),  //0x0165878A594ca255338adfa4d48449f69242Eb8F 
+                "maker_out_token": await USDT_TOKEN.getAddress(), //0xa513E6E4b8f2a923D98304ec87F64353C4D5C853
+                "takers": signers[0].address, //0xf39fd6e51aad88f6f4ce6ab8827279cfffb92266
+                "makers": signers[1].address, //0x70997970c51812dc3a010c7d01b50e0d17dc79c8
+                "taker_out_token_amount": 500_000000000000000000n, // 12000000000000000000 // 1250
                 "maker_out_token_amount": 500_000000000000000000n, // 12000000000000000000  // 2500
             }
 
@@ -1157,54 +1126,27 @@ describe("Interest Test", function () {
             const participants_third = [[Data_third.takers], [Data_third.makers]];
             const trade_amounts_third = [[Data_third.taker_out_token_amount], [Data_third.maker_out_token_amount]];
 
-            // await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 490_000000000000000000n, true);
-
-            // asset_data = await DataHub.returnAssetLogs(await DAI_TOKEN.getAddress());
-            // user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
-            // console.log("user0 data", user_data);
-            // user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
-            // console.log("user0 data", user_data);
-
-            // user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
-            // console.log("user1 data", user_data);
-            // user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
-            // console.log("user1 data", user_data);
-
-            // expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
-            // expect(asset_data[4][2]).equals(1000_000000000000000000n); // lending pool supply
-            
+            await DataHub.connect(signers[1]).alterLendingPool(await DAI_TOKEN.getAddress(), 600_000000000000000000n, true);
+          
             await CurrentExchange.SubmitOrder(pair_third, participants_third, trade_amounts_third, trade_sides_third);
 
             ////////////////////////////////////////// User Info /////////////////////////////////////////////////
-            let userData_rexe3_signer0 = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
-            let userData_dai2_signer0 = await DataHub.ReadUserData(signers[0].address, await DAI_TOKEN.getAddress());
+            // imr_singers_usdt = await DataHub.calculateIMR(signers[0].address, await USDT_TOKEN.getAddress());
+            // mmr_singers_usdt = await DataHub.calculateMMR(signers[0].address, await USDT_TOKEN.getAddress());
 
-            // console.log("userData_rexe3_signer0 amount", userData_rexe3_signer0[0]);
-            // console.log("userData_dai2_signer0 amount", userData_dai2_signer0[0]);
-            // console.log("userData_rexe3_signer0 liabilities", userData_rexe3_signer0[1]);
-            // console.log("userData_dai2_signer0 liabilities", userData_dai2_signer0[1]);
+            aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
+            ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
+            user_data_usdt = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            user_data_dai = await DataHub.ReadUserData(signers[0].address, await DAI_TOKEN.getAddress());
 
-            let userData_rexe3_signer1 = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
-            let userData_dai2_signer1 = await DataHub.ReadUserData(signers[1].address, await DAI_TOKEN.getAddress());
+            expect(aimr_signers).equals(454025108053632979100n); // lending pool amount
+            expect(ammr_signers).equals(227012554026816489550n); // lending pool supply
 
-            // console.log("userData_rexe3_signer1 amount", userData_rexe3_signer1[0]);
-            // console.log("userData_dai2_signer1 amount", userData_dai2_signer1[0]);
-            // console.log("userData_rexe3_signer1 liabilities", userData_rexe3_signer1[1]);
-            // console.log("userData_dai2_signer1 liabilities", userData_dai2_signer1[1]);
-
-            imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await USDT_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            expect(imr_singers).equals(0);
-            expect(mmr_singers).equals(0);
-            // console.log("imr for signers before trade", imr_singers);
-            // console.log("mmr for signers before trade", mmr_singers);
-
-            imr_singers = await DataHub.returnPairIMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            mmr_singers = await DataHub.returnPairMMROfUser(signers[0].address, await DAI_TOKEN.getAddress(), await REXE_TOKEN.getAddress());
-            // console.log("imr for signers before trade", imr_singers);
-            // console.log("mmr for signers before trade", mmr_singers);
-            expect(imr_singers).equals(250000000000000000000n);
-            expect(mmr_singers).equals(125000000000000000000n);
+            // console.log("======================== Third Trade ===========================");
+            // console.log("user0 usdt liability", user_data_usdt[1]);
+            // console.log("user0 dai liability", user_data_dai[1]);
+            // console.log("aimr for signers after trade", aimr_signers);
+            // console.log("ammr for signers after trade", ammr_signers);     
         })
 
         it("Test liablity Works while trading", async function () {

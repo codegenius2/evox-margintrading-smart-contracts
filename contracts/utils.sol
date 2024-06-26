@@ -343,7 +343,7 @@ contract Utility is Ownable {
             if (tradeAmounts[i] > assets) {
                 uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, tradeAmounts[i]);
                 initalMarginFeeAmount = (initalMarginFeeAmount * assetLogs.assetPrice) / 10 ** 18;
-                uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]);
+                uint256 collateralValue = Datahub.calculateCollateralValue(participants[i]) - Datahub.calculatePendingCollateralValue(participants[i]);
 
                 uint256 aimrForUser = Datahub.calculateAIMRForUser(participants[i]);
                 if (collateralValue <= aimrForUser + initalMarginFeeAmount) {
@@ -357,139 +357,6 @@ contract Utility is Ownable {
         }
         return true;
     }
-
-    /// @notice This modify's a users maintenance margin requirement
-    /// @dev Explain to a developer any extra details
-    /// @param user the user we are modifying the mmr of
-    /// @param in_token the token entering the users wallet
-    /// @param out_token the token leaving the users wallet
-    /// @param amount the amount being adjected
-    function Modifymmr(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        IDataHub.AssetData memory assetLogsOutToken = Datahub.returnAssetLogs(
-            out_token
-        );
-        IDataHub.AssetData memory assetLogsInToken = Datahub.returnAssetLogs(
-            in_token
-        );
-        if (amount <= returnliabilities(user, in_token)) {
-            uint256 StartingDollarMMR = (amount * assetLogsOutToken.marginRequirement[1]) / 10 ** 18; // 1 -> MaintenanceMarginRequirement
-            uint256 pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, out_token);
-            if (StartingDollarMMR > pairMMROfUser) {
-                uint256 overage = (StartingDollarMMR - pairMMROfUser) * (10 ** 18) / assetLogsInToken.marginRequirement[1]; // 1 -> MaintenanceMarginRequirement
-
-                Datahub.removeMaintenanceMarginRequirement(
-                    user,
-                    in_token,
-                    out_token,
-                    pairMMROfUser
-                );
-
-                uint256 userLiabilities = returnliabilities(user, in_token);
-
-                uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(userLiabilities, overage);
-
-                address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-
-                for (uint256 i = 0; i < tokens.length; i++) {
-                    Datahub.alterMMR(
-                        user,
-                        in_token,
-                        tokens[i],
-                        liabilityMultiplier
-                    );
-                }
-            } else {
-                Datahub.removeMaintenanceMarginRequirement(
-                    user,
-                    in_token,
-                    out_token,
-                    StartingDollarMMR
-                );
-            }
-        } else {
-            uint256 length = Datahub.returnUsersAssetTokens(user).length;
-            address[] memory tokens;
-            uint256 pairMMROfUser;
-            for (uint256 i = 0; i < length; i++) {
-                tokens = Datahub.returnUsersAssetTokens(user);
-                pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, tokens[i]);
-                Datahub.removeMaintenanceMarginRequirement(
-                    user,
-                    in_token,
-                    tokens[i],
-                    pairMMROfUser
-                );
-            }
-        }
-    }
-
-    function Modifyimr(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        IDataHub.AssetData memory assetLogsOutToken = Datahub.returnAssetLogs(
-            out_token
-        );
-        IDataHub.AssetData memory assetLogsInToken = Datahub.returnAssetLogs(
-            in_token
-        );
-        uint256 userLiabilities = returnliabilities(user, in_token);
-        if (amount <= userLiabilities ) {
-            uint256 StartingDollarIMR = (amount * assetLogsOutToken.marginRequirement[0]) / 10 ** 18; // 0 -> InitialMarginRequirement
-            uint256 pairMMROfUser = Datahub.returnPairMMROfUser(user, in_token, out_token);
-            if (StartingDollarIMR > pairMMROfUser) {
-                uint256 overage = (StartingDollarIMR - pairMMROfUser) * (10 ** 18) / assetLogsInToken.marginRequirement[0]; // 0-> initialMarginRequirement
-
-                Datahub.removeInitialMarginRequirement(
-                    user,
-                    in_token,
-                    out_token,
-                    pairMMROfUser
-                );
-                uint256 liabilityMultiplier = EVO_LIBRARY
-                    .calculatedepositLiabilityRatio(userLiabilities, overage);
-                address[] memory tokens = Datahub.returnUsersAssetTokens(user);
-                for (uint256 i = 0; i < tokens.length; i++) {
-                    Datahub.alterIMR(
-                        user,
-                        in_token,
-                        tokens[i],
-                        liabilityMultiplier
-                    );
-                }
-            } else {
-                Datahub.removeInitialMarginRequirement(
-                    user,
-                    in_token,
-                    out_token,
-                    StartingDollarIMR
-                );
-            }
-        } else {
-            uint256 length = Datahub.returnUsersAssetTokens(user).length;
-            address[] memory tokens;
-            uint256 pairMMROfUser;
-            for (uint256 i = 0; i < length; i++) {
-                tokens = Datahub.returnUsersAssetTokens(user);
-                pairMMROfUser = Datahub.returnPairIMROfUser(user, in_token, tokens[i]);
-                Datahub.removeInitialMarginRequirement(
-                    user,
-                    in_token,
-                    tokens[i],
-                    pairMMROfUser
-                );
-            }
-        }
-    }
-
     function returnEarningProfit(address user, address token) external view returns(uint256) {
         ( , , , , , uint256 lending_pool_amount) = Datahub.ReadUserData(user, token);
         uint256 currentRateIndex = interestContract.fetchCurrentRateIndex(token);

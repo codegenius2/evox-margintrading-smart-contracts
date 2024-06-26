@@ -86,15 +86,6 @@ contract DataHub is Ownable {
         return userdata[user].interestRateIndex[token] == 0 ? 1 : userdata[user].interestRateIndex[token];
     }
 
-    function returnPairMMROfUser(address user, address in_token, address out_token) public view returns (uint256) {
-        return
-            userdata[user].maintenance_margin_requirement[in_token][out_token];
-    }
-
-    function returnPairIMROfUser(address user, address in_token, address out_token) public view returns (uint256) {
-        return userdata[user].initial_margin_requirement[in_token][out_token];
-    }
-
     /// @notice This function returns the users tokens array ( the tokens in their portfolio)
     /// @param user the user being targetted
     function returnUsersAssetTokens(address user) external view returns (address[] memory) {
@@ -109,6 +100,21 @@ contract DataHub is Ownable {
         return assetdata[token];
     }
 
+    // /// @notice This function returns the users tokens array ( the tokens in their portfolio)
+    // /// @param user the user being targetted
+    // function calculateIMR(address user, address token) external view returns (uint256) {
+    //     uint256 liabilities = userdata[user].liability_info[token];
+    //     return (assetdata[token].assetPrice * liabilities * assetdata[token].marginRequirement[0]) / 10 ** 36; // 0 -> InitialMarginRequirement
+    // }
+
+    // /// @notice This returns the asset data of a given asset see Idatahub for more details on what it returns
+    // /// @param token the token being targetted
+    // /// @return returns the assets data
+    // function calculateMMR(address user, address token) public view returns (uint256) {
+    //     uint256 liabilities = userdata[user].liability_info[token];
+    //     return (assetdata[token].assetPrice * liabilities * assetdata[token].marginRequirement[1]) / 10 ** 36; // 0 -> MainternanceMarginRequirement
+    // }
+    
     /// @notice Returns a users data
     /// @param user being targetted
     /// @param token the users data of the token being queried
@@ -133,10 +139,7 @@ contract DataHub is Ownable {
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            sumOfAssets +=
-                (assetdata[token].assetPrice *
-                    userdata[user].asset_info[token]) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
+            sumOfAssets += (assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
         return sumOfAssets;
     }
@@ -169,14 +172,8 @@ contract DataHub is Ownable {
     function calculateTotalAssetCollateralAmount(address user) internal view returns (uint256) {
         uint256 sumOfAssets;
         address token;
-        // console.log("user - token length",user, userdata[user].tokens.length);
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
-            // console.log("token", token);
-            // console.log("price", assetdata[token].assetPrice);
-            // console.log("amount", userdata[user].asset_info[token]);
-            // console.log("asset amount", ((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18));
-            // console.log("collateral multiplier", assetdata[token].collateralMultiplier);
             sumOfAssets += (((assetdata[token].assetPrice * userdata[user].asset_info[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) /
                 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
@@ -186,26 +183,15 @@ contract DataHub is Ownable {
     /// @notice calculates the total dollar value of the users Collateral
     /// @param user the address of the user we want to query
     /// @return returns their assets - liabilities value in dollars
-    function calculatePendingCollateralValue(address user) external view returns (uint256) {
+    function calculatePendingCollateralValue(address user) public view returns (uint256) {
         uint256 sumOfAssets;
-        uint256 liabilities;
         address token;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
             sumOfAssets +=
-                (((assetdata[token].assetPrice *
-                    userdata[user].pending_balances[token]) / 10 ** 18) *
-                    assetdata[token].collateralMultiplier) /
-                10 ** 18; // want to get like a whole normal number so balance and price correction
+                (((assetdata[token].assetPrice * userdata[user].pending_balances[token]) / 10 ** 18) * assetdata[token].collateralMultiplier) / 10 ** 18; // want to get like a whole normal number so balance and price correction
         }
-
-        liabilities = calculateLiabilitiesValue(user);
-
-        if(sumOfAssets < liabilities) {
-            return 0;
-        }
-
-        return sumOfAssets - liabilities;
+        return sumOfAssets;
     }
 
     function tradeFee(address token, uint256 feeType) public view returns (uint256) {
@@ -219,9 +205,9 @@ contract DataHub is Ownable {
         uint256 sumOfAssets;
         uint256 userLiabilities;
         sumOfAssets = calculateTotalAssetCollateralAmount(user);
+        sumOfAssets += calculatePendingCollateralValue(user);
         userLiabilities = calculateLiabilitiesValue(user);
         if(sumOfAssets < userLiabilities) {
-            // alterUserNegativeValue(user, userLiabilities - sumOfAssets);
             return 0;
         }
         return sumOfAssets - userLiabilities;
@@ -234,28 +220,11 @@ contract DataHub is Ownable {
         uint256 AIMR;
         address token;
         uint256 liabilities;
-        address token_2;
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
-            token = userdata[user].tokens[i];
-            liabilities = userdata[user].liability_info[token];
-            if (liabilities > 0) {
-                for (uint256 j = 0; j < userdata[user].tokens.length; j++) {
-                    token_2 = userdata[user].tokens[j];
-                    if (
-                        userdata[user].initial_margin_requirement[token][
-                            token_2
-                        ] > 0
-                    ) {
-                        AIMR +=
-                            (assetdata[token].assetPrice *
-                                userdata[user].initial_margin_requirement[
-                                    token
-                                ][token_2]) /
-                            10 ** 18;
-                    }
-                }
+                token = userdata[user].tokens[i];
+                liabilities = userdata[user].liability_info[token];
+                AIMR += (assetdata[token].assetPrice * liabilities * assetdata[token].marginRequirement[0]) / 10 ** 36; // 0 -> InitialMarginRequirement
             }
-        }
         return AIMR;
     }
 
@@ -266,32 +235,10 @@ contract DataHub is Ownable {
         uint256 AMMR;
         address token;
         uint256 liabilities;
-        address token_2;
-        // console.log("=========ammr calculate=========");
-        // console.log("user", user);
-
         for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
             token = userdata[user].tokens[i];
             liabilities = userdata[user].liability_info[token];
-            // console.log("liabilities", liabilities);
-            // console.log("token", token);
-            if (liabilities > 0) {
-                for (uint256 j = 0; j < userdata[user].tokens.length; j++) {
-                    token_2 = userdata[user].tokens[j];
-                    if (
-                        userdata[user].maintenance_margin_requirement[token][
-                            token_2
-                        ] > 0
-                    ) {
-                        AMMR +=
-                            (assetdata[token].assetPrice *
-                                userdata[user].maintenance_margin_requirement[
-                                    token
-                                ][token_2]) /
-                            10 ** 18;
-                    }
-                }
-            }
+            AMMR += (assetdata[token].assetPrice * liabilities * assetdata[token].marginRequirement[1]) / 10 ** 36; // 1 -> MainternanceMarginRequirement
         }
         return AMMR;
     }
@@ -353,6 +300,19 @@ contract DataHub is Ownable {
         userdata[user].earningRateIndex[token] = interestContract.fetchCurrentRateIndex(token);
     }
 
+    /// @notice calculates the total dollar value of the users lending pool assets
+    /// @param user the address of the user we want to query
+    /// @return sumOfAssets the cumulative value of all their assets
+    function CalculateUsersTotalLendingPoolAssetValue(address user) public view returns (uint256) {
+        uint256 sumOfAssets;
+        address token;
+        for (uint256 i = 0; i < userdata[user].tokens.length; i++) {
+            token = userdata[user].tokens[i];
+            sumOfAssets += (assetdata[token].assetPrice * userdata[user].lending_pool_info[token]) / 10 ** 18; // want to get like a whole normal number so balance and price correction
+        }
+        return sumOfAssets;
+    }
+
     /// @notice Alters lending pool asset
     /// @dev This is to change the users rate epoch, it would be changed after they pay interest.
     /// @param token the token being targetted
@@ -361,7 +321,7 @@ contract DataHub is Ownable {
 
         if(direction) { // deposit
             // lending pool supply
-            require(amount + assetdata[token].assetInfo[2] <= assetdata[token].assetInfo[0], "this amount cannot be deposited into the lending pool cause of overflow"); // 0 -> totalSupply
+            require(amount <= assetdata[token].assetInfo[0], "this amount cannot be deposited into the lending pool cause of overflow"); // 0 -> totalSupply
             require(userdata[_sender].asset_info[token] >= amount, "Insufficient funds");
             // require(assetdata[token].assetInfo[0] >= amount, "this amount cannot be depositted cause of total supply underflow");
 
@@ -369,15 +329,16 @@ contract DataHub is Ownable {
             userdata[_sender].lending_pool_info[token] = userdata[_sender].lending_pool_info[token] + amount;
             assetdata[token].assetInfo[2] = assetdata[token].assetInfo[2] + amount; // 2 -> lending pool supply
             // console.log("lending pool supply", assetdata[token].assetInfo[2], token);
-            // assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] - amount;
+            assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] - amount;
             emit LendingPoolDeposit(_sender, token, amount);
             
         } else { // withdraw
             require(userdata[_sender].lending_pool_info[token] >= amount, "this amount cannot be withdrawn into cause of underflow");
-            require(assetdata[token].assetInfo[2] - amount >= assetdata[token].assetInfo[1], "this amount cannot be withdrawn into the lending pool"); // 1 -> totalBorrowedAmount
+            require(assetdata[token].assetInfo[2] >= amount, "this amount cannot be withdrawn into the lending pool"); // 1 -> totalBorrowedAmount
             userdata[_sender].lending_pool_info[token] = userdata[_sender].lending_pool_info[token] - amount;
             assetdata[token].assetInfo[2] = assetdata[token].assetInfo[2] - amount; // 2 -> lending pool supply
             userdata[_sender].asset_info[token] = userdata[_sender].asset_info[token] + amount;
+            assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] + amount;
             emit LendingPoolWithdrawal(_sender, token, amount);
         }
     }
@@ -511,29 +472,6 @@ contract DataHub is Ownable {
             out_token
         ] -= amount;
     }
-    function alterIMR(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].initial_margin_requirement[in_token][out_token] =
-            (userdata[user].initial_margin_requirement[in_token][out_token] *
-                amount) /
-            (10 ** 18);
-    }
-
-    function addInitialMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].initial_margin_requirement[in_token][
-            out_token
-        ] += amount;
-    }
-
     function removeInitialMarginRequirement(
         address user,
         address in_token,

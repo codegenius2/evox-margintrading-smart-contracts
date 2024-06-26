@@ -93,19 +93,5 @@ interface IUtilityContract {
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
 
-    function Modifymmr(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
-    function Modifyimr(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
     function debitAssetInterest(address user, address token) external;
 }
