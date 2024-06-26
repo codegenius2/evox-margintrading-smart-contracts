@@ -241,27 +241,9 @@ contract DepositVault is Ownable {
 
         IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
 
-        // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount
-        // require(amount + assetLogs.assetInfo[1] < assetLogs.assetInfo[0], "You cannot withdraw this amount as it would exceed the maximum borrow proportion");
-
-        // uint256 AssetPriceCalulation = (assetLogs.assetPrice * amount) / 10 ** 18; // this is 10*18 dnominated price of asset amount
-
         Datahub.removeAssets(msg.sender, token, amount);
-
-        // if (amount == assets) {
-        //     // remove assets and asset token from their portfolio
-        //     Datahub.removeAssets(msg.sender, token, amount);
-        //     // Datahub.removeAssetToken(msg.sender, token);
-        // } else {
-        //     Datahub.removeAssets(msg.sender, token, amount);
-        // }
-
         uint256 usersAMMR = Datahub.calculateAMMRForUser(msg.sender);
-
-        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
-
-        // bool UnableToWithdraw = usersAMMR + AssetPriceCalulation > usersTCV;
-        // if the users AMMR + price of the withdraw is bigger than their TPV dont let them withdraw this
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
 
         require(usersAMMR < usersTCV, "Cannot withdraw");
 
@@ -355,8 +337,8 @@ contract DepositVault is Ownable {
         require(assetLogs.initialized == true, "this asset is not available to be borrowed");
        
         interestContract.chargeMassinterest(token);
-
-        (uint256 assets, uint256 liabilities, , , ,) = Datahub.ReadUserData(msg.sender, token);
+        (uint256 assets, uint256 liabilities, uint256 pending, , ,) = Datahub.ReadUserData(msg.sender, token);
+        require(pending == 0, "You must have a 0 pending trade balance to borrow, please wait for your trade to settle before attempting to borrow");
         uint256 initalMarginFeeAmount = EVO_LIBRARY.calculateinitialMarginFeeAmount(assetLogs, amount);
 
         if (liabilities > 0) {    
@@ -372,7 +354,7 @@ contract DepositVault is Ownable {
         Datahub.addAssets(msg.sender, token, amount);
 
         uint256 usersAIMR = Datahub.calculateAIMRForUser(msg.sender);
-        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender) - Datahub.calculatePendingCollateralValue(msg.sender);
+        uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
         require(usersAIMR < usersTCV, "Cannot Borrow because it reached out the limit");
     }
 
