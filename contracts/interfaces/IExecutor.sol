@@ -19,4 +19,6 @@ interface IExecutor {
     function fetchDaoWallet() external view returns (address);
 
     function chargeinterest(address user, address token, uint256 liabilitiesAccrued, bool minus) external;
+
+    function divideFee(address token, uint256 amount) external;
 }
