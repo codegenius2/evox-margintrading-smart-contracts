@@ -5,6 +5,7 @@ import "@openzeppelin/contracts/utils/Context.sol";
 import "@openzeppelin/contracts/access/Ownable.sol";
 import "@openzeppelin/contracts/interfaces/IERC20.sol" as IERC20;
 import "./interfaces/IInterestData.sol";
+import "./interfaces/IDepositVault.sol";
 import "hardhat/console.sol";
 
 contract DataHub is Ownable {
@@ -34,6 +35,7 @@ contract DataHub is Ownable {
     }
 
     IInterestData public interestContract;
+    IDepositVault public depositVault;
 
     /// @notice Keeps track of a users data
     /// @dev Go to IDatahub for more details
@@ -72,6 +74,7 @@ contract DataHub is Ownable {
         admins[initialOwner] = true;
         admins[utils] = true;
         interestContract = IInterestData(_interest);
+        depositVault = IDepositVault(_deposit_vault);
     }
 
     function viewUsersEarningRateIndex(address user, address token) public view returns (uint256) {
@@ -262,6 +265,7 @@ contract DataHub is Ownable {
         admins[_utils] = true;
         interestContract = IInterestData(_interest);
         admins[_liquidator] = true;
+        depositVault = IDepositVault(_deposit_vault);
     }
 
     /// @notice Sets a new Admin role
@@ -323,22 +327,23 @@ contract DataHub is Ownable {
             // lending pool supply
             require(amount <= assetdata[token].assetInfo[0], "this amount cannot be deposited into the lending pool cause of overflow"); // 0 -> totalSupply
             require(userdata[_sender].asset_info[token] >= amount, "Insufficient funds");
-            // require(assetdata[token].assetInfo[0] >= amount, "this amount cannot be depositted cause of total supply underflow");
-
-            userdata[_sender].asset_info[token] = userdata[_sender].asset_info[token] - amount;
+            
+            depositVault.withdraw_process(_sender, token, amount);
+            
             userdata[_sender].lending_pool_info[token] = userdata[_sender].lending_pool_info[token] + amount;
             assetdata[token].assetInfo[2] = assetdata[token].assetInfo[2] + amount; // 2 -> lending pool supply
-            // console.log("lending pool supply", assetdata[token].assetInfo[2], token);
-            assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] - amount;
+            
             emit LendingPoolDeposit(_sender, token, amount);
             
         } else { // withdraw
             require(userdata[_sender].lending_pool_info[token] >= amount, "this amount cannot be withdrawn into cause of underflow");
             require(assetdata[token].assetInfo[2] >= amount, "this amount cannot be withdrawn into the lending pool"); // 1 -> totalBorrowedAmount
+
+            depositVault.deposit_process(_sender, token, amount);
+
             userdata[_sender].lending_pool_info[token] = userdata[_sender].lending_pool_info[token] - amount;
             assetdata[token].assetInfo[2] = assetdata[token].assetInfo[2] - amount; // 2 -> lending pool supply
-            userdata[_sender].asset_info[token] = userdata[_sender].asset_info[token] + amount;
-            assetdata[token].assetInfo[0] = assetdata[token].assetInfo[0] + amount;
+
             emit LendingPoolWithdrawal(_sender, token, amount);
         }
     }
