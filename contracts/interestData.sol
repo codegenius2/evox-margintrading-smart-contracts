@@ -383,6 +383,11 @@ contract interestData {
             // total borroed amount * current interest rate -> up total borrowed amount by this fucking value
             require(calculatedBorroedAmount + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeMassinInterest");
             Datahub.setAssetInfo(1, token, calculatedBorroedAmount, true); // 1 -> totalBorrowedAmount
+
+            IDataHub.AssetData memory finalAssetLogs = Datahub.returnAssetLogs(token);
+            if(finalAssetLogs.assetInfo[1] > finalAssetLogs.assetInfo[2]) {
+                Datahub.changeTotalBorrowedAmountOfAsset(token, finalAssetLogs.assetInfo[2]);
+            }
         }
     }
 

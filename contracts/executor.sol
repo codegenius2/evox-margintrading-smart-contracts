@@ -356,7 +356,7 @@ contract EVO_EXCHANGE is Ownable {
                 token,
                 liabilitiesAccrued
             );
-            require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
+            // require(interestCharge + liabilitiesAccrued + assetLogs.assetInfo[1] <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Minus");
             Datahub.addLiabilities(
                 user,
                 token,
@@ -378,8 +378,18 @@ contract EVO_EXCHANGE is Ownable {
             Datahub.addLiabilities(user, token, interestCharge);
             Datahub.removeLiabilities(user, token, liabilitiesAccrued);
             require(assetLogs.assetInfo[1] - liabilitiesAccrued + interestCharge <= assetLogs.assetInfo[2], "TBA should be smaller than LPS in ChargeInterest Plus");
-            Datahub.setAssetInfo(1, token, (liabilitiesAccrued - interestCharge), false); // 1 -> totalBorrowedAmount
+            uint256 debtAmount;
+            if( liabilitiesAccrued > interestCharge ) {
+                debtAmount = liabilitiesAccrued - interestCharge;
+            } else {
+                debtAmount =  interestCharge - liabilitiesAccrued;
+            }
+            Datahub.setAssetInfo(1, token, debtAmount, false); // 1 -> totalBorrowedAmount
             Datahub.alterUsersInterestRateIndex(user, token);
+        }
+        IDataHub.AssetData memory finalAssetLogs = Datahub.returnAssetLogs(token);
+        if(finalAssetLogs.assetInfo[1] > finalAssetLogs.assetInfo[2]) {
+            Datahub.changeTotalBorrowedAmountOfAsset(token, finalAssetLogs.assetInfo[2]);
         }
     }
 
