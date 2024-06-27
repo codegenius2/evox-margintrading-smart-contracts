@@ -102,69 +102,6 @@ contract Utility is Ownable {
         return margined;
     }
 
-    //// @notice calcualtes aimmr
-    /// @dev Explain to a developer any extra details
-    /// @param user being argetted
-    /// @param token being argetted
-    /// @param BalanceToLeave the balance to leave
-    function calculateAIMRRequirement(
-        address user,
-        address token,
-        uint256 BalanceToLeave
-    ) external view returns (bool) {
-        if (
-            Datahub.calculateAIMRForUser(user, token, BalanceToLeave) <=
-            Datahub.calculateTotalPortfolioValue(user)
-        ) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    //// @notice Explain to an end user what this does
-    /// @dev Explain to a developer any extra details
-    /// @param user being argetted
-    /// @param token being argetted
-    /// @param BalanceToLeave the balance to leave
-    /// @param userAssets the users assets
-    function calculateMarginRequirement(
-        address user,
-        address token,
-        uint256 BalanceToLeave,
-        uint256 userAssets
-    ) external view returns (bool) {
-        uint256 liabilities = (BalanceToLeave - userAssets);
-        uint256 ammrForUser = Datahub.calculateAMMRForUser(user);
-        IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(token);
-
-        uint256 maintenanceRequirementForTrade = EVO_LIBRARY.calculateMaintenanceRequirementForTrade(
-            assetLogs,
-            liabilities
-        );
-        uint256 totalPortfolioValue = Datahub.calculateTotalPortfolioValue(user);
-
-        if (ammrForUser + (maintenanceRequirementForTrade * assetLogs.assetPrice) <=  totalPortfolioValue) {
-            return true;
-        } else {
-            return false;
-        }
-    }
-
-    //// @notice calcualtes aimmr
-    /// @dev Explain to a developer any extra details
-    /// @param user being argetted
-    function calculateAMMRRequirement(
-        address user
-    ) external view returns (bool) {
-        uint256 ammrForUser = Datahub.calculateAMMRForUser(user);
-        uint256 totalPortfolioValue = Datahub.calculateTotalPortfolioValue(user);
-        if (ammrForUser <= totalPortfolioValue) {
-            return true;
-        } else {
-            return false;
-        }
-    }
     /// @notice Takes a single users address and returns the amount of liabilities that are going to be issued to that user
     function calculateAmountToAddToLiabilities(
         address user,
@@ -376,8 +313,7 @@ contract Utility is Ownable {
             );
         }
         
-        (
-            uint256 interestCharge, ,) = EVO_LIBRARY.calculateCompoundedAssets(
+        (uint256 interestCharge, ,) = EVO_LIBRARY.calculateCompoundedAssets(
                 currentRateIndex,
                 averageCumulativeDepositInterest * 95 / 100, // 0.99
                 lending_pool_amount,

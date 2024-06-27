@@ -153,13 +153,6 @@ interface IDataHub {
         uint256 amount
     ) external view returns (uint256);
 
-    function calculateMarginRequirement(
-        address user,
-        address token,
-        uint256 BalanceToLeave,
-        uint256 userAssets
-    ) external view returns (bool);
-
     function calculateAMMRForUser(address user) external view returns (uint256);
 
     function calculateTotalPortfolioValue(
@@ -186,4 +179,6 @@ interface IDataHub {
     ) external ;
 
     function tokenTransferFees(address token)external returns(uint256);
+
+    function changeTotalBorrowedAmountOfAsset(address token, uint256 _updated_value) external;
 }
