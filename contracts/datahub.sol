@@ -457,41 +457,6 @@ contract DataHub is Ownable {
        userdata[user].pending_balances[token] -= amountToRemove;
     }
 
-    function alterMMR(address user, address in_token, address out_token, uint256 amount) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][out_token] =
-            (userdata[user].maintenance_margin_requirement[in_token][
-                out_token
-            ] * amount) /
-            (10 ** 18);
-    }
-
-    function addMaintenanceMarginRequirement(address user, address in_token, address out_token, uint256 amount) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][
-            out_token
-        ] += amount;
-    }
-
-    function removeMaintenanceMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][
-            out_token
-        ] -= amount;
-    }
-    function removeInitialMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].initial_margin_requirement[in_token][
-            out_token
-        ] -= amount;
-    }
-
     /// @notice This checks the users margin status and if they should be in that status state, and changes it if they should not be
     /// @param user the user being targetted
     /// @param token the token being traded or targetted

@@ -79,20 +79,6 @@ interface IDataHub {
         uint256 amount
     ) external;
 
-    function addMaintenanceMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
-    function removeMaintenanceMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external;
-
     function divideFee(address token, uint256 amount) external;
 
     function addPendingBalances(
@@ -147,11 +133,6 @@ interface IDataHub {
         address token,
         uint256 BalanceToLeave
     ) external;
-
-    function returnMaintenanceRequirementForTrade(
-        address token,
-        uint256 amount
-    ) external view returns (uint256);
 
     function calculateAMMRForUser(address user) external view returns (uint256);
 
