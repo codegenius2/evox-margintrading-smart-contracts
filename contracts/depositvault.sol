@@ -397,9 +397,10 @@ contract DepositVault is Ownable {
         if (liabilities > 0) {    
             Executor.chargeinterest(msg.sender, token, amount, false);
         } else {
-            Datahub.addLiabilities(msg.sender, token, amount + initalMarginFeeAmount);
-            Datahub.setAssetInfo(1, token, amount + initalMarginFeeAmount, true); // 1 -> TotalBorrowedAmount
-            Datahub.alterUsersInterestRateIndex(msg.sender, token);
+            Executor.chargeinterest(msg.sender, token, amount + initalMarginFeeAmount, false);
+            // Datahub.addLiabilities(msg.sender, token, amount + initalMarginFeeAmount);
+            // Datahub.setAssetInfo(1, token, amount + initalMarginFeeAmount, true); // 1 -> TotalBorrowedAmount
+            // Datahub.alterUsersInterestRateIndex(msg.sender, token);
         }
 
         Executor.divideFee(token, initalMarginFeeAmount);
