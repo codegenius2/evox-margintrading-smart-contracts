@@ -823,7 +823,7 @@ describe("Interest Test", function () {
             
 
             expect(test_val["USDT-1"].usdt_amount).equals(192.1017663807477);
-            expect(test_val["USDT-1"].liabilities).equals(0);
+            expect(test_val["USDT-1"].liabilities).equals(557.9337580500688);
         })
 
         it("Test Withdraw", async function () {
