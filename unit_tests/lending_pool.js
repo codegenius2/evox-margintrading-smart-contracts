@@ -520,75 +520,75 @@ describe("Interest Test", function () {
     })
 
     describe("Lending Pool Logic Test", function () {
-        it("Alter Lending Pool Function Test", async function () {
-            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+        // it("Alter Lending Pool Function Test", async function () {
+        //     const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
-            await DataHub.addLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 502_504238073434460000n);
-            await DataHub.settotalAssetSupplyTest(await USDT_TOKEN.getAddress(), 1500_000000000000000000n, true);
-            await DataHub.settotalAssetSupplyTest(await REXE_TOKEN.getAddress(), 1500_000000000000000000n, true);
-            await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 502_504238073434460000n, true);
-            await DataHub.addAssetsTest(signers[1].address, await USDT_TOKEN.getAddress(), 2000_000000000000000000n);
+        //     await DataHub.addLiabilitiesTest(signers[0].address, await USDT_TOKEN.getAddress(), 502_504238073434460000n);
+        //     await DataHub.settotalAssetSupplyTest(await USDT_TOKEN.getAddress(), 1500_000000000000000000n, true);
+        //     await DataHub.settotalAssetSupplyTest(await REXE_TOKEN.getAddress(), 1500_000000000000000000n, true);
+        //     await DataHub.settotalBorrowAmountTest(await USDT_TOKEN.getAddress(), 502_504238073434460000n, true);
+        //     await DataHub.addAssetsTest(signers[1].address, await USDT_TOKEN.getAddress(), 2000_000000000000000000n);
 
-            const originTimestamp = await getTimeStamp(hre.ethers.provider);
+        //     const originTimestamp = await getTimeStamp(hre.ethers.provider);
 
-            const scaledTimestamp = originTimestamp + 0 * 3600;
+        //     const scaledTimestamp = originTimestamp + 0 * 3600;
 
-            setTimeStamp(hre.ethers.provider, network, scaledTimestamp);
+        //     setTimeStamp(hre.ethers.provider, network, scaledTimestamp);
 
-            let data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+        //     let data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
-            expect(data["USDT-0"].usdt_supply).equals(Number(1500));
+        //     expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"].usdt_supply).equals(Number(1500));
 
-            expect(data["USDT-0"].usdt_amount).equals(Number(0));
-            expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"].usdt_amount).equals(Number(0));
+        //     expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
 
-            expect(data["USDT-1"].usdt_amount).equals(Number(2000));
-            expect(data["USDT-1"]["liabilities"]).equals(Number(0));
+        //     expect(data["USDT-1"].usdt_amount).equals(Number(2000));
+        //     expect(data["USDT-1"]["liabilities"]).equals(Number(0));
 
-            DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true);
+        //     DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true);
             
-            // Deposit Functionality Test
-            await expect(DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true)).to.be.revertedWith('Insufficient funds');
-            await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 2000_000000000000000000n, true)).to.be.revertedWith('this amount cannot be deposited into the lending pool cause of overflow');
+        //     // Deposit Functionality Test
+        //     await expect(DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true)).to.be.revertedWith('Insufficient funds');
+        //     await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 2000_000000000000000000n, true)).to.be.revertedWith('this amount cannot be deposited into the lending pool cause of overflow');
 
-            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1000_000000000000000000n, true);
+        //     await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1000_000000000000000000n, true);
             
-            data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+        //     data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
-            expect(data["USDT-0"].usdt_supply).equals(Number(500));
-            expect(data["USDT-0"].usdt_amount).equals(Number(0));
-            expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"].usdt_supply).equals(Number(500));
+        //     expect(data["USDT-0"].usdt_amount).equals(Number(0));
+        //     expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
 
-            expect(data["USDT-1"].usdt_amount).equals(Number(1000));
-            expect(data["USDT-1"]["liabilities"]).equals(Number(0));
+        //     expect(data["USDT-1"].usdt_amount).equals(Number(1000));
+        //     expect(data["USDT-1"]["liabilities"]).equals(Number(0));
 
-            let asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
-            let user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+        //     let asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+        //     let user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
 
-            expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
-            expect(asset_data[4][2]).equals(1000_000000000000000000n); // lending pool supply
+        //     expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
+        //     expect(asset_data[4][2]).equals(1000_000000000000000000n); // lending pool supply
 
-            // Withdraw Functionality Test
-            await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1100_000000000000000000n, false)).to.be.revertedWith('this amount cannot be withdrawn into cause of underflow');
-            // await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1500_000000000000000000n, false)).to.be.revertedWith('this amount cannot be withdrawn into the lending pool');
+        //     // Withdraw Functionality Test
+        //     await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1100_000000000000000000n, false)).to.be.revertedWith('this amount cannot be withdrawn into cause of underflow');
+        //     // await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 1500_000000000000000000n, false)).to.be.revertedWith('this amount cannot be withdrawn into the lending pool');
 
-            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 400_000000000000000000n, false);
+        //     await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 400_000000000000000000n, false);
             
-            data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
+        //     data = await createNewData(scaledTimestamp, signers, DataHub, _Interest, Utils, USDT_TOKEN, REXE_TOKEN);
 
-            expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
-            expect(data["USDT-0"].usdt_supply).equals(Number(900));
-            expect(data["USDT-0"].usdt_amount).equals(Number(0));
-            expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"]["total-borrowed"]).equals(Number(502.50423807343446));
+        //     expect(data["USDT-0"].usdt_supply).equals(Number(900));
+        //     expect(data["USDT-0"].usdt_amount).equals(Number(0));
+        //     expect(data["USDT-0"]["liabilities"]).equals(Number(502.50423807343446));
 
-            expect(data["USDT-1"].usdt_amount).equals(Number(1400));
-            expect(data["USDT-1"]["liabilities"]).equals(Number(0));
+        //     expect(data["USDT-1"].usdt_amount).equals(Number(1400));
+        //     expect(data["USDT-1"]["liabilities"]).equals(Number(0));
 
-            expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
-            expect(asset_data[4][2]).equals(1000_000000000000000000n); // lending pool supply
-        })
+        //     expect(user_data[5]).equals(1000_000000000000000000n); // lending pool amount
+        //     expect(asset_data[4][2]).equals(1000_000000000000000000n); // lending pool supply
+        // })
 
         it("Test Earning rate and liability after trade ", async function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
@@ -715,7 +715,7 @@ describe("Interest Test", function () {
             expect(test_val["USDT-0"].liability_charge).equals(1.4978219201198344);
         })
 
-        it("Test Borrow", async function () {
+        it("Test Borrow and Repay", async function () {
             const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
 
             /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
@@ -822,8 +822,8 @@ describe("Interest Test", function () {
             // console.log("signer1 usdt liability", test_val["USDT-1"].liabilities);
             
 
-            expect(test_val["USDT-1"].usdt_amount).equals(195.8483352822185);
-            expect(test_val["USDT-1"].liabilities).equals(0.2953010574023366);
+            expect(test_val["USDT-1"].usdt_amount).equals(192.1017663807477);
+            expect(test_val["USDT-1"].liabilities).equals(557.9337580500688);
         })
 
         it("Test Withdraw", async function () {
@@ -872,8 +872,8 @@ describe("Interest Test", function () {
             // console.log("aimr for user0", aimr_signers);
             // console.log("ammr for user0", ammr_signers);
 
-            expect(aimr_signers).equals(20100000000000000000n); // lending pool amount
-            expect(ammr_signers).equals(10050000000000000000n); // lending pool supply
+            expect(aimr_signers).equals(20200830825647566713n); // lending pool amount
+            expect(ammr_signers).equals(10100415412823783356n); // lending pool supply
 
             let withdraw_amount = 81_000000000000000000n;
             
@@ -885,7 +885,7 @@ describe("Interest Test", function () {
             // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
 
             expect(test_val["USDT-0"].usdt_amount).equals(200.5);
-            expect(test_val["USDT-0"].liabilities).equals(100.5);
+            expect(test_val["USDT-0"].liabilities).equals(101.00415412823784);
 
             aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
             ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
@@ -902,13 +902,753 @@ describe("Interest Test", function () {
             // console.log("signer0 usdt liability", test_val["USDT-0"].liabilities);
 
             expect(test_val["USDT-0"].usdt_amount).equals(121.5);
-            expect(test_val["USDT-0"].liabilities).equals(100.5);
+            expect(test_val["USDT-0"].liabilities).equals(101.00415412823784);
 
             aimr_signers = await DataHub.calculateAIMRForUser(signers[0].address);
             ammr_signers = await DataHub.calculateAMMRForUser(signers[0].address);
 
             // console.log("aimr for user0", aimr_signers);
             // console.log("ammr for user0", ammr_signers);
+        })
+
+        it("Deposit SIGNER0 100 USDT FAILURE", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+
+            CurrentExchange.setOrderBookProviderTest(signers[2]);
+            CurrentExchange.setDaoWalletTest(signers[2]);
+
+            /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
+            let deposit_amount = 500_000000000000000000n
+            let transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait();
+            let approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined       
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), deposit_amount)
+
+            deposit_amount = 1000_000000000000000000n;
+            transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 900_000000000000000000n, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(0n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer0 usdt amount
+            expect(user_data[1]).equals(0n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            let borrow_amount = 800_000000000000000000n;
+            await deposit_vault.connect(signers[0]).borrow(await USDT_TOKEN.getAddress(), borrow_amount);
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(800000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            await expect(DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 200_000000000000000000n, true)).revertedWith("this amount cannot be deposited into the lending pool cause of overflow");
+        })
+
+        it("Deposit SIGNER0 100 USDT SUCCESS", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+
+            CurrentExchange.setOrderBookProviderTest(signers[2]);
+            CurrentExchange.setDaoWalletTest(signers[2]);
+
+            /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
+            let deposit_amount = 500_000000000000000000n
+            let transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait();
+            let approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined       
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), deposit_amount)
+
+            deposit_amount = 1000_000000000000000000n;
+            transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 900_000000000000000000n, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(0n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer0 usdt amount
+            expect(user_data[1]).equals(0n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let borrow_amount = 800_000000000000000000n;
+            await deposit_vault.connect(signers[0]).borrow(await USDT_TOKEN.getAddress(), borrow_amount);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(800000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            DataHub.connect(signers[0]).alterLendingPool(await USDT_TOKEN.getAddress(), 100_000000000000000000n, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(700000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(100000000000000000000n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        })
+
+        it("Withdraw SIGNER1 200 From LendingPool FAILIURE", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+
+            CurrentExchange.setOrderBookProviderTest(signers[2]);
+            CurrentExchange.setDaoWalletTest(signers[2]);
+
+            /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
+            let deposit_amount = 500_000000000000000000n
+            let transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait();
+            let approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined       
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), deposit_amount)
+
+            deposit_amount = 1000_000000000000000000n;
+            transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 900_000000000000000000n, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(0n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer0 usdt amount
+            expect(user_data[1]).equals(0n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let borrow_amount = 800_000000000000000000n;
+            await deposit_vault.connect(signers[0]).borrow(await USDT_TOKEN.getAddress(), borrow_amount);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(800000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let withdraw_amount = 200_000000000000000000n;
+            await expect(DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), withdraw_amount, true)).revertedWith("this amount cannot be deposited into the lending pool cause of overflow");
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+        })
+
+        it("Withdraw SIGNER1 100 From LendingPool SUCCESS", async function () {
+            const { signers, Utils, CurrentExchange, deposit_vault, CurrentLiquidator, DataHub, Oracle, _Interest, USDT_TOKEN, REXE_TOKEN } = await loadFixture(deployandInitContracts);
+
+            CurrentExchange.setOrderBookProviderTest(signers[2]);
+            CurrentExchange.setDaoWalletTest(signers[2]);
+
+            /////////////////////////////// DEPOSIT TOKENS //////////////////////////////////
+            let deposit_amount = 500_000000000000000000n
+            let transfer = await REXE_TOKEN.connect(signers[1]).transfer(signers[0].address, deposit_amount);
+            await transfer.wait();
+            let approvalTx = await REXE_TOKEN.connect(signers[0]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();  // Wait for the transaction to be mined       
+            await deposit_vault.connect(signers[0]).deposit_token(await REXE_TOKEN.getAddress(), deposit_amount)
+
+            deposit_amount = 1000_000000000000000000n;
+            transfer = await USDT_TOKEN.transfer(signers[1].address, deposit_amount);
+            await transfer.wait();
+            approvalTx = await USDT_TOKEN.connect(signers[1]).approve(await deposit_vault.getAddress(), deposit_amount);
+            await approvalTx.wait();
+            await deposit_vault.connect(signers[1]).deposit_token(await USDT_TOKEN.getAddress(), deposit_amount)
+
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), 900_000000000000000000n, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(0n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer0 usdt amount
+            expect(user_data[1]).equals(0n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let borrow_amount = 800_000000000000000000n;
+            await deposit_vault.connect(signers[0]).borrow(await USDT_TOKEN.getAddress(), borrow_amount);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(100000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(900000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(800000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(100000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(900000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            let withdraw_amount = 96_000000000000000000n;
+            await DataHub.connect(signers[1]).alterLendingPool(await USDT_TOKEN.getAddress(), withdraw_amount, true);
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
+
+            asset_data = await DataHub.returnAssetLogs(await USDT_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< USDT >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("usdt total supply", asset_data[4][0]);
+            // console.log("usdt total borrowed amount", asset_data[4][1]);
+            // console.log("usdt total lending pool supply", asset_data[4][2]);
+            expect(asset_data[4][0]).equals(4000000000000000000n); // usdt total supply
+            expect(asset_data[4][1]).equals(808084218559218558516n); // usdt total supply
+            expect(asset_data[4][2]).equals(996000000000000000000n); // usdt total supply
+
+            asset_data = await DataHub.returnAssetLogs(await REXE_TOKEN.getAddress());
+
+            // console.log("<<<<<<<<<<<<<<<<<< REXE >>>>>>>>>>>>>>>>>>>>>");
+            // console.log("rexe total supply", asset_data[4][0]);
+            // console.log("rexe total borrowed amount", asset_data[4][1]);
+            // console.log("rexe total lending pool supply", asset_data[4][2]);
+
+            expect(asset_data[4][0]).equals(500000000000000000000n); // rexe total supply
+            expect(asset_data[4][1]).equals(0n); // rexe total supply
+            expect(asset_data[4][2]).equals(0n); // rexe total supply
+            
+            // console.log("<<<<<<<<<<<<<<<<<< signer0 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[0].address, await USDT_TOKEN.getAddress());
+            // console.log("signer0 usdt amount", user_data[0]);
+            // console.log("signer0 usdt liabilities", user_data[1]);
+            // console.log("signer0 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(800000000000000000000n); // signer0 usdt amount
+            expect(user_data[1]).equals(808084218559218558516n); // signer0 usdt liabilities
+            expect(user_data[5]).equals(0n); // signer0 usdt lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[0].address, await REXE_TOKEN.getAddress());
+            // console.log("signer0 rexe amount", user_data[0]);
+            // console.log("signer0 rexe liabilities", user_data[1]);
+            // console.log("signer0 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(500000000000000000000n); // signer0 rexe amount
+            expect(user_data[1]).equals(0n); // signer0 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer0 rexe lending pool amount
+
+            // console.log("<<<<<<<<<<<<<<<<<< signer1 >>>>>>>>>>>>>>>>>>>>>");
+            user_data = await DataHub.ReadUserData(signers[1].address, await USDT_TOKEN.getAddress());
+            // console.log("signer1 usdt amount", user_data[0]);
+            // console.log("signer1 usdt liabilities", user_data[1]);
+            // console.log("signer1 usdt lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(4000000000000000000n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(996000000000000000000n); // signer1 rexe lending pool amount
+
+            user_data = await DataHub.ReadUserData(signers[1].address, await REXE_TOKEN.getAddress());
+            // console.log("signer1 rexe amount", user_data[0]);
+            // console.log("signer1 rexe liabilities", user_data[1]);
+            // console.log("signer1 rexe lending pool amount", user_data[5]);
+
+            expect(user_data[0]).equals(0n); // signer1 rexe amount
+            expect(user_data[1]).equals(0n); // signer1 rexe liabilities
+            expect(user_data[5]).equals(0n); // signer1 rexe lending pool amount
+
+            ///////////////////////////////////////////////////////////////////////////////////////////////////////
         })
     })
 

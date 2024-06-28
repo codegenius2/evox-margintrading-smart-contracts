@@ -287,13 +287,17 @@ contract DataHub is Ownable {
         dao_role[_wallet] = _flag;
     }
 
+    function getTotalExchangeSupply(address token) public view returns(uint256) {
+        return assetdata[token].assetInfo[0] + assetdata[token].assetInfo[1];
+    }
+
     /// @notice Alters the users interest rate index (or epoch)
     /// @dev This is to change the users rate epoch, it would be changed after they pay interest.
     /// @param user the users address
     /// @param token the token being targetted
     function alterUsersInterestRateIndex(address user, address token) external checkRoleAuthority {
         userdata[user].interestRateIndex[token] = interestContract.fetchCurrentRateIndex(token); // updates to be the current rate index..... 1+
-    }
+    }   
 
     function alterUsersEarningRateIndex(address user, address token) external checkRoleAuthority {
         // console.log("alterUserEarningRateIndex function");
@@ -451,41 +455,6 @@ contract DataHub is Ownable {
     uint256 pendingBalances = userdata[user].pending_balances[token];
     uint256 amountToRemove = amount >  pendingBalances ? pendingBalances : amount ;
        userdata[user].pending_balances[token] -= amountToRemove;
-    }
-
-    function alterMMR(address user, address in_token, address out_token, uint256 amount) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][out_token] =
-            (userdata[user].maintenance_margin_requirement[in_token][
-                out_token
-            ] * amount) /
-            (10 ** 18);
-    }
-
-    function addMaintenanceMarginRequirement(address user, address in_token, address out_token, uint256 amount) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][
-            out_token
-        ] += amount;
-    }
-
-    function removeMaintenanceMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].maintenance_margin_requirement[in_token][
-            out_token
-        ] -= amount;
-    }
-    function removeInitialMarginRequirement(
-        address user,
-        address in_token,
-        address out_token,
-        uint256 amount
-    ) external checkRoleAuthority {
-        userdata[user].initial_margin_requirement[in_token][
-            out_token
-        ] -= amount;
     }
 
     /// @notice This checks the users margin status and if they should be in that status state, and changes it if they should not be
