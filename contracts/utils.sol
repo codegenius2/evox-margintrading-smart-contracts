@@ -212,30 +212,7 @@ contract Utility is Ownable {
         return true;
     }
 
-    /// @notice Checks that the trade will not push the asset over maxBorrowProportion
-    function maxBorrowCheck(
-        address[2] memory pair,
-        address[][2] memory participants,
-        uint256[][2] memory trade_amounts
-    ) public view returns (bool) {
-        uint256 newLiabilitiesIssued;
-        for (uint256 i = 0; i < pair.length; i++) {
-            uint256 collateral = EVO_LIBRARY.calculateTotal(trade_amounts[i]);
-            uint256 bulkAssets = returnBulkAssets(participants[i], pair[i]);
-            newLiabilitiesIssued = collateral > bulkAssets ? collateral - bulkAssets: 0;
-            if (newLiabilitiesIssued > 0) {
-                IDataHub.AssetData memory assetLogs = Datahub.returnAssetLogs(pair[i]);
-                bool flag = EVO_LIBRARY.calculateBorrowProportionAfterTrades(
-                    assetLogs,
-                    newLiabilitiesIssued
-                );
-                return flag;
-            }
-        }
-        return true;
-    }
-
-    /// @notice this function runs the margin checks, changes margin status if applicable and adds pending balances
+     /// @notice this function runs the margin checks, changes margin status if applicable and adds pending balances
     /// @param pair the pair of tokens being traded
     /// @param participants of the trade 2 nested arrays
     /// @param trade_amounts the trades amounts for each participant

@@ -186,11 +186,7 @@ contract EVO_EXCHANGE is Ownable {
         // this checks if the asset they are trying to trade isn't pass max borrow
 
         require(Utilities.validateTradeAmounts(trade_amounts), "Never 0 trades");
-        require(
-            Utilities.maxBorrowCheck(pair, participants, trade_amounts),
-            "This trade puts the protocol above maximum borrow proportion and cannot be completed"
-        );
-
+ 
         require(
             Utilities.processMargin(pair, participants, trade_amounts),
             "This trade failed the margin checks for one or more users"

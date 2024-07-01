@@ -144,10 +144,6 @@ contract Liquidator is Ownable {
 
         (uint256[] memory takerLiabilities, uint256[] memory makerLiabilities) = Utilities.calculateTradeLiabilityAddtions(tokens, participants, trade_amounts);
         require(Utilities.validateTradeAmounts(trade_amounts), "Never 0 trades");
-        require(
-            Utilities.maxBorrowCheck(tokens, participants, trade_amounts),
-            "this liquidation would exceed max borrow proportion please lower the spending cap"
-        );
 
         require(
             Utilities.processMargin(tokens, participants, trade_amounts),

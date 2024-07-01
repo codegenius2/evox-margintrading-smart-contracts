@@ -70,12 +70,6 @@ interface IUtilityContract {
         uint256 index
     ) external view returns (uint256);
 
-    function maxBorrowCheck(
-        address[2] memory pair,
-        address[][2] memory participants,
-        uint256[][2] memory trade_amounts
-    ) external view returns (bool);
-
     function validateTradeAmounts(
         uint256[][2] memory trade_amounts
     ) external view returns (bool);
