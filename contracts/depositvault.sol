@@ -409,6 +409,8 @@ contract DepositVault is Ownable {
 
         uint256 usersAIMR = Datahub.calculateAIMRForUser(msg.sender);
         uint256 usersTCV = Datahub.calculateCollateralValue(msg.sender);
+
+        Datahub.changeMarginStatus(msg.sender);
         // console.log("users aimr", usersAIMR);
         // console.log("users tcv", usersTCV);
         require(usersAIMR < usersTCV, "Cannot Borrow because it reached out the limit");
@@ -430,6 +432,8 @@ contract DepositVault is Ownable {
 
         // Executor.chargeinterest(msg.sender, token, repay_amount, true);       
         Datahub.removeAssets(msg.sender, token, repay_amount);
+
+        Datahub.changeMarginStatus(msg.sender);
     }
 
     function withdrawETH(address payable owner) external onlyOwner {
