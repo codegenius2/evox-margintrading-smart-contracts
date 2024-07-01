@@ -350,6 +350,8 @@ contract DataHub is Ownable {
 
             emit LendingPoolWithdrawal(_sender, token, amount);
         }
+
+        changeMarginStatusInternal(_sender);
     }
 
     function alterUserNegativeValue(address user) external checkRoleAuthority {
@@ -481,6 +483,13 @@ contract DataHub is Ownable {
     /// @dev if they don't have any margined positions this should turn them into a "spot" user
     /// @param user the user being targetted
     function changeMarginStatus(address user) external checkRoleAuthority returns (bool) {
+        return changeMarginStatusInternal(user);
+    }
+
+    /// @notice This changes the users margin status
+    /// @dev if they don't have any margined positions this should turn them into a "spot" user
+    /// @param user the user being targetted
+    function changeMarginStatusInternal(address user) internal returns (bool) {
         bool isMargined = false;
         for (uint256 j = 0; j < userdata[user].tokens.length; j++) {
             if (userdata[user].liability_info[userdata[user].tokens[j]] > 0) {
