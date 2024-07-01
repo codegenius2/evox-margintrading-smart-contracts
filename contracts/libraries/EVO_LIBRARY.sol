@@ -158,25 +158,6 @@ library EVO_LIBRARY {
             (assetdata.assetInfo[1] * 10 ** 18) / assetdata.assetInfo[2]; // 0 -> totalAssetSupply, 1 -> totalBorrowedAmount, 2 -> lendingPoolSupply
     }
 
-    function calculateBorrowProportionAfterTrades(
-        IDataHub.AssetData memory assetdata,
-        uint256 new_liabilities
-    ) public pure returns (bool) {
-        if(assetdata.assetInfo[2] == 0) {
-            return false;
-        }
-        uint256 scaleFactor = 1e18; // Scaling factor, e.g., 10^18 for wei
-
-        // here we add the current borrowed amount and the new liabilities to be issued, and scale it
-        uint256 scaledTotalBorrowed = (assetdata.assetInfo[1] + new_liabilities) * scaleFactor; // 1 -> totalBorrowedAmount
-
-        // Calculate the new borrow proportion
-        uint256 newBorrowProportion = (scaledTotalBorrowed / assetdata.assetInfo[2]); // totalLendingPoolSupply
-
-        // Compare with maximumBorrowProportion
-        return newBorrowProportion <= assetdata.borrowPosition[1]; // 1 -> maximumBorrowProportion
-    }
-
     function calculateFee(
         uint256 _amount,
         uint256 _fee
